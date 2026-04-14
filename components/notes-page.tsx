@@ -13,6 +13,35 @@ export interface NotesSection {
   tableRows?: string[][]
 }
 
+// Parse a raw markdown-style string into NotesSection[]
+function parseContent(raw: string): NotesSection[] {
+  const lines = raw.split('\n')
+  const result: NotesSection[] = []
+  let bulletBuffer: string[] = []
+
+  const flushBullets = () => {
+    if (bulletBuffer.length > 0) {
+      result.push({ type: 'bullets', content: '', bullets: [...bulletBuffer] })
+      bulletBuffer = []
+    }
+  }
+
+  for (const line of lines) {
+    const trimmed = line.trim()
+    if (!trimmed) { flushBullets(); continue }
+    if (trimmed.startsWith('## ')) { flushBullets(); result.push({ type: 'heading', content: trimmed.slice(3) }); continue }
+    if (trimmed.startsWith('### ')) { flushBullets(); result.push({ type: 'subheading', content: trimmed.slice(4) }); continue }
+    if (trimmed.startsWith('- ') || trimmed.startsWith('* ') || /^\d+\.\s/.test(trimmed)) {
+      bulletBuffer.push(trimmed.replace(/^[-*]\s/, '').replace(/^\d+\.\s/, ''))
+      continue
+    }
+    flushBullets()
+    result.push({ type: 'body', content: trimmed })
+  }
+  flushBullets()
+  return result
+}
+
 interface NotesPageProps {
   course: {
     label: string
@@ -28,19 +57,22 @@ interface NotesPageProps {
     number: number
     title: string
     keyTerms?: string[]
+    description?: string
   }
-  sections: NotesSection[]
+  sections?: NotesSection[]
+  content?: string
   prev?: { href: string; title: string }
   next?: { href: string; title: string }
-  courseHref: string
-  unitHref: string
+  courseHref?: string
+  unitHref?: string
   videoId?: string
   videoTitle?: string
 }
 
 export function NotesPage({
-  course, unit, topic, sections, prev, next, courseHref, unitHref, videoId, videoTitle
+  course, unit, topic, sections: sectionsProp, content, prev, next, courseHref = '/', unitHref, videoId, videoTitle
 }: NotesPageProps) {
+  const sections: NotesSection[] = sectionsProp ?? (content ? parseContent(content) : [])
   const [loaded, setLoaded] = useState(false)
   const [readPct, setReadPct] = useState(0)
 
