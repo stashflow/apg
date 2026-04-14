@@ -201,10 +201,12 @@ export function NotesPage({
 
       {/* Reading progress bar */}
       <div
-        className="fixed top-14 left-0 h-0.5 z-40 transition-all duration-100"
+        className="fixed top-14 left-0 h-[3px] z-40"
         style={{
           width: `${readPct}%`,
           background: `linear-gradient(90deg, ${course.accent}, ${course.accentLight})`,
+          transition: 'width 0.08s linear',
+          boxShadow: `0 0 8px ${course.accent}88`,
         }}
       />
 

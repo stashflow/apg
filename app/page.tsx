@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const courses = [
   {
@@ -13,9 +13,9 @@ const courses = [
     image: '/images/enviro-tile.jpg',
     accent: '#22c55e',
     accentLight: '#86efac',
-    tag: 'the living earth',
+    tag: 'unit 1–9',
     units: 9,
-    position: 'top-left',
+    desc: 'ecosystems, climate, pollution & solutions',
   },
   {
     id: 'apush',
@@ -25,9 +25,9 @@ const courses = [
     image: '/images/apush-tile.jpg',
     accent: '#ef4444',
     accentLight: '#f59e0b',
-    tag: 'from colonies to now',
+    tag: 'period 1–9',
     units: 9,
-    position: 'top-right',
+    desc: '1491 to the present — every turning point',
   },
   {
     id: 'lang',
@@ -37,9 +37,9 @@ const courses = [
     image: '/images/lang-tile.jpg',
     accent: '#a855f7',
     accentLight: '#ec4899',
-    tag: 'rhetoric & argument',
-    units: 9,
-    position: 'bottom-left',
+    tag: 'unit 1–8',
+    units: 8,
+    desc: 'rhetoric, argument & all three essays',
   },
   {
     id: 'csp',
@@ -49,122 +49,118 @@ const courses = [
     image: '/images/csp-tile.jpg',
     accent: '#14b8a6',
     accentLight: '#f97316',
-    tag: 'code & data',
+    tag: 'big ideas 1–5',
     units: 5,
-    position: 'bottom-right',
+    desc: 'algorithms, data, internet & impact',
   },
 ]
 
-function CourseTile({ course, delay }: { course: typeof courses[0]; delay: number }) {
+function CourseTile({ course }: { course: typeof courses[0] }) {
   const [hovered, setHovered] = useState(false)
-  const ref = useRef<HTMLAnchorElement>(null)
 
   return (
     <Link
-      ref={ref}
       href={course.href}
-      className="relative flex flex-col justify-end overflow-hidden group cursor-pointer"
-      style={{
-        animationDelay: `${delay}ms`,
-        animationFillMode: 'both',
-      }}
+      className="relative flex flex-col justify-end overflow-hidden cursor-pointer w-full h-full"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Background image */}
+      {/* Background image — fills 100% of the tile */}
       <Image
         src={course.image}
         alt={course.label}
         fill
-        className="object-cover transition-transform duration-700 ease-out"
-        style={{ transform: hovered ? 'scale(1.06)' : 'scale(1)' }}
+        sizes="50vw"
+        className="object-cover object-center"
+        style={{
+          transform: hovered ? 'scale(1.07)' : 'scale(1)',
+          transition: 'transform 0.75s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        }}
         priority
       />
 
-      {/* Dark overlay */}
+      {/* Base gradient — always present, bottom-weighted so images show at top */}
       <div
-        className="absolute inset-0 transition-opacity duration-500"
+        className="absolute inset-0"
         style={{
-          background: `linear-gradient(160deg, ${course.accent}22 0%, #050d1a99 40%, #050d1aee 100%)`,
-          opacity: hovered ? 0.85 : 0.65,
+          background: `linear-gradient(180deg,
+            rgba(5,13,26,0.05) 0%,
+            rgba(5,13,26,0.15) 35%,
+            rgba(5,13,26,0.72) 65%,
+            rgba(5,13,26,0.97) 100%)`,
+          transition: 'opacity 0.4s ease',
         }}
       />
 
-      {/* Animated accent border on hover */}
+      {/* Accent color wash on hover */}
       <div
-        className="absolute inset-0 border-4 transition-all duration-300"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          borderColor: hovered ? course.accent : 'transparent',
+          background: `${course.accent}`,
+          opacity: hovered ? 0.08 : 0,
+          transition: 'opacity 0.4s ease',
+          mixBlendMode: 'screen',
         }}
       />
 
-      {/* Corner tag */}
+      {/* Accent border on hover — inset so image doesn't shrink */}
       <div
-        className="absolute top-5 left-5 px-3 py-1 text-xs font-mono font-bold tracking-widest uppercase transition-all duration-300"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundColor: course.accent,
-          color: '#050d1a',
-          opacity: hovered ? 1 : 0.8,
-          transform: hovered ? 'translateY(0)' : 'translateY(-4px)',
+          boxShadow: hovered ? `inset 0 0 0 3px ${course.accent}` : 'inset 0 0 0 0px transparent',
+          transition: 'box-shadow 0.3s ease',
         }}
-      >
-        {course.tag}
+      />
+
+      {/* Top-left badge */}
+      <div className="absolute top-4 left-4 md:top-6 md:left-6">
+        <div
+          className="px-2.5 py-1 font-mono text-xs font-bold tracking-widest uppercase"
+          style={{
+            backgroundColor: course.accent,
+            color: '#050d1a',
+          }}
+        >
+          {course.tag}
+        </div>
       </div>
 
-      {/* Unit count badge */}
-      <div
-        className="absolute top-5 right-5 w-10 h-10 flex items-center justify-center font-mono font-black text-sm border-2 transition-all duration-300"
-        style={{
-          borderColor: course.accentLight,
-          color: course.accentLight,
-          backgroundColor: '#050d1a88',
-          opacity: hovered ? 1 : 0.7,
-        }}
-      >
-        {course.units}
-      </div>
-
-      {/* Content */}
-      <div className="relative z-10 p-6 md:p-8 lg:p-10">
+      {/* Bottom content */}
+      <div className="relative z-10 p-5 md:p-8 lg:p-10">
         <p
-          className="font-mono text-xs tracking-[0.25em] uppercase mb-2 transition-all duration-300"
+          className="font-mono text-xs tracking-[0.22em] uppercase mb-2"
           style={{ color: course.accentLight }}
         >
           {course.short}
         </p>
         <h2
-          className="text-2xl md:text-3xl lg:text-4xl font-black lowercase leading-tight tracking-tight transition-all duration-300 text-balance"
+          className="text-2xl md:text-3xl xl:text-4xl font-black lowercase leading-tight tracking-tight text-balance"
           style={{ color: '#f0f6ff' }}
         >
           {course.label}
         </h2>
+        <p
+          className="mt-2 text-sm leading-relaxed"
+          style={{ color: '#b8d0ee', opacity: 0.85 }}
+        >
+          {course.desc}
+        </p>
 
-        {/* Arrow indicator */}
+        {/* CTA row */}
         <div
-          className="mt-4 flex items-center gap-2 font-mono text-sm font-bold transition-all duration-400"
+          className="mt-4 flex items-center gap-2 font-mono text-xs font-bold tracking-widest uppercase"
           style={{
             color: course.accent,
-            transform: hovered ? 'translateX(8px)' : 'translateX(0)',
+            transform: hovered ? 'translateX(6px)' : 'translateX(0)',
+            transition: 'transform 0.3s ease',
           }}
         >
-          <span>study now</span>
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-            <path d="M4 10h12M11 5l5 5-5 5" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+          open course
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
       </div>
-
-      {/* Animated shimmer on hover */}
-      {hovered && (
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `linear-gradient(105deg, transparent 40%, ${course.accent}18 50%, transparent 60%)`,
-            backgroundSize: '200% 100%',
-            animation: 'shimmer-slide 1.5s ease infinite',
-          }}
-        />
-      )}
     </Link>
   )
 }
@@ -173,167 +169,132 @@ export default function HomePage() {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
-    const t = setTimeout(() => setLoaded(true), 100)
+    const t = setTimeout(() => setLoaded(true), 80)
     return () => clearTimeout(t)
   }, [])
 
   return (
-    <main className="relative w-full h-screen overflow-hidden">
-      {/* 2x2 grid - no gaps, fills entire screen */}
-      <div className="grid grid-cols-2 grid-rows-2 w-full h-full">
-        {/* Top-left: APES */}
-        <div
-          className="relative"
-          style={{
-            opacity: loaded ? 1 : 0,
-            transform: loaded ? 'translateY(0)' : 'translateY(-30px)',
-            transition: 'opacity 0.7s ease 0.1s, transform 0.7s ease 0.1s',
-          }}
-        >
-          <CourseTile course={courses[0]} delay={100} />
-        </div>
-
-        {/* Top-right: APUSH */}
-        <div
-          className="relative"
-          style={{
-            opacity: loaded ? 1 : 0,
-            transform: loaded ? 'translateY(0)' : 'translateY(-30px)',
-            transition: 'opacity 0.7s ease 0.2s, transform 0.7s ease 0.2s',
-          }}
-        >
-          <CourseTile course={courses[1]} delay={200} />
-        </div>
-
-        {/* Bottom-left: AP Lang */}
-        <div
-          className="relative"
-          style={{
-            opacity: loaded ? 1 : 0,
-            transform: loaded ? 'translateY(0)' : 'translateY(30px)',
-            transition: 'opacity 0.7s ease 0.3s, transform 0.7s ease 0.3s',
-          }}
-        >
-          <CourseTile course={courses[2]} delay={300} />
-        </div>
-
-        {/* Bottom-right: AP CSP */}
-        <div
-          className="relative"
-          style={{
-            opacity: loaded ? 1 : 0,
-            transform: loaded ? 'translateY(0)' : 'translateY(30px)',
-            transition: 'opacity 0.7s ease 0.4s, transform 0.7s ease 0.4s',
-          }}
-        >
-          <CourseTile course={courses[3]} delay={400} />
-        </div>
+    <main
+      className="relative w-full overflow-hidden"
+      style={{ height: '100dvh', minHeight: '100svh' }}
+    >
+      {/* 2×2 grid — no gap, completely fills viewport */}
+      <div
+        className="grid w-full h-full"
+        style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr' }}
+      >
+        {courses.map((course, i) => {
+          const dirs = [
+            { x: '-20px', y: '-20px' },
+            { x: '20px',  y: '-20px' },
+            { x: '-20px', y: '20px'  },
+            { x: '20px',  y: '20px'  },
+          ]
+          return (
+            <div
+              key={course.id}
+              className="relative"
+              style={{
+                opacity: loaded ? 1 : 0,
+                transform: loaded
+                  ? 'translate(0,0)'
+                  : `translate(${dirs[i].x}, ${dirs[i].y})`,
+                transition: `opacity 0.7s ease ${i * 0.1}s, transform 0.7s cubic-bezier(0.22,1,0.36,1) ${i * 0.1}s`,
+              }}
+            >
+              <CourseTile course={course} />
+            </div>
+          )
+        })}
       </div>
 
-      {/* Center logo overlay */}
+      {/* Dividing lines (crosshair) */}
+      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 15 }}>
+        <div
+          className="absolute top-0 bottom-0"
+          style={{ left: '50%', width: '1px', background: 'rgba(26,108,245,0.3)' }}
+        />
+        <div
+          className="absolute left-0 right-0"
+          style={{ top: '50%', height: '1px', background: 'rgba(26,108,245,0.3)' }}
+        />
+      </div>
+
+      {/* Center logo — static, no pulsing container */}
       <div
         className="absolute inset-0 pointer-events-none flex items-center justify-center"
         style={{ zIndex: 20 }}
       >
         <div
-          className="relative flex flex-col items-center justify-center"
           style={{
             opacity: loaded ? 1 : 0,
-            transform: loaded ? 'scale(1)' : 'scale(0.85)',
-            transition: 'opacity 0.8s ease 0.5s, transform 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.5s',
+            transform: loaded ? 'scale(1)' : 'scale(0.9)',
+            transition: 'opacity 0.8s ease 0.45s, transform 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.45s',
           }}
         >
-          {/* Logo container */}
           <div
-            className="relative px-8 py-6 md:px-12 md:py-8 flex flex-col items-center"
+            className="relative flex flex-col items-center px-8 py-5 md:px-14 md:py-7"
             style={{
-              background: 'rgba(5, 13, 26, 0.88)',
-              backdropFilter: 'blur(16px)',
-              border: '1px solid rgba(26, 108, 245, 0.4)',
-              boxShadow: '0 0 60px rgba(26,108,245,0.25), 0 0 120px rgba(0,212,255,0.1)',
+              background: 'rgba(5,13,26,0.86)',
+              backdropFilter: 'blur(20px)',
+              border: '1px solid rgba(26,108,245,0.35)',
+              boxShadow: '0 0 40px rgba(26,108,245,0.2), 0 0 80px rgba(0,212,255,0.08)',
             }}
           >
-            {/* Pulse ring */}
+            {/* Top accent line — animated shimmer, stays static */}
             <div
-              className="absolute inset-0"
+              className="absolute top-0 left-0 right-0 h-0.5"
               style={{
-                border: '2px solid rgba(0,212,255,0.3)',
-                animation: 'pulse-ring 2.5s ease-out infinite',
+                background: 'linear-gradient(90deg, transparent, #1a6cf5, #00d4ff, #1a6cf5, transparent)',
+                backgroundSize: '200% 100%',
+                animation: 'shimmer-slide 3s linear infinite',
+              }}
+            />
+            {/* Bottom accent line */}
+            <div
+              className="absolute bottom-0 left-0 right-0 h-0.5"
+              style={{
+                background: 'linear-gradient(90deg, transparent, #1a6cf5, #00d4ff, #1a6cf5, transparent)',
+                backgroundSize: '200% 100%',
+                animation: 'shimmer-slide 3s linear infinite reverse',
               }}
             />
 
-            {/* Top line */}
-            <div
-              className="absolute top-0 left-6 right-6 h-0.5"
-              style={{ background: 'linear-gradient(90deg, transparent, #1a6cf5, #00d4ff, #1a6cf5, transparent)' }}
-            />
-            {/* Bottom line */}
-            <div
-              className="absolute bottom-0 left-6 right-6 h-0.5"
-              style={{ background: 'linear-gradient(90deg, transparent, #1a6cf5, #00d4ff, #1a6cf5, transparent)' }}
-            />
-
-            <p
-              className="font-mono text-xs tracking-[0.3em] uppercase mb-1"
-              style={{ color: '#38a8ff' }}
-            >
-              your path to a 5
-            </p>
-
+            {/* Wordmark */}
             <h1
-              className="text-3xl md:text-4xl lg:text-5xl font-black lowercase tracking-tight text-center leading-none"
+              className="text-2xl md:text-3xl lg:text-5xl font-black lowercase tracking-tight text-center leading-none"
               style={{ color: '#f0f6ff' }}
             >
               meade<span style={{ color: '#1a6cf5' }}> study </span>plan<span style={{ color: '#00d4ff' }}>.</span>
             </h1>
 
-            <p
-              className="font-mono text-xs mt-2 tracking-widest uppercase"
-              style={{ color: '#4a7090' }}
-            >
-              ap exam prep — built different
-            </p>
-
-            {/* Course count dots */}
-            <div className="flex gap-3 mt-4">
-              {['#22c55e', '#ef4444', '#a855f7', '#14b8a6'].map((c, i) => (
-                <div
-                  key={i}
-                  className="w-2 h-2"
-                  style={{
-                    backgroundColor: c,
-                    animation: `pulse-ring 2s ease-out ${i * 0.3}s infinite`,
-                  }}
-                />
+            {/* Course color dots — pulse only the dots */}
+            <div className="flex items-center gap-2.5 mt-3">
+              {[
+                { color: '#22c55e', delay: '0s' },
+                { color: '#ef4444', delay: '0.25s' },
+                { color: '#a855f7', delay: '0.5s' },
+                { color: '#14b8a6', delay: '0.75s' },
+              ].map((d, i) => (
+                <div key={i} className="relative flex items-center justify-center">
+                  <div
+                    className="absolute w-3 h-3 rounded-full"
+                    style={{
+                      background: d.color,
+                      opacity: 0.4,
+                      animation: `pulse-ring 2s ease-out ${d.delay} infinite`,
+                      transform: 'scale(1)',
+                    }}
+                  />
+                  <div
+                    className="w-2 h-2 rounded-full relative"
+                    style={{ background: d.color }}
+                  />
+                </div>
               ))}
             </div>
           </div>
         </div>
-      </div>
-
-      {/* Crosshair lines at center */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{ zIndex: 15 }}
-      >
-        {/* Horizontal line */}
-        <div
-          className="absolute left-0 right-0"
-          style={{
-            top: '50%',
-            height: '1px',
-            background: 'rgba(26, 108, 245, 0.25)',
-          }}
-        />
-        {/* Vertical line */}
-        <div
-          className="absolute top-0 bottom-0"
-          style={{
-            left: '50%',
-            width: '1px',
-            background: 'rgba(26, 108, 245, 0.25)',
-          }}
-        />
       </div>
     </main>
   )

@@ -30,7 +30,7 @@ interface CourseLayoutProps {
 
 export function CourseLayout({ course, basePath }: CourseLayoutProps) {
   const [loaded, setLoaded] = useState(false)
-  const [activeUnit, setActiveUnit] = useState<number | null>(null)
+  const [hoveredUnit, setHoveredUnit] = useState<number | null>(null)
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 80)
@@ -41,196 +41,230 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
     <div className="min-h-screen" style={{ background: '#050d1a' }}>
       <SiteNav />
 
-      {/* Hero banner */}
-      <div className="relative w-full overflow-hidden" style={{ height: '320px' }}>
+      {/* Hero banner — tall, image shows fully */}
+      <div className="relative w-full overflow-hidden" style={{ height: 'clamp(280px, 38vh, 420px)' }}>
         <Image
           src={course.banner}
           alt={course.label}
           fill
-          className="object-cover"
+          sizes="100vw"
+          className="object-cover object-center"
           priority
         />
+        {/* Gradient — lighter at top so image reads, dark at bottom for text */}
         <div
           className="absolute inset-0"
           style={{
-            background: `linear-gradient(180deg, rgba(5,13,26,0.3) 0%, rgba(5,13,26,0.75) 60%, #050d1a 100%)`,
+            background: `linear-gradient(180deg,
+              rgba(5,13,26,0.1) 0%,
+              rgba(5,13,26,0.4) 45%,
+              rgba(5,13,26,0.9) 80%,
+              #050d1a 100%)`,
           }}
         />
+        {/* Accent color glow at bottom */}
         <div
-          className="absolute inset-x-0 bottom-0 px-6 md:px-12 pb-10"
+          className="absolute inset-x-0 bottom-0 h-32 pointer-events-none"
+          style={{ background: `linear-gradient(0deg, ${course.accent}18 0%, transparent 100%)` }}
+        />
+
+        {/* Hero text */}
+        <div
+          className="absolute inset-x-0 bottom-0 px-6 md:px-14 pb-8 md:pb-10"
           style={{
             opacity: loaded ? 1 : 0,
-            transform: loaded ? 'translateY(0)' : 'translateY(20px)',
-            transition: 'all 0.6s ease',
+            transform: loaded ? 'translateY(0)' : 'translateY(18px)',
+            transition: 'all 0.6s ease 0.1s',
           }}
         >
           <Link
             href="/"
-            className="inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase mb-4 transition-opacity hover:opacity-80"
+            className="inline-flex items-center gap-2 font-mono text-xs tracking-widest uppercase mb-4 transition-all hover:gap-3"
             style={{ color: course.accent }}
           >
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-              <path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+              <path d="M9 2L4 7l5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            back to home
+            home
           </Link>
-          <p
-            className="font-mono text-xs tracking-[0.25em] uppercase mb-1"
-            style={{ color: course.accentLight }}
-          >
-            {course.short}
-          </p>
-          <h1
-            className="text-4xl md:text-5xl lg:text-6xl font-black lowercase tracking-tight leading-none text-balance"
-            style={{ color: '#f0f6ff' }}
-          >
-            {course.label}
-          </h1>
-          <p
-            className="mt-2 text-base max-w-xl leading-relaxed"
-            style={{ color: '#b8d0ee' }}
-          >
-            {course.description}
-          </p>
+          <div className="flex items-end justify-between gap-4 flex-wrap">
+            <div>
+              <p className="font-mono text-xs tracking-[0.25em] uppercase mb-1" style={{ color: course.accentLight }}>
+                {course.short}
+              </p>
+              <h1
+                className="text-4xl md:text-5xl lg:text-6xl font-black lowercase tracking-tight leading-none text-balance"
+                style={{ color: '#f0f6ff' }}
+              >
+                {course.label}
+              </h1>
+              <p className="mt-2 text-sm md:text-base max-w-2xl leading-relaxed" style={{ color: '#b8d0ee' }}>
+                {course.description}
+              </p>
+            </div>
+            {/* Stats chip */}
+            <div
+              className="shrink-0 flex items-center gap-3 px-4 py-3 font-mono text-sm"
+              style={{
+                background: `${course.accent}18`,
+                border: `1px solid ${course.accent}44`,
+              }}
+            >
+              <span style={{ color: course.accent, fontWeight: 800 }}>{course.units.length}</span>
+              <span style={{ color: '#b8d0ee' }}>units</span>
+              <span
+                className="w-1 h-1 rounded-full"
+                style={{ background: course.accent }}
+              />
+              <span style={{ color: '#b8d0ee' }}>
+                {course.units.reduce((a, u) => a + u.topics.length, 0)} topics
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Accent strip */}
       <div
         className="w-full h-1"
-        style={{ background: `linear-gradient(90deg, ${course.accent}, ${course.accentLight}, ${course.accent})` }}
+        style={{
+          background: `linear-gradient(90deg, ${course.accent}, ${course.accentLight}, ${course.accent})`,
+          backgroundSize: '200% 100%',
+          animation: 'shimmer-slide 4s linear infinite',
+        }}
       />
 
       {/* Units grid */}
-      <div className="px-6 md:px-12 py-12 max-w-7xl mx-auto">
+      <div className="px-6 md:px-14 py-12 max-w-7xl mx-auto">
         <div className="flex items-center gap-4 mb-8">
-          <h2
-            className="text-2xl font-black lowercase"
-            style={{ color: '#f0f6ff' }}
-          >
-            units
+          <h2 className="text-xl font-black lowercase tracking-tight" style={{ color: '#f0f6ff' }}>
+            all units
           </h2>
-          <div
-            className="flex-1 h-px"
-            style={{ background: 'rgba(26,108,245,0.25)' }}
-          />
-          <span
-            className="font-mono text-xs tracking-widest uppercase"
-            style={{ color: '#4a7090' }}
-          >
-            {course.units.length} units
-          </span>
+          <div className="flex-1 h-px" style={{ background: 'rgba(26,108,245,0.2)' }} />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {course.units.map((unit, i) => (
-            <div
-              key={unit.number}
-              className="relative overflow-hidden cursor-pointer group"
-              style={{
-                background: '#0a1929',
-                border: `1px solid ${activeUnit === unit.number ? course.accent : 'rgba(26,48,80,0.8)'}`,
-                opacity: loaded ? 1 : 0,
-                transform: loaded ? 'translateY(0)' : 'translateY(24px)',
-                transition: `opacity 0.5s ease ${i * 0.06}s, transform 0.5s ease ${i * 0.06}s, border-color 0.2s`,
-              }}
-              onMouseEnter={() => setActiveUnit(unit.number)}
-              onMouseLeave={() => setActiveUnit(null)}
-            >
-              {/* Unit number accent */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          {course.units.map((unit, i) => {
+            const isHovered = hoveredUnit === unit.number
+            return (
               <div
-                className="absolute top-0 left-0 w-1 h-full"
-                style={{ background: course.accent }}
-              />
+                key={unit.number}
+                className="relative overflow-hidden group"
+                style={{
+                  background: isHovered ? '#0f2540' : '#0a1929',
+                  border: `1px solid ${isHovered ? course.accent : 'rgba(26,48,80,0.7)'}`,
+                  opacity: loaded ? 1 : 0,
+                  transform: loaded ? 'translateY(0)' : 'translateY(20px)',
+                  transition: `opacity 0.5s ease ${i * 0.05}s, transform 0.5s ease ${i * 0.05}s, border-color 0.2s, background 0.2s`,
+                  cursor: 'default',
+                }}
+                onMouseEnter={() => setHoveredUnit(unit.number)}
+                onMouseLeave={() => setHoveredUnit(null)}
+              >
+                {/* Left accent bar */}
+                <div
+                  className="absolute top-0 left-0 w-1 h-full"
+                  style={{
+                    background: isHovered
+                      ? `linear-gradient(180deg, ${course.accent}, ${course.accentLight})`
+                      : course.accent,
+                    opacity: isHovered ? 1 : 0.5,
+                    transition: 'opacity 0.2s, background 0.2s',
+                  }}
+                />
 
-              <div className="pl-5 pr-4 py-5">
-                {/* Header row */}
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <p
-                      className="font-mono text-xs tracking-widest uppercase mb-1"
-                      style={{ color: course.accent }}
-                    >
-                      unit {unit.number.toString().padStart(2, '0')}
-                    </p>
-                    <h3
-                      className="text-lg font-black lowercase leading-tight"
-                      style={{ color: '#f0f6ff' }}
-                    >
-                      {unit.title}
-                    </h3>
-                  </div>
+                {/* Top accent glow on hover */}
+                {isHovered && (
                   <div
-                    className="shrink-0 ml-2 px-2 py-1 font-mono text-xs font-bold"
-                    style={{
-                      background: `${course.accent}22`,
-                      color: course.accent,
-                      border: `1px solid ${course.accent}55`,
-                    }}
-                  >
-                    {unit.examWeight}
+                    className="absolute top-0 left-0 right-0 h-0.5"
+                    style={{ background: `linear-gradient(90deg, ${course.accent}, transparent)` }}
+                  />
+                )}
+
+                <div className="pl-5 pr-4 pt-5 pb-4">
+                  {/* Header */}
+                  <div className="flex items-start justify-between mb-3 gap-2">
+                    <div>
+                      <p className="font-mono text-xs tracking-widest uppercase mb-1" style={{ color: course.accent }}>
+                        unit {unit.number.toString().padStart(2, '0')}
+                      </p>
+                      <h3 className="text-base font-black lowercase leading-tight" style={{ color: '#f0f6ff' }}>
+                        {unit.title}
+                      </h3>
+                    </div>
+                    <span
+                      className="shrink-0 px-2 py-0.5 font-mono text-xs font-bold"
+                      style={{
+                        background: `${course.accent}20`,
+                        color: course.accent,
+                        border: `1px solid ${course.accent}44`,
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {unit.examWeight}
+                    </span>
                   </div>
-                </div>
 
-                {/* Topics list */}
-                <div className="space-y-1 mb-4">
-                  {unit.topics.slice(0, 4).map((topic, ti) => (
-                    <Link
-                      key={ti}
-                      href={`${basePath}/unit-${unit.number}/${ti + 1}`}
-                      className="flex items-center gap-2 text-sm group/topic transition-all duration-200 hover:opacity-100"
-                      style={{ color: '#b8d0ee', opacity: 0.8 }}
-                    >
-                      <span
-                        className="shrink-0 w-4 h-4 flex items-center justify-center font-mono text-xs"
-                        style={{ color: course.accentLight }}
+                  {/* Topics */}
+                  <div className="space-y-0.5 mb-4">
+                    {unit.topics.map((topic, ti) => (
+                      <Link
+                        key={ti}
+                        href={`${basePath}/unit-${unit.number}/${ti + 1}`}
+                        className="flex items-center gap-2 py-1 px-1 text-sm transition-all duration-150 group/t"
+                        style={{ color: '#8aabb0', borderRadius: '2px' }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = '#f0f6ff'
+                          e.currentTarget.style.background = `${course.accent}15`
+                          e.currentTarget.style.paddingLeft = '6px'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = '#8aabb0'
+                          e.currentTarget.style.background = 'transparent'
+                          e.currentTarget.style.paddingLeft = '4px'
+                        }}
                       >
-                        {ti + 1}
-                      </span>
-                      <span className="truncate hover:text-white transition-colors">{topic}</span>
-                    </Link>
-                  ))}
-                  {unit.topics.length > 4 && (
-                    <p
-                      className="font-mono text-xs"
-                      style={{ color: '#4a7090', paddingLeft: '24px' }}
-                    >
-                      +{unit.topics.length - 4} more topics
-                    </p>
-                  )}
-                </div>
+                        <span className="shrink-0 font-mono text-xs" style={{ color: course.accentLight, opacity: 0.7, minWidth: '16px' }}>
+                          {(ti + 1).toString().padStart(2, '0')}
+                        </span>
+                        <span className="truncate">{topic}</span>
+                      </Link>
+                    ))}
+                  </div>
 
-                {/* View unit button */}
-                <Link
-                  href={`${basePath}/unit-${unit.number}`}
-                  className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest transition-all duration-200 group-hover:gap-3"
-                  style={{ color: course.accent }}
-                >
-                  view all topics
-                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                    <path d="M2 7h10M7.5 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </Link>
+                  {/* View unit CTA */}
+                  <Link
+                    href={`${basePath}/unit-${unit.number}`}
+                    className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-widest transition-all duration-200"
+                    style={{
+                      color: isHovered ? course.accentLight : course.accent,
+                    }}
+                    onMouseEnter={(e) => { e.currentTarget.style.gap = '10px' }}
+                    onMouseLeave={(e) => { e.currentTarget.style.gap = '8px' }}
+                  >
+                    all {unit.topics.length} topics
+                    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                      <path d="M2 6h8M6.5 2.5l3.5 3.5-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </Link>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
 
-        {/* Exam info strip */}
+        {/* Exam info */}
         {course.examDate && (
           <div
-            className="mt-8 p-4 flex items-center gap-4"
+            className="mt-8 px-5 py-4 flex items-center gap-3"
             style={{
-              background: '#0a1929',
-              border: `1px solid rgba(26,108,245,0.3)`,
+              background: `${course.accent}0d`,
+              border: `1px solid ${course.accent}30`,
             }}
           >
-            <div
-              className="w-2 h-2 shrink-0"
-              style={{ background: course.accent, animation: 'pulse-ring 2s ease-out infinite' }}
-            />
+            <div className="w-2 h-2 rounded-full shrink-0" style={{ background: course.accent }} />
             <p className="font-mono text-sm" style={{ color: '#b8d0ee' }}>
-              <span style={{ color: course.accent }}>exam date: </span>
+              <span style={{ color: course.accent, fontWeight: 700 }}>exam: </span>
               {course.examDate}
             </p>
           </div>

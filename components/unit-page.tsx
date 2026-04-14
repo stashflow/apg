@@ -108,13 +108,14 @@ export function UnitPage({ course, unit, topics, basePath, courseHref }: UnitPag
             <Link
               key={topic.number}
               href={`${basePath}/${topic.number}`}
-              className="group flex items-start gap-5 p-5 transition-all duration-200"
+              className="group flex items-stretch overflow-hidden"
               style={{
                 background: '#0a1929',
-                border: `1px solid rgba(26,48,80,0.8)`,
+                border: `1px solid rgba(26,48,80,0.7)`,
                 opacity: loaded ? 1 : 0,
-                transform: loaded ? 'translateX(0)' : 'translateX(-20px)',
-                transition: `opacity 0.4s ease ${i * 0.04}s, transform 0.4s ease ${i * 0.04}s`,
+                transform: loaded ? 'translateX(0)' : 'translateX(-24px)',
+                transition: `opacity 0.45s ease ${i * 0.045}s, transform 0.45s cubic-bezier(0.22,1,0.36,1) ${i * 0.045}s`,
+                display: 'flex',
               }}
               onMouseEnter={(e) => {
                 const el = e.currentTarget
@@ -123,43 +124,51 @@ export function UnitPage({ course, unit, topics, basePath, courseHref }: UnitPag
               }}
               onMouseLeave={(e) => {
                 const el = e.currentTarget
-                el.style.borderColor = 'rgba(26,48,80,0.8)'
+                el.style.borderColor = 'rgba(26,48,80,0.7)'
                 el.style.background = '#0a1929'
               }}
             >
-              {/* Topic number */}
+              {/* Left accent strip */}
               <div
-                className="shrink-0 w-10 h-10 flex items-center justify-center font-mono font-black text-base"
-                style={{
-                  background: `${course.accent}22`,
-                  color: course.accent,
-                  border: `1px solid ${course.accent}44`,
-                }}
-              >
-                {topic.number}
-              </div>
+                className="shrink-0 w-1"
+                style={{ background: `${course.accent}`, opacity: 0.5 }}
+              />
 
-              {/* Content */}
-              <div className="flex-1 min-w-0">
-                <h3
-                  className="font-black text-base lowercase leading-tight mb-1"
-                  style={{ color: '#f0f6ff' }}
+              <div className="flex items-start gap-4 px-5 py-4 flex-1">
+                {/* Topic number badge */}
+                <div
+                  className="shrink-0 w-10 h-10 flex items-center justify-center font-mono font-black text-sm"
+                  style={{
+                    background: `${course.accent}1a`,
+                    color: course.accent,
+                    border: `1px solid ${course.accent}40`,
+                  }}
                 >
-                  {topic.title}
-                </h3>
-                <p className="text-sm leading-relaxed" style={{ color: '#b8d0ee', opacity: 0.8 }}>
-                  {topic.description}
-                </p>
-              </div>
+                  {topic.number.toString().padStart(2, '0')}
+                </div>
 
-              {/* Arrow */}
-              <div
-                className="shrink-0 self-center transition-transform duration-200 group-hover:translate-x-2"
-                style={{ color: course.accent }}
-              >
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <path d="M3 9h12M10 4l5 5-5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                {/* Content */}
+                <div className="flex-1 min-w-0">
+                  <h3
+                    className="font-black text-base lowercase leading-tight mb-1"
+                    style={{ color: '#f0f6ff' }}
+                  >
+                    {topic.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed" style={{ color: '#7a9ab0' }}>
+                    {topic.description}
+                  </p>
+                </div>
+
+                {/* Arrow */}
+                <div
+                  className="shrink-0 self-center transition-transform duration-250 group-hover:translate-x-2"
+                  style={{ color: course.accent }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M3 9h12M10 4l5 5-5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </div>
               </div>
             </Link>
           ))}
