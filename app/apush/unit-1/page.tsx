@@ -3,11 +3,11 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'native american societies', description: 'diverse pre-contact civilizations — Aztec, Inca, Pueblo, Iroquois, and Great Plains cultures before 1492.', videoId: 'X_3bH6FJsLA' },
-  { number: 2, title: 'columbian exchange', description: 'transfer of plants, animals, diseases, and people between hemispheres — and its catastrophic demographic effects.', videoId: 'JpqGRBiQWmw' },
-  { number: 3, title: 'spanish colonization', description: 'Columbus, conquistadors, the encomienda system, and Spain\'s empire-building model in the Americas.', videoId: 'j5Y2SiZUtKY' },
-  { number: 4, title: 'encomienda system', description: 'forced indigenous labor, Catholic missionaries, Las Casas\'s critique, and the origins of racial hierarchy in the Americas.', videoId: 'CjVYTT3DFJA' },
-  { number: 5, title: 'columbian triangle trade beginnings', description: 'early transatlantic trade networks, European motives, and how commerce drove colonization.', videoId: 'TaHt_2txpLU' },
+  { number: 1, title: 'native american societies', description: 'diverse pre-contact civilizations — Aztec, Inca, Pueblo, Iroquois, and Great Plains cultures before 1492.', videoId: 'fTv4S1q7p_c' },
+  { number: 2, title: 'columbian exchange', description: 'transfer of plants, animals, diseases, and people between hemispheres — and its catastrophic demographic effects.', videoId: 'fTv4S1q7p_c' },
+  { number: 3, title: 'spanish colonization', description: 'Columbus, conquistadors, the encomienda system, and Spain\'s empire-building model in the Americas.', videoId: 'fTv4S1q7p_c' },
+  { number: 4, title: 'encomienda system', description: 'forced indigenous labor, Catholic missionaries, Las Casas\'s critique, and the origins of racial hierarchy in the Americas.', videoId: 'fTv4S1q7p_c' },
+  { number: 5, title: 'columbian triangle trade beginnings', description: 'early transatlantic trade networks, European motives, and how commerce drove colonization.', videoId: 'fTv4S1q7p_c' },
 ]
 
 export default function APUSHUnit1Page() {
@@ -18,7 +18,7 @@ export default function APUSHUnit1Page() {
       topics={topics}
       basePath="/apush/unit-1"
       courseHref="/apush"
-      videoId="qwGaIf0AWxo"
+      videoId="fTv4S1q7p_c"
       examDate={{ date: 'Friday, May 9, 2025', time: '8:00 AM' }}
     />
   )

@@ -3,12 +3,12 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'ecosystem diversity', description: 'variety of habitats, niches, and ecological communities — why diversity stabilizes ecosystems.', videoId: 'DliF5uQmtn0' },
-  { number: 2, title: 'species diversity', description: 'species richness vs. evenness, Simpson\'s and Shannon indices, and hotspots.', videoId: 'bBxLIgWpJnI' },
-  { number: 3, title: 'genetic diversity', description: 'allelic variation, inbreeding depression, and why genetic diversity prevents extinction.', videoId: 'uz5lNPQLPUM' },
-  { number: 4, title: 'invasive species', description: 'how invasives displace native species, case studies, and management strategies.', videoId: 'iqLV-D_mVy8' },
-  { number: 5, title: 'habitat fragmentation', description: 'edge effects, island biogeography theory, corridors, and minimum viable populations.', videoId: 'dGnMniRCMsg' },
-  { number: 6, title: 'endangered species', description: 'IUCN categories, the Endangered Species Act, captive breeding, and recovery plans.', videoId: 'y4WjAuIOLyE' },
+  { number: 1, title: 'ecosystem diversity', description: 'variety of habitats, niches, and ecological communities — why diversity stabilizes ecosystems.', videoId: 'gMavNnExCQI' },
+  { number: 2, title: 'species diversity', description: 'species richness vs. evenness, Simpson\'s and Shannon indices, and hotspots.', videoId: '3QMSojbUHKk' },
+  { number: 3, title: 'genetic diversity', description: 'allelic variation, inbreeding depression, and why genetic diversity prevents extinction.', videoId: '3QMSojbUHKk' },
+  { number: 4, title: 'invasive species', description: 'how invasives displace native species, case studies, and management strategies.', videoId: 'ydncbgFiEQQ' },
+  { number: 5, title: 'habitat fragmentation', description: 'edge effects, island biogeography theory, corridors, and minimum viable populations.', videoId: 'ydncbgFiEQQ' },
+  { number: 6, title: 'endangered species', description: 'IUCN categories, the Endangered Species Act, captive breeding, and recovery plans.', videoId: 'gLaT0_hyVQk' },
 ]
 
 export default function APESUnit2Page() {
@@ -19,7 +19,7 @@ export default function APESUnit2Page() {
       topics={topics}
       basePath="/apes/unit-2"
       courseHref="/apes"
-      videoId="OWqXAL1uJ3I"
+      videoId="gMavNnExCQI"
       examDate={{ date: 'Tuesday, May 6, 2025', time: '8:00 AM' }}
     />
   )

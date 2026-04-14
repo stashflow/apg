@@ -3,11 +3,11 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'air pollutants', description: 'primary vs. secondary pollutants, criteria pollutants, CO, SO₂, NOₓ, particulate matter, and VOCs.', videoId: 'Bp_BXxCBf-8' },
-  { number: 2, title: 'smog', description: 'photochemical smog formation, ground-level ozone, thermal inversions, and LA vs. London smog.', videoId: 'OsXiIXO9Fus' },
-  { number: 3, title: 'acid rain', description: 'SO₂ and NOₓ sources, wet vs. dry deposition, pH effects on aquatic and terrestrial ecosystems.', videoId: 'X7iiM3Pzm0c' },
-  { number: 4, title: 'ozone depletion', description: 'stratospheric ozone, CFC chemistry, the ozone hole, UV radiation effects, and the Montreal Protocol.', videoId: 'pMPvvqMnNsI' },
-  { number: 5, title: 'indoor air pollution', description: 'radon, VOCs, asbestos, CO, secondhand smoke — sources, health effects, and ventilation solutions.', videoId: 'FUzv6O4WS9g' },
+  { number: 1, title: 'air pollutants', description: 'primary vs. secondary pollutants, criteria pollutants, CO, SO₂, NOₓ, particulate matter, and VOCs.' },
+  { number: 2, title: 'smog', description: 'photochemical smog formation, ground-level ozone, thermal inversions, and LA vs. London smog.' },
+  { number: 3, title: 'acid rain', description: 'SO₂ and NOₓ sources, wet vs. dry deposition, pH effects on aquatic and terrestrial ecosystems.' },
+  { number: 4, title: 'ozone depletion', description: 'stratospheric ozone, CFC chemistry, the ozone hole, UV radiation effects, and the Montreal Protocol.' },
+  { number: 5, title: 'indoor air pollution', description: 'radon, VOCs, asbestos, CO, secondhand smoke — sources, health effects, and ventilation solutions.' },
 ]
 
 export default function APESUnit7Page() {
@@ -18,7 +18,7 @@ export default function APESUnit7Page() {
       topics={topics}
       basePath="/apes/unit-7"
       courseHref="/apes"
-      videoId="Bp_BXxCBf-8"
+
       examDate={{ date: 'Tuesday, May 6, 2025', time: '8:00 AM' }}
     />
   )

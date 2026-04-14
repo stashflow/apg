@@ -3,11 +3,11 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'food chains & food webs', description: 'producers, consumers, decomposers — how energy moves through an ecosystem step by step.', videoId: 'tmSmdUCw0sk' },
-  { number: 2, title: 'trophic levels', description: 'energy pyramids, the 10% rule, biomass at each level, and ecological efficiency.', videoId: 'l-a42EMzMWA' },
-  { number: 3, title: 'primary productivity', description: 'GPP vs. NPP, limiting factors, and how to calculate net primary productivity on the exam.', videoId: 'EuHFkxbk6dU' },
-  { number: 4, title: 'biogeochemical cycles', description: 'carbon, nitrogen, phosphorus, and the hydrologic cycle — all pathways, reservoirs, and human disruptions.', videoId: 'YkYNF64OlkA' },
-  { number: 5, title: 'ecological succession', description: 'primary vs. secondary succession, pioneer & climax communities, and real-world examples.', videoId: 'q2T3-4NObog' },
+  { number: 1, title: 'food chains & food webs', description: 'producers, consumers, decomposers — how energy moves through an ecosystem step by step.', videoId: 'SCKJJSsKqQY' },
+  { number: 2, title: 'trophic levels', description: 'energy pyramids, the 10% rule, biomass at each level, and ecological efficiency.', videoId: 'tFvphrq_xsc' },
+  { number: 3, title: 'primary productivity', description: 'GPP vs. NPP, limiting factors, and how to calculate net primary productivity on the exam.', videoId: 'tRXp-WPnjxE' },
+  { number: 4, title: 'biogeochemical cycles', description: 'carbon, nitrogen, phosphorus, and the hydrologic cycle — all pathways, reservoirs, and human disruptions.', videoId: 'pFrfOnw8TFs' },
+  { number: 5, title: 'ecological succession', description: 'primary vs. secondary succession, pioneer & climax communities, and real-world examples.', videoId: '2g4ygzsjXNg' },
 ]
 
 export default function APESUnit1Page() {
@@ -18,7 +18,7 @@ export default function APESUnit1Page() {
       topics={topics}
       basePath="/apes/unit-1"
       courseHref="/apes"
-      videoId="lZ3bPUKo5zc"
+      videoId="-IMCElvN0lk"
       examDate={{ date: 'Tuesday, May 6, 2025', time: '8:00 AM' }}
     />
   )

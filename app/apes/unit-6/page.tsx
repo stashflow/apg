@@ -3,11 +3,11 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'fossil fuels', description: 'coal, oil, and natural gas — formation, extraction, burning byproducts, and EROI.', videoId: 'zaXBVYr9Ij0' },
-  { number: 2, title: 'renewable energy', description: 'solar, wind, hydroelectric, geothermal, and biomass — advantages, limitations, and land use.', videoId: 'ifrHogDujXw' },
-  { number: 3, title: 'nuclear energy', description: 'fission vs. fusion, pros/cons, waste storage, Chernobyl and Fukushima as case studies.', videoId: 'rcOFV4y5z8c' },
-  { number: 4, title: 'energy efficiency', description: 'energy return on investment (EROI), efficiency calculations, CAFE standards, and conservation.', videoId: 'kGS5gx_KLG0' },
-  { number: 5, title: 'sustainability', description: 'sustainable development goals, cogeneration, net metering, and transitioning off fossil fuels.', videoId: 'mTGSiB4kB18' },
+  { number: 1, title: 'fossil fuels', description: 'coal, oil, and natural gas — formation, extraction, burning byproducts, and EROI.' },
+  { number: 2, title: 'renewable energy', description: 'solar, wind, hydroelectric, geothermal, and biomass — advantages, limitations, and land use.' },
+  { number: 3, title: 'nuclear energy', description: 'fission vs. fusion, pros/cons, waste storage, Chernobyl and Fukushima as case studies.' },
+  { number: 4, title: 'energy efficiency', description: 'energy return on investment (EROI), efficiency calculations, CAFE standards, and conservation.' },
+  { number: 5, title: 'sustainability', description: 'sustainable development goals, cogeneration, net metering, and transitioning off fossil fuels.' },
 ]
 
 export default function APESUnit6Page() {
@@ -18,7 +18,7 @@ export default function APESUnit6Page() {
       topics={topics}
       basePath="/apes/unit-6"
       courseHref="/apes"
-      videoId="kGS5gx_KLG0"
+
       examDate={{ date: 'Tuesday, May 6, 2025', time: '8:00 AM' }}
     />
   )

@@ -3,11 +3,11 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'carrying capacity', description: 'K, limiting factors (biotic & abiotic), and what happens when populations exceed K.', videoId: 'RpHpCPdUAlE' },
-  { number: 2, title: 'population growth models', description: 'exponential (J-curve) vs. logistic (S-curve) growth — equations, graphs, and exam traps.', videoId: 'AOAHRrBOuAk' },
-  { number: 3, title: 'demographic transition model', description: 'four stages of DTM, birth/death rates, and how development changes population structure.', videoId: 'QsBT5EQt348' },
-  { number: 4, title: 'survivorship curves', description: 'type I, II, and III curves — examples for each and what they predict about populations.', videoId: 'Aq2K9R9lrtA' },
-  { number: 5, title: 'human population growth', description: 'total fertility rate, age-structure diagrams, pro-natalist vs. anti-natalist policies.', videoId: 'VcSX4ytEfcE' },
+  { number: 1, title: 'carrying capacity', description: 'K, limiting factors (biotic & abiotic), and what happens when populations exceed K.', videoId: 'MzXaqjXpk50' },
+  { number: 2, title: 'population growth models', description: 'exponential (J-curve) vs. logistic (S-curve) growth — equations, graphs, and exam traps.', videoId: 'NL-Q-C4HPFA' },
+  { number: 3, title: 'demographic transition model', description: 'four stages of DTM, birth/death rates, and how development changes population structure.', videoId: 'NK7AiDgRpIc' },
+  { number: 4, title: 'survivorship curves', description: 'type I, II, and III curves — examples for each and what they predict about populations.', videoId: 'YcFdWYyQxCs' },
+  { number: 5, title: 'human population growth', description: 'total fertility rate, age-structure diagrams, pro-natalist vs. anti-natalist policies.', videoId: 'z7A8rHod20M' },
 ]
 
 export default function APESUnit3Page() {
@@ -18,7 +18,7 @@ export default function APESUnit3Page() {
       topics={topics}
       basePath="/apes/unit-3"
       courseHref="/apes"
-      videoId="AxfIhRlnRcE"
+      videoId="AjlOxmEOa5U"
       examDate={{ date: 'Tuesday, May 6, 2025', time: '8:00 AM' }}
     />
   )
