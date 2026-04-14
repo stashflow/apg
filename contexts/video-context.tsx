@@ -41,8 +41,12 @@ export function VideoProvider({ children }: { children: ReactNode }) {
 
 export function useVideoState(courseId: string) {
   const context = useContext(VideoContext)
+  // Return safe defaults during SSR/prerender when context is not available
   if (!context) {
-    throw new Error('useVideoState must be used within VideoProvider')
+    return {
+      isOpen: true,
+      toggle: () => {},
+    }
   }
   return {
     isOpen: context.videoOpen[courseId] ?? true,

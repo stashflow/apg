@@ -70,9 +70,12 @@ interface NotesPageProps {
 }
 
 export function NotesPage({
-  course, unit, topic, sections: sectionsProp, content, prev, next, courseHref = '/', unitHref, videoId, videoTitle
+  course, unit, topic, sections: sectionsProp, content, prev, next, courseHref: courseHrefProp, unitHref: unitHrefProp, videoId, videoTitle
 }: NotesPageProps) {
   const sections: NotesSection[] = sectionsProp ?? (content ? parseContent(content) : [])
+  const courseSlug = course.short.replace(/\s+/g, '-').replace('ap-', '')
+  const courseHref = courseHrefProp ?? `/${courseSlug}`
+  const unitHref = unitHrefProp ?? `/${courseSlug}/unit-${unit.number}`
   const [loaded, setLoaded] = useState(false)
   const [readPct, setReadPct] = useState(0)
 

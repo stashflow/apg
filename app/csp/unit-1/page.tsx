@@ -3,11 +3,11 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'program design process', description: 'how to move from an idea to a working program — decomposition, abstraction, and planning before coding.' },
-  { number: 2, title: 'collaboration in computing', description: 'pair programming, version control, communication strategies, and how collaboration reduces bias and improves programs.' },
-  { number: 3, title: 'iterative development', description: 'why programs are built in cycles — prototype, test, revise — and how iteration leads to better outcomes.' },
-  { number: 4, title: 'testing & debugging', description: 'test cases, expected vs. actual output, identifying logic errors, runtime errors, and syntax errors.' },
-  { number: 5, title: 'documentation & comments', description: 'why comments matter, how to write useful documentation, and how it makes programs readable and maintainable.' },
+  { number: 1, title: 'program design process', description: 'how to move from an idea to a working program — decomposition, abstraction, and planning before coding.', videoId: 'LfaMVlDaQ24' },
+  { number: 2, title: 'collaboration in computing', description: 'pair programming, version control, communication strategies, and how collaboration reduces bias and improves programs.', videoId: '0SARbwvhupQ' },
+  { number: 3, title: 'iterative development', description: 'why programs are built in cycles — prototype, test, revise — and how iteration leads to better outcomes.', videoId: 'vNHpsC5ng_E' },
+  { number: 4, title: 'testing & debugging', description: 'test cases, expected vs. actual output, identifying logic errors, runtime errors, and syntax errors.', videoId: 'QTmXR2TSZ_Y' },
+  { number: 5, title: 'documentation & comments', description: 'why comments matter, how to write useful documentation, and how it makes programs readable and maintainable.', videoId: 'azf6yzuJt54' },
 ]
 
 export default function CSPUnit1Page() {
