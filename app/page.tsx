@@ -220,7 +220,7 @@ export default function HomePage() {
         />
       </div>
 
-      {/* Center logo — static, no pulsing container */}
+      {/* Center logo */}
       <div
         className="absolute inset-0 pointer-events-none flex items-center justify-center"
         style={{ zIndex: 20 }}
@@ -233,26 +233,26 @@ export default function HomePage() {
           }}
         >
           <div
-            className="relative flex flex-col items-center px-8 py-5 md:px-14 md:py-7"
+            className="relative flex flex-col items-center px-6 py-4 md:px-10 md:py-5"
             style={{
-              background: 'rgba(5,13,26,0.86)',
-              backdropFilter: 'blur(20px)',
-              border: '1px solid rgba(26,108,245,0.35)',
-              boxShadow: '0 0 40px rgba(26,108,245,0.2), 0 0 80px rgba(0,212,255,0.08)',
+              background: 'rgba(5,13,26,0.82)',
+              backdropFilter: 'blur(18px)',
+              border: '1px solid rgba(26,108,245,0.3)',
+              boxShadow: '0 0 32px rgba(26,108,245,0.18), 0 0 64px rgba(0,212,255,0.07)',
             }}
           >
-            {/* Top accent line — animated shimmer, stays static */}
+            {/* Top shimmer line */}
             <div
-              className="absolute top-0 left-0 right-0 h-0.5"
+              className="absolute top-0 left-0 right-0 h-px"
               style={{
                 background: 'linear-gradient(90deg, transparent, #1a6cf5, #00d4ff, #1a6cf5, transparent)',
                 backgroundSize: '200% 100%',
                 animation: 'shimmer-slide 3s linear infinite',
               }}
             />
-            {/* Bottom accent line */}
+            {/* Bottom shimmer line */}
             <div
-              className="absolute bottom-0 left-0 right-0 h-0.5"
+              className="absolute bottom-0 left-0 right-0 h-px"
               style={{
                 background: 'linear-gradient(90deg, transparent, #1a6cf5, #00d4ff, #1a6cf5, transparent)',
                 backgroundSize: '200% 100%',
@@ -260,36 +260,87 @@ export default function HomePage() {
               }}
             />
 
-            {/* Wordmark */}
+            {/* BSP wordmark — B S P large, surrounding letters small */}
             <h1
-              className="text-2xl md:text-3xl lg:text-5xl font-black lowercase tracking-tight text-center leading-none"
-              style={{ color: '#f0f6ff' }}
+              className="flex items-baseline gap-0 leading-none select-none"
+              aria-label="best study plan"
             >
-              meade<span style={{ color: '#1a6cf5' }}> study </span>plan<span style={{ color: '#00d4ff' }}>.</span>
+              {/* "best" — B big, est small */}
+              <span
+                className="font-black"
+                style={{ color: '#00d4ff', fontSize: 'clamp(2rem, 4.5vw, 3.5rem)', letterSpacing: '-0.03em', lineHeight: 1 }}
+              >
+                B
+              </span>
+              <span
+                className="font-bold"
+                style={{ color: '#b8d0ee', fontSize: 'clamp(0.6rem, 1.1vw, 0.95rem)', letterSpacing: '0.04em', opacity: 0.7, marginRight: '0.18em' }}
+              >
+                est
+              </span>
+
+              {/* "study" — S big, tudy small */}
+              <span
+                className="font-black"
+                style={{ color: '#1a6cf5', fontSize: 'clamp(2rem, 4.5vw, 3.5rem)', letterSpacing: '-0.03em', lineHeight: 1 }}
+              >
+                S
+              </span>
+              <span
+                className="font-bold"
+                style={{ color: '#b8d0ee', fontSize: 'clamp(0.6rem, 1.1vw, 0.95rem)', letterSpacing: '0.04em', opacity: 0.7, marginRight: '0.18em' }}
+              >
+                tudy
+              </span>
+
+              {/* "plan." — P big, lan. small */}
+              <span
+                className="font-black"
+                style={{ color: '#38a8ff', fontSize: 'clamp(2rem, 4.5vw, 3.5rem)', letterSpacing: '-0.03em', lineHeight: 1 }}
+              >
+                P
+              </span>
+              <span
+                className="font-bold"
+                style={{ color: '#b8d0ee', fontSize: 'clamp(0.6rem, 1.1vw, 0.95rem)', letterSpacing: '0.04em', opacity: 0.7 }}
+              >
+                lan
+              </span>
+              <span
+                className="font-black"
+                style={{ color: '#00d4ff', fontSize: 'clamp(1.2rem, 2.5vw, 2rem)', lineHeight: 1, marginLeft: '1px' }}
+              >
+                .
+              </span>
             </h1>
 
-            {/* Course color dots — pulse only the dots */}
-            <div className="flex items-center gap-2.5 mt-3">
+            {/* URL */}
+            <p
+              className="font-mono mt-1.5 tracking-widest"
+              style={{ color: '#3a5a7a', fontSize: 'clamp(0.5rem, 0.85vw, 0.7rem)', letterSpacing: '0.12em' }}
+            >
+              bsp.ezo.lol
+            </p>
+
+            {/* Course color dots */}
+            <div className="flex items-center gap-2 mt-2.5">
               {[
                 { color: '#22c55e', delay: '0s' },
                 { color: '#ef4444', delay: '0.25s' },
                 { color: '#a855f7', delay: '0.5s' },
                 { color: '#14b8a6', delay: '0.75s' },
               ].map((d, i) => (
-                <div key={i} className="relative flex items-center justify-center">
+                <div key={i} className="relative flex items-center justify-center w-3 h-3">
                   <div
-                    className="absolute w-3 h-3 rounded-full"
+                    className="absolute rounded-full"
                     style={{
+                      width: '12px', height: '12px',
                       background: d.color,
-                      opacity: 0.4,
+                      opacity: 0.35,
                       animation: `pulse-ring 2s ease-out ${d.delay} infinite`,
-                      transform: 'scale(1)',
                     }}
                   />
-                  <div
-                    className="w-2 h-2 rounded-full relative"
-                    style={{ background: d.color }}
-                  />
+                  <div className="w-1.5 h-1.5 rounded-full relative" style={{ background: d.color }} />
                 </div>
               ))}
             </div>
