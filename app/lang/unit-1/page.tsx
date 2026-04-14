@@ -3,14 +3,14 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'speaker, audience & purpose', description: 'who speaks, who listens, and why — the three anchors of every rhetorical act.' },
-  { number: 2, title: 'exigence, context & occasion', description: 'the "why now?" — the urgent problem that calls rhetoric into existence, and the circumstances surrounding it.' },
-  { number: 3, title: 'message & SOAPSTone', description: 'how to break down any text: Subject, Occasion, Audience, Purpose, Speaker, Tone — the full method.' },
-  { number: 4, title: 'rhetorical triangle', description: 'Aristotle\'s model of rhetoric — the speaker, audience, and subject as three interlocking forces.' },
-  { number: 5, title: 'ethos, pathos & logos', description: 'the three classical appeals — credibility, emotion, and logic — and how writers deploy them strategically.' },
-  { number: 6, title: 'tone & shift in tone', description: 'how word choice, syntax, and context create tone — and how writers shift tone to create complexity.' },
-  { number: 7, title: 'point of view', description: 'first, second, and third person — and how POV shapes the reader\'s relationship to the text.' },
-  { number: 8, title: 'appeals to values & beliefs', description: 'how writers connect to audience values, beliefs, and cultural assumptions to make arguments persuasive.' },
+  { number: 1, title: 'speaker, audience & purpose', description: 'who speaks, who listens, and why — the three anchors of every rhetorical act.', videoId: '35NsF5YgZcg' },
+  { number: 2, title: 'exigence, context & occasion', description: 'the "why now?" — the urgent problem that calls rhetoric into existence, and the circumstances surrounding it.', videoId: 'wN19wer2DT0' },
+  { number: 3, title: 'message & SOAPSTone', description: 'how to break down any text: Subject, Occasion, Audience, Purpose, Speaker, Tone — the full method.', videoId: 'HLn3oxiLpTM' },
+  { number: 4, title: 'rhetorical triangle', description: 'Aristotle\'s model of rhetoric — the speaker, audience, and subject as three interlocking forces.', videoId: 'TBsTjSSWMSo' },
+  { number: 5, title: 'ethos, pathos & logos', description: 'the three classical appeals — credibility, emotion, and logic — and how writers deploy them strategically.', videoId: 'bwPjWiBB0OQ' },
+  { number: 6, title: 'tone & shift in tone', description: 'how word choice, syntax, and context create tone — and how writers shift tone to create complexity.', videoId: 'xqGaTVAqlkc' },
+  { number: 7, title: 'point of view', description: 'first, second, and third person — and how POV shapes the reader\'s relationship to the text.', videoId: 'XaEYiXwCJFQ' },
+  { number: 8, title: 'appeals to values & beliefs', description: 'how writers connect to audience values, beliefs, and cultural assumptions to make arguments persuasive.', videoId: 'e9pQVwJd9H4' },
 ]
 
 export default function LangUnit1Page() {

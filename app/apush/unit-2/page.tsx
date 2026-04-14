@@ -3,14 +3,14 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'jamestown & virginia', description: 'the first permanent English colony, headright system, Bacon\'s Rebellion, and the tobacco economy.' },
-  { number: 2, title: 'plymouth & massachusetts bay', description: 'Pilgrims, Puritans, the Mayflower Compact, theocracy, and the city on a hill.' },
-  { number: 3, title: 'new england colonies', description: 'Puritan society, town meetings, King Philip\'s War, and the Salem Witch Trials as social rupture.' },
-  { number: 4, title: 'chesapeake colonies', description: 'Virginia and Maryland — indentured servants, tobacco, Bacon\'s Rebellion, and the shift to enslaved labor.' },
-  { number: 5, title: 'middle & southern colonies', description: 'Pennsylvania\'s diversity, New York\'s patroons, Carolina\'s rice economy, and Georgia\'s buffer role.' },
-  { number: 6, title: 'mercantilism & salutary neglect', description: 'Navigation Acts, Britain\'s economic theory, and why England left the colonies largely alone until the 1760s.' },
-  { number: 7, title: 'first great awakening', description: 'Whitefield, Edwards, emotional revivalism, its challenge to authority, and early seeds of democratic thinking.' },
-  { number: 8, title: 'colonial slavery', description: 'the transatlantic slave trade, slave codes, the Middle Passage, resistance, and African cultural retention.' },
+  { number: 1, title: 'jamestown & virginia', description: 'the first permanent English colony, headright system, Bacon\'s Rebellion, and the tobacco economy.', videoId: 'wq2jG_Ww_xc' },
+  { number: 2, title: 'plymouth & massachusetts bay', description: 'Pilgrims, Puritans, the Mayflower Compact, theocracy, and the city on a hill.', videoId: 'IyMIFEq9v2k' },
+  { number: 3, title: 'new england colonies', description: 'Puritan society, town meetings, King Philip\'s War, and the Salem Witch Trials as social rupture.', videoId: 'Dg6PQUGzBuA' },
+  { number: 4, title: 'chesapeake colonies', description: 'Virginia and Maryland — indentured servants, tobacco, Bacon\'s Rebellion, and the shift to enslaved labor.', videoId: 'Jeoqb9JibfQ' },
+  { number: 5, title: 'middle & southern colonies', description: 'Pennsylvania\'s diversity, New York\'s patroons, Carolina\'s rice economy, and Georgia\'s buffer role.', videoId: 'YE3gq89OIJQ' },
+  { number: 6, title: 'mercantilism & salutary neglect', description: 'Navigation Acts, Britain\'s economic theory, and why England left the colonies largely alone until the 1760s.', videoId: 'vMGBnBtFnlQ' },
+  { number: 7, title: 'first great awakening', description: 'Whitefield, Edwards, emotional revivalism, its challenge to authority, and early seeds of democratic thinking.', videoId: 'yqcDtFLVMPc' },
+  { number: 8, title: 'colonial slavery', description: 'the transatlantic slave trade, slave codes, the Middle Passage, resistance, and African cultural retention.', videoId: 'v3UaU8Y4f3g' },
 ]
 
 export default function APUSHUnit2Page() {

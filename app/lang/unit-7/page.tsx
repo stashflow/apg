@@ -3,12 +3,12 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'arguable & qualified claims', description: 'what makes a claim arguable (not a fact), and how to qualify it with "although," "while," "even though" for nuance.' },
-  { number: 2, title: 'defending a claim', description: 'selecting and integrating the strongest evidence, writing commentary that bridges evidence to thesis, and sustaining an argument.' },
-  { number: 3, title: 'counterargument & refutation', description: 'presenting the strongest version of the opposing view, then dismantling it — how to write this without undermining yourself.' },
-  { number: 4, title: 'synthesis of sources', description: 'using multiple sources as a conversation — how to cite, integrate, and synthesize without summarizing or patchwriting.' },
-  { number: 5, title: 'building a line of reasoning', description: 'connecting every part of your essay — thesis, subclaims, evidence, commentary — into one coherent logical chain.' },
-  { number: 6, title: 'evidence selection & commentary depth', description: 'choosing evidence that is specific, significant, and arguable — and writing commentary that earns sophistication points.' },
+  { number: 1, title: 'arguable & qualified claims', description: 'what makes a claim arguable (not a fact), and how to qualify it with "although," "while," "even though" for nuance.', videoId: 'F4xUKv5pHW4' },
+  { number: 2, title: 'defending a claim', description: 'selecting and integrating the strongest evidence, writing commentary that bridges evidence to thesis, and sustaining an argument.', videoId: 'kHyHKVJa81o' },
+  { number: 3, title: 'counterargument & refutation', description: 'presenting the strongest version of the opposing view, then dismantling it — how to write this without undermining yourself.', videoId: 'BtHbGi1JxP0' },
+  { number: 4, title: 'synthesis of sources', description: 'using multiple sources as a conversation — how to cite, integrate, and synthesize without summarizing or patchwriting.', videoId: 'VVqe4O6RBrc' },
+  { number: 5, title: 'building a line of reasoning', description: 'connecting every part of your essay — thesis, subclaims, evidence, commentary — into one coherent logical chain.', videoId: 'LjZS_tQ2vE0' },
+  { number: 6, title: 'evidence selection & commentary depth', description: 'choosing evidence that is specific, significant, and arguable — and writing commentary that earns sophistication points.', videoId: 'Oe6Y3y5ZMAM' },
 ]
 
 export default function LangUnit7Page() {

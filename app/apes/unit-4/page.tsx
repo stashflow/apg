@@ -3,11 +3,11 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'plate tectonics', description: 'tectonic plates, convergent/divergent/transform boundaries, earthquakes, volcanoes, and soil formation.' },
-  { number: 2, title: 'soil formation', description: 'parent material, weathering, O-A-B-C-R horizons, soil texture, permeability, and fertility.' },
-  { number: 3, title: 'watersheds', description: 'watershed structure, groundwater vs. surface water, aquifer types, and water table dynamics.' },
-  { number: 4, title: 'atmospheric circulation', description: 'Hadley/Ferrel/Polar cells, trade winds, Coriolis effect, rain shadows, and climate zones.' },
-  { number: 5, title: 'ocean currents', description: 'thermohaline circulation, El Niño/La Niña (ENSO), upwelling, and climate impacts.' },
+  { number: 1, title: 'plate tectonics', description: 'tectonic plates, convergent/divergent/transform boundaries, earthquakes, volcanoes, and soil formation.', videoId: 'QuUJwQO9Idk' },
+  { number: 2, title: 'soil formation', description: 'parent material, weathering, O-A-B-C-R horizons, soil texture, permeability, and fertility.', videoId: 'tqYxSoTbAd4' },
+  { number: 3, title: 'watersheds', description: 'watershed structure, groundwater vs. surface water, aquifer types, and water table dynamics.', videoId: 'xpATJVsnVOo' },
+  { number: 4, title: 'atmospheric circulation', description: 'Hadley/Ferrel/Polar cells, trade winds, Coriolis effect, rain shadows, and climate zones.', videoId: 'PDEcAxfSYaI' },
+  { number: 5, title: 'ocean currents', description: 'thermohaline circulation, El Niño/La Niña (ENSO), upwelling, and climate impacts.', videoId: 'UuGrBhK2c7U' },
 ]
 
 export default function APESUnit4Page() {

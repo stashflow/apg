@@ -3,13 +3,13 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'progressive era', description: 'muckrakers (Sinclair, Tarbell), trust-busting, 16th/17th/18th/19th amendments, and the Roosevelt/Taft/Wilson presidencies.' },
-  { number: 2, title: 'imperialism', description: 'Spanish-American War, Philippines debate, Platt Amendment, Open Door Policy, and Roosevelt Corollary.' },
-  { number: 3, title: 'world war i', description: 'assassination of Franz Ferdinand, U.S. neutrality, Zimmermann Telegram, Committee on Public Information, Espionage Act.' },
-  { number: 4, title: 'roaring twenties', description: 'consumerism, Harlem Renaissance, Jazz Age, prohibition, fundamentalism vs. modernism, and nativism.' },
-  { number: 5, title: 'great depression', description: 'causes (overproduction, credit, tariffs), Hoovervilles, Dust Bowl, unemployment, and Hoover\'s failed response.' },
-  { number: 6, title: 'new deal', description: 'FDR\'s relief-recovery-reform programs, TVA, Social Security, court-packing, and labor\'s rise (Wagner Act).' },
-  { number: 7, title: 'world war ii', description: 'Pearl Harbor, home front mobilization, Japanese internment, D-Day, the Holocaust, and the atomic bomb decision.' },
+  { number: 1, title: 'progressive era', description: 'muckrakers (Sinclair, Tarbell), trust-busting, 16th/17th/18th/19th amendments, and the Roosevelt/Taft/Wilson presidencies.', videoId: 'riVNM2bEaZU' },
+  { number: 2, title: 'imperialism', description: 'Spanish-American War, Philippines debate, Platt Amendment, Open Door Policy, and Roosevelt Corollary.', videoId: 'oBMBNXi8uF4' },
+  { number: 3, title: 'world war i', description: 'assassination of Franz Ferdinand, U.S. neutrality, Zimmermann Telegram, Committee on Public Information, Espionage Act.', videoId: 'ZlQuja8eN34' },
+  { number: 4, title: 'roaring twenties', description: 'consumerism, Harlem Renaissance, Jazz Age, prohibition, fundamentalism vs. modernism, and nativism.', videoId: 'nMSGt7S3Lfc' },
+  { number: 5, title: 'great depression', description: 'causes (overproduction, credit, tariffs), Hoovervilles, Dust Bowl, unemployment, and Hoover\'s failed response.', videoId: 'uUSjQfRPEmY' },
+  { number: 6, title: 'new deal', description: 'FDR\'s relief-recovery-reform programs, TVA, Social Security, court-packing, and labor\'s rise (Wagner Act).', videoId: 'dLkYAXOlC0Q' },
+  { number: 7, title: 'world war ii', description: 'Pearl Harbor, home front mobilization, Japanese internment, D-Day, the Holocaust, and the atomic bomb decision.', videoId: '7NS6dGhP8U4' },
 ]
 
 export default function APUSHUnit7Page() {

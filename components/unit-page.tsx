@@ -9,6 +9,7 @@ interface Topic {
   number: number
   title: string
   description: string
+  videoId?: string
 }
 
 interface UnitPageProps {
@@ -180,6 +181,37 @@ export function UnitPage({ course, unit, topics, basePath, courseHref, videoId, 
                       {topic.description}
                     </p>
                   </div>
+
+                  {/* Video button */}
+                  {topic.videoId && (
+                    <a
+                      href={`https://www.youtube.com/watch?v=${topic.videoId}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
+                      className="shrink-0 self-center flex items-center gap-1.5 px-2.5 py-1.5 font-mono text-xs font-bold transition-all"
+                      style={{
+                        background: '#ff000018',
+                        color: '#ff4444',
+                        border: '1px solid #ff000033',
+                      }}
+                      onMouseEnter={(e) => {
+                        const el = e.currentTarget
+                        el.style.background = '#ff000030'
+                        el.style.borderColor = '#ff000066'
+                      }}
+                      onMouseLeave={(e) => {
+                        const el = e.currentTarget
+                        el.style.background = '#ff000018'
+                        el.style.borderColor = '#ff000033'
+                      }}
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
+                      </svg>
+                      watch
+                    </a>
+                  )}
 
                   {/* Arrow */}
                   <div

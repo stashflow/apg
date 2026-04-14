@@ -3,12 +3,12 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'line of reasoning', description: 'how claims connect logically — the thread that ties thesis to subclaims to evidence to conclusion.' },
-  { number: 2, title: 'inductive & deductive reasoning', description: 'bottom-up (specific → general) vs. top-down (general → specific) — and how to identify each in passages.' },
-  { number: 3, title: 'cause & effect, compare & contrast', description: 'two common organizational modes — how writers use them and how to write about them in analysis essays.' },
-  { number: 4, title: 'definition, classification & exemplification', description: 'three rhetorical strategies for developing ideas — how to identify and write about each one.' },
-  { number: 5, title: 'organizational patterns', description: 'chronological, spatial, problem-solution, order of importance — how structure itself creates meaning.' },
-  { number: 6, title: 'logical fallacies', description: 'straw man, ad hominem, slippery slope, circular reasoning, false dilemma, hasty generalization, red herring — define, identify, explain effect.' },
+  { number: 1, title: 'line of reasoning', description: 'how claims connect logically — the thread that ties thesis to subclaims to evidence to conclusion.', videoId: 'wN19wer2DT0' },
+  { number: 2, title: 'inductive & deductive reasoning', description: 'bottom-up (specific → general) vs. top-down (general → specific) — and how to identify each in passages.', videoId: '44uyMFSGpvo' },
+  { number: 3, title: 'cause & effect, compare & contrast', description: 'two common organizational modes — how writers use them and how to write about them in analysis essays.', videoId: 'KxHiZfBj0tE' },
+  { number: 4, title: 'definition, classification & exemplification', description: 'three rhetorical strategies for developing ideas — how to identify and write about each one.', videoId: 'Iiw_GHkVHOg' },
+  { number: 5, title: 'organizational patterns', description: 'chronological, spatial, problem-solution, order of importance — how structure itself creates meaning.', videoId: 'LmxVVoFnUMY' },
+  { number: 6, title: 'logical fallacies', description: 'straw man, ad hominem, slippery slope, circular reasoning, false dilemma, hasty generalization, red herring — define, identify, explain effect.', videoId: 'IWFEJifRVkk' },
 ]
 
 export default function LangUnit3Page() {
