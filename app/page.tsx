@@ -233,12 +233,12 @@ export default function HomePage() {
           }}
         >
           <div
-            className="relative flex flex-col items-center px-6 py-4 md:px-10 md:py-5"
+            className="relative flex flex-col items-center px-5 py-3"
             style={{
-              background: 'rgba(5,13,26,0.82)',
-              backdropFilter: 'blur(18px)',
-              border: '1px solid rgba(26,108,245,0.3)',
-              boxShadow: '0 0 32px rgba(26,108,245,0.18), 0 0 64px rgba(0,212,255,0.07)',
+              background: 'rgba(5,13,26,0.85)',
+              backdropFilter: 'blur(16px)',
+              border: '1px solid rgba(26,108,245,0.28)',
+              boxShadow: '0 0 24px rgba(26,108,245,0.14), 0 0 48px rgba(0,212,255,0.05)',
             }}
           >
             {/* Top shimmer line */}
@@ -260,89 +260,87 @@ export default function HomePage() {
               }}
             />
 
-            {/* BSP wordmark — B S P large, surrounding letters small */}
+            {/* bsp wordmark — b s p large (lowercase), surrounding letters small */}
             <h1
               className="flex items-baseline gap-0 leading-none select-none"
               aria-label="best study plan"
             >
-              {/* "best" — B big, est small */}
+              {/* b — large, est — small */}
               <span
                 className="font-black"
-                style={{ color: '#00d4ff', fontSize: 'clamp(2rem, 4.5vw, 3.5rem)', letterSpacing: '-0.03em', lineHeight: 1 }}
+                style={{ color: '#00d4ff', fontSize: 'clamp(1.4rem, 2.8vw, 2.2rem)', letterSpacing: '-0.02em', lineHeight: 1 }}
               >
-                B
+                b
               </span>
               <span
-                className="font-bold"
-                style={{ color: '#b8d0ee', fontSize: 'clamp(0.6rem, 1.1vw, 0.95rem)', letterSpacing: '0.04em', opacity: 0.7, marginRight: '0.18em' }}
+                className="font-semibold"
+                style={{ color: '#b8d0ee', fontSize: 'clamp(0.5rem, 0.85vw, 0.72rem)', opacity: 0.65, marginRight: '0.14em', letterSpacing: '0.02em' }}
               >
                 est
               </span>
 
-              {/* "study" — S big, tudy small */}
+              {/* s — large, tudy — small */}
               <span
                 className="font-black"
-                style={{ color: '#1a6cf5', fontSize: 'clamp(2rem, 4.5vw, 3.5rem)', letterSpacing: '-0.03em', lineHeight: 1 }}
+                style={{ color: '#1a6cf5', fontSize: 'clamp(1.4rem, 2.8vw, 2.2rem)', letterSpacing: '-0.02em', lineHeight: 1 }}
               >
-                S
+                s
               </span>
               <span
-                className="font-bold"
-                style={{ color: '#b8d0ee', fontSize: 'clamp(0.6rem, 1.1vw, 0.95rem)', letterSpacing: '0.04em', opacity: 0.7, marginRight: '0.18em' }}
+                className="font-semibold"
+                style={{ color: '#b8d0ee', fontSize: 'clamp(0.5rem, 0.85vw, 0.72rem)', opacity: 0.65, marginRight: '0.14em', letterSpacing: '0.02em' }}
               >
                 tudy
               </span>
 
-              {/* "plan." — P big, lan. small */}
+              {/* p — large, lan — small, . — accent */}
               <span
                 className="font-black"
-                style={{ color: '#38a8ff', fontSize: 'clamp(2rem, 4.5vw, 3.5rem)', letterSpacing: '-0.03em', lineHeight: 1 }}
+                style={{ color: '#38a8ff', fontSize: 'clamp(1.4rem, 2.8vw, 2.2rem)', letterSpacing: '-0.02em', lineHeight: 1 }}
               >
-                P
+                p
               </span>
               <span
-                className="font-bold"
-                style={{ color: '#b8d0ee', fontSize: 'clamp(0.6rem, 1.1vw, 0.95rem)', letterSpacing: '0.04em', opacity: 0.7 }}
+                className="font-semibold"
+                style={{ color: '#b8d0ee', fontSize: 'clamp(0.5rem, 0.85vw, 0.72rem)', opacity: 0.65, letterSpacing: '0.02em' }}
               >
                 lan
               </span>
               <span
                 className="font-black"
-                style={{ color: '#00d4ff', fontSize: 'clamp(1.2rem, 2.5vw, 2rem)', lineHeight: 1, marginLeft: '1px' }}
+                style={{ color: '#00d4ff', fontSize: 'clamp(0.9rem, 1.8vw, 1.4rem)', lineHeight: 1, marginLeft: '1px' }}
               >
                 .
               </span>
             </h1>
 
-            {/* URL */}
-            <p
-              className="font-mono mt-1.5 tracking-widest"
-              style={{ color: '#3a5a7a', fontSize: 'clamp(0.5rem, 0.85vw, 0.7rem)', letterSpacing: '0.12em' }}
-            >
-              bsp.ezo.lol
-            </p>
-
-            {/* Course color dots */}
-            <div className="flex items-center gap-2 mt-2.5">
+            {/* URL + dots row */}
+            <div className="flex items-center gap-2 mt-1.5">
               {[
                 { color: '#22c55e', delay: '0s' },
                 { color: '#ef4444', delay: '0.25s' },
                 { color: '#a855f7', delay: '0.5s' },
                 { color: '#14b8a6', delay: '0.75s' },
               ].map((d, i) => (
-                <div key={i} className="relative flex items-center justify-center w-3 h-3">
+                <div key={i} className="relative flex items-center justify-center w-2.5 h-2.5">
                   <div
                     className="absolute rounded-full"
                     style={{
-                      width: '12px', height: '12px',
+                      width: '10px', height: '10px',
                       background: d.color,
-                      opacity: 0.35,
+                      opacity: 0.3,
                       animation: `pulse-ring 2s ease-out ${d.delay} infinite`,
                     }}
                   />
-                  <div className="w-1.5 h-1.5 rounded-full relative" style={{ background: d.color }} />
+                  <div className="w-1 h-1 rounded-full relative" style={{ background: d.color }} />
                 </div>
               ))}
+              <span
+                className="font-mono"
+                style={{ color: '#2a4a6a', fontSize: '0.55rem', letterSpacing: '0.1em', marginLeft: '2px' }}
+              >
+                bsp.ezo.lol
+              </span>
             </div>
           </div>
         </div>
