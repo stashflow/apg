@@ -21,3 +21,4 @@ export default function LangUnit1Page() {
       courseHref="/lang"
       videoId="35NsF5YgZcg"
       examDate={{ date: 'Friday, May 16, 2025', time: '12:00 PM' }}
+    />

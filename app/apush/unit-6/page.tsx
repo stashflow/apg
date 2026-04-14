@@ -19,3 +19,4 @@ export default function APUSHUnit6Page() {
       courseHref="/apush"
       videoId="h36PX_zM5V4"
       examDate={{ date: 'Friday, May 9, 2025', time: '8:00 AM' }}
+    />
