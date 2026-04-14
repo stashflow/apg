@@ -220,11 +220,11 @@ export default function HomePage() {
         />
       </div>
 
-      {/* Center logo */}
+      {/* Center logo - hidden */}
       <div
         className="absolute inset-0 pointer-events-none flex items-center justify-center"
         style={{ zIndex: 20, display: 'none' }}
-      >
+      />
     </main>
   )
 }
