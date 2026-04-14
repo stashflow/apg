@@ -21,3 +21,5 @@ export default function APUSHUnit4Page() {
       videoId="6_rR4t1D4G4"
       examDate={{ date: 'Friday, May 9, 2025', time: '8:00 AM' }}
     />
+  )
+}

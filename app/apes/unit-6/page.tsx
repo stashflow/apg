@@ -19,3 +19,5 @@ export default function APESUnit6Page() {
       videoId="kGS5gx_KLG0"
       examDate={{ date: 'Tuesday, May 6, 2025', time: '8:00 AM' }}
     />
+  )
+}
