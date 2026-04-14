@@ -223,58 +223,8 @@ export default function HomePage() {
       {/* Center logo */}
       <div
         className="absolute inset-0 pointer-events-none flex items-center justify-center"
-        style={{ zIndex: 20 }}
+        style={{ zIndex: 20, display: 'none' }}
       >
-        <div
-          style={{
-            opacity: loaded ? 1 : 0,
-            transform: loaded ? 'scale(1)' : 'scale(0.9)',
-            transition: 'opacity 0.8s ease 0.45s, transform 0.8s cubic-bezier(0.34,1.56,0.64,1) 0.45s',
-          }}
-        >
-          <div
-            className="relative flex flex-col items-center px-3 py-2"
-            style={{
-              background: 'rgba(5,13,26,0.8)',
-              backdropFilter: 'blur(14px)',
-              border: '1px solid rgba(26,108,245,0.24)',
-              boxShadow: '0 0 16px rgba(26,108,245,0.1)',
-            }}
-          >
-            {/* Top shimmer line */}
-            <div
-              className="absolute top-0 left-0 right-0 h-px"
-              style={{
-                background: 'linear-gradient(90deg, transparent, #1a6cf5, #00d4ff, #1a6cf5, transparent)',
-                backgroundSize: '200% 100%',
-                animation: 'shimmer-slide 3s linear infinite',
-              }}
-            />
-            {/* Bottom shimmer line */}
-            <div
-              className="absolute bottom-0 left-0 right-0 h-px"
-              style={{
-                background: 'linear-gradient(90deg, transparent, #1a6cf5, #00d4ff, #1a6cf5, transparent)',
-                backgroundSize: '200% 100%',
-                animation: 'shimmer-slide 3s linear infinite reverse',
-              }}
-            />
-
-            {/* apg — abbreviated home logo */}
-            <h1
-              className="font-black leading-none select-none"
-              style={{
-                fontSize: '1rem',
-                color: '#00d4ff',
-                letterSpacing: '-0.02em',
-                lineHeight: 1,
-              }}
-            >
-              apg
-            </h1>
-          </div>
-        </div>
-      </div>
     </main>
   )
 }
