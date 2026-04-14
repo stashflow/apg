@@ -13,7 +13,7 @@ const topics = [
   { number: 8, title: 'clear-cutting vs selective cutting', description: 'forest management methods and tradeoffs.' },
   { number: 9, title: 'urbanization', description: 'heat islands, sprawl, smart growth, green infrastructure.' },
   { number: 10, title: 'aquifer depletion', description: 'Ogallala aquifer, subsidence, and groundwater mining.' },
-  { number: 11, title: 'dams & desalination', description: 'water management tradeoffs and energy costs.' },
+  { number: 11, title: 'dams, levees & desalination', description: 'water management tradeoffs, flood control, and energy costs.' },
   { number: 12, title: 'mining', description: 'surface vs subsurface, acid drainage, and remediation.' },
 ]
 
