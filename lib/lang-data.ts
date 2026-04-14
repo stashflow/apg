@@ -1,0 +1,61 @@
+export const langConfig = {
+  id: 'lang',
+  label: 'ap language & composition',
+  short: 'ap lang',
+  description: 'rhetoric, argument, and style — master every essay type and rhetorical device for a 5.',
+  banner: '/images/lang-banner.jpg',
+  accent: '#a855f7',
+  accentLight: '#ec4899',
+  bgClass: 'bg-navy',
+  examDate: 'May 2026 (TBD)',
+  units: [
+    {
+      number: 1,
+      title: 'rhetorical situation',
+      examWeight: '11–14%',
+      topics: ['speaker, audience & purpose', 'exigence, context & occasion', 'SOAPSTone method', 'rhetorical triangle', 'ethos pathos logos', 'tone & shift in tone', 'point of view', 'appeals to values & beliefs'],
+    },
+    {
+      number: 2,
+      title: 'claims & evidence',
+      examWeight: '11–14%',
+      topics: ['main claim & subclaim', 'thesis statement construction', 'types of evidence', 'evidence relevance & sufficiency', 'commentary & analysis', 'counterclaim, rebuttal & concession'],
+    },
+    {
+      number: 3,
+      title: 'reasoning & organization',
+      examWeight: '13–16%',
+      topics: ['line of reasoning', 'inductive & deductive reasoning', 'cause & effect, compare & contrast', 'organizational patterns', 'logical fallacies'],
+    },
+    {
+      number: 4,
+      title: 'style',
+      examWeight: '11–14%',
+      topics: ['diction & syntax', 'imagery & figurative language', 'parallelism & repetition', 'anaphora, antithesis & more', 'polysyndeton & asyndeton', 'sentence variety & tone shifts'],
+    },
+    {
+      number: 5,
+      title: 'putting it all together',
+      examWeight: '11–14%',
+      topics: ['combining appeals & evidence', 'strong thesis construction', 'topic sentences & commentary', 'transitions & cohesion', 'essay organization', 'intro & conclusion techniques'],
+    },
+    {
+      number: 6,
+      title: 'position, perspective & bias',
+      examWeight: '11–14%',
+      topics: ['perspective & bias', 'assumptions & cultural context', 'intended audience & credibility', 'multiple viewpoints', 'author\'s position & reliability'],
+    },
+    {
+      number: 7,
+      title: 'developing an argument',
+      examWeight: '11–14%',
+      topics: ['arguable & qualified claims', 'defending a claim', 'counterargument & refutation', 'synthesis of sources', 'building a line of reasoning'],
+    },
+    {
+      number: 8,
+      title: 'stylistic choices',
+      examWeight: '11–14%',
+      topics: ['word choice & sentence structure', 'irony, satire & hyperbole', 'metaphor, simile & allusion', 'rhetorical questions & repetition', 'synthesis essay mastery', 'rhetorical analysis essay mastery', 'argument essay mastery'],
+    },
+  ],
+}

@@ -1,0 +1,67 @@
+export const apesConfig = {
+  id: 'apes',
+  label: 'ap environmental science',
+  short: 'apes',
+  description: 'master ecosystems, energy, pollution, and global change — everything you need to earn a 5.',
+  banner: '/images/enviro-banner.jpg',
+  accent: '#22c55e',
+  accentLight: '#86efac',
+  bgClass: 'bg-navy',
+  examDate: 'May 2026 (TBD)',
+  units: [
+    {
+      number: 1,
+      title: 'the living world: ecosystems',
+      examWeight: '6–8%',
+      topics: ['intro to ecosystems', 'terrestrial biomes', 'aquatic biomes', 'the carbon cycle', 'the nitrogen cycle', 'the phosphorus cycle', 'the hydrologic cycle', 'primary productivity', 'trophic levels & energy flow', 'food chains and food webs', 'ecological succession'],
+    },
+    {
+      number: 2,
+      title: 'the living world: biodiversity',
+      examWeight: '6–8%',
+      topics: ['ecosystem diversity', 'species diversity', 'genetic diversity', 'species interactions', 'invasive species', 'habitat fragmentation', 'endangered & threatened species', 'island biogeography'],
+    },
+    {
+      number: 3,
+      title: 'populations',
+      examWeight: '10–15%',
+      topics: ['population ecology basics', 'population growth models', 'carrying capacity & limiting factors', 'reproductive strategies (r vs K)', 'survivorship curves', 'demographic transition model', 'human population growth', 'age-structure diagrams'],
+    },
+    {
+      number: 4,
+      title: 'earth systems & resources',
+      examWeight: '10–15%',
+      topics: ['plate tectonics & earthquakes', 'soil formation & composition', 'soil degradation', 'watersheds & water supply', 'atmospheric circulation', 'ocean currents & ENSO', 'solar radiation & earth\'s energy budget'],
+    },
+    {
+      number: 5,
+      title: 'land & water use',
+      examWeight: '10–15%',
+      topics: ['agriculture & food production', 'irrigation methods', 'pest management', 'deforestation', 'urban sprawl & land use', 'fisheries & overfishing', 'aquaculture', 'mining impacts'],
+    },
+    {
+      number: 6,
+      title: 'energy resources & consumption',
+      examWeight: '10–15%',
+      topics: ['fossil fuels overview', 'coal, oil & natural gas', 'nuclear energy', 'solar energy', 'wind energy', 'hydroelectric & tidal', 'biomass & geothermal', 'energy efficiency & conservation'],
+    },
+    {
+      number: 7,
+      title: 'atmospheric pollution',
+      examWeight: '7–10%',
+      topics: ['sources of air pollution', 'primary vs secondary pollutants', 'photochemical smog', 'acid rain & acid deposition', 'ozone layer & CFC depletion', 'indoor air pollution', 'noise pollution'],
+    },
+    {
+      number: 8,
+      title: 'aquatic & terrestrial pollution',
+      examWeight: '7–10%',
+      topics: ['water pollution sources', 'eutrophication', 'solid waste & landfills', 'hazardous waste', 'oil spills', 'plastic & microplastic pollution', 'soil contamination & remediation'],
+    },
+    {
+      number: 9,
+      title: 'global change',
+      examWeight: '15–20%',
+      topics: ['greenhouse gases & climate change', 'the carbon cycle & feedbacks', 'consequences of climate change', 'sea-level rise', 'ocean acidification', 'mitigation strategies', 'adaptation strategies', 'environmental laws & treaties', 'APES formulas & calculations'],
+    },
+  ],
+}

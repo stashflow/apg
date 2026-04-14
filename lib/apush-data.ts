@@ -1,0 +1,67 @@
+export const apushConfig = {
+  id: 'apush',
+  label: 'ap united states history',
+  short: 'apush',
+  description: 'from 1491 to the present — complete notes, key themes, and essay practice for a guaranteed 5.',
+  banner: '/images/apush-banner.jpg',
+  accent: '#ef4444',
+  accentLight: '#f59e0b',
+  bgClass: 'bg-navy',
+  examDate: 'May 2026 (TBD)',
+  units: [
+    {
+      number: 1,
+      title: 'period 1: 1491–1607',
+      examWeight: '4–6%',
+      topics: ['native american societies before contact', 'columbian exchange', 'spanish colonization', 'encomienda system', 'european contact & conflict'],
+    },
+    {
+      number: 2,
+      title: 'period 2: 1607–1754',
+      examWeight: '6–8%',
+      topics: ['jamestown & virginia', 'plymouth & massachusetts bay', 'new england colonies', 'chesapeake colonies', 'middle colonies', 'southern colonies', 'colonial slavery', 'mercantilism & salutary neglect', 'first great awakening'],
+    },
+    {
+      number: 3,
+      title: 'period 3: 1754–1800',
+      examWeight: '10–17%',
+      topics: ['french & indian war', 'taxation without representation', 'boston massacre & tea party', 'intolerable acts & continental congress', 'declaration of independence', 'revolutionary war', 'articles of confederation', 'constitutional convention', 'federalists vs anti-federalists', 'washington & hamilton', 'political parties emerge'],
+    },
+    {
+      number: 4,
+      title: 'period 4: 1800–1848',
+      examWeight: '10–17%',
+      topics: ['jefferson & the revolution of 1800', 'louisiana purchase & expansion', 'war of 1812', 'era of good feelings & nationalism', 'monroe doctrine', 'market revolution', 'jacksonian democracy', 'indian removal act', 'second great awakening & reform movements'],
+    },
+    {
+      number: 5,
+      title: 'period 5: 1844–1877',
+      examWeight: '10–17%',
+      topics: ['manifest destiny', 'mexican-american war', 'compromise of 1850', 'kansas-nebraska act & bleeding kansas', 'dred scott decision', 'lincoln & the election of 1860', 'causes of the civil war', 'civil war turning points', 'reconstruction era', '13th 14th & 15th amendments'],
+    },
+    {
+      number: 6,
+      title: 'period 6: 1865–1898',
+      examWeight: '10–17%',
+      topics: ['industrialization & big business', 'railroads & transcontinental expansion', 'robber barons & gospel of wealth', 'labor unions & strikes', 'new immigration & urbanization', 'gilded age politics & corruption', 'populist movement'],
+    },
+    {
+      number: 7,
+      title: 'period 7: 1890–1945',
+      examWeight: '10–17%',
+      topics: ['progressive era reforms', 'american imperialism', 'world war I & isolationism', 'roaring twenties & cultural change', 'great depression causes', 'new deal programs & legacy', 'world war II & the homefront'],
+    },
+    {
+      number: 8,
+      title: 'period 8: 1945–1980',
+      examWeight: '10–17%',
+      topics: ['cold war origins & containment', 'truman doctrine & marshall plan', 'korean war', 'vietnam war & anti-war movement', 'civil rights movement', 'great society legislation', 'nixon & détente', 'watergate scandal'],
+    },
+    {
+      number: 9,
+      title: 'period 9: 1980–present',
+      examWeight: '4–6%',
+      topics: ['reagan revolution & conservatism', 'end of the cold war', 'globalization & trade', '9/11 & war on terror', 'modern political polarization', 'supreme court landmark cases', 'dbq & leq practice themes', 'saq practice strategies'],
+    },
+  ],
+}

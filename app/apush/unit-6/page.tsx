@@ -1,0 +1,22 @@
+import { UnitPage } from '@/components/unit-page'
+
+const topics = [
+  { number: 1, title: 'industrialization & railroads', description: 'transcontinental railroad, steel industry, Carnegie\'s vertical integration, and the transformation of the economy.' },
+  { number: 2, title: 'big business & gospel of wealth', description: 'Rockefeller\'s Standard Oil, horizontal integration, trusts, Social Darwinism, and Carnegie\'s philanthropy rationale.' },
+  { number: 3, title: 'labor unions', description: 'Knights of Labor, AFL, Haymarket Affair, Pullman Strike, and the tension between capital and labor.' },
+  { number: 4, title: 'immigration & urbanization', description: 'new immigration (Southern/Eastern Europe), tenements, political machines, nativism, and Chinese Exclusion Act.' },
+  { number: 5, title: 'gilded age politics', description: 'political machines (Tammany Hall), spoils system, civil service reform (Pendleton Act), and Plessy v. Ferguson.' },
+  { number: 6, title: 'populist movement', description: 'Farmers\' Alliance, Omaha Platform, free silver debate, Bryan\'s Cross of Gold speech, and populism\'s legacy.' },
+]
+
+export default function APUSHUnit6Page() {
+  return (
+    <UnitPage
+      course={{ label: 'ap united states history', short: 'apush', accent: '#ef4444', accentLight: '#f59e0b' }}
+      unit={{ number: 6, title: 'period 6: 1865–1898', examWeight: '10–17%', description: 'industrialization, immigration, labor struggles, and the birth of modern corporate America.' }}
+      topics={topics}
+      basePath="/apush/unit-6"
+      courseHref="/apush"
+    />
+  )
+}
