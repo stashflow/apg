@@ -18,6 +18,7 @@ export default function CSPUnit3Page() {
       unit={{ number: 3, title: 'big idea 3: algorithms & programming', examWeight: '30–35%', description: 'the biggest unit — over a third of the exam. master pseudocode, loops, lists, and procedures cold.' }}
       topics={topics}
       basePath="/csp/unit-3"
+      videoId="gHCrPvKV3EE"
       courseHref="/csp"
     />
   )

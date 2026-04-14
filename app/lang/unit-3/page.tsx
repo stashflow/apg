@@ -16,6 +16,7 @@ export default function LangUnit3Page() {
       unit={{ number: 3, title: 'reasoning & organization', examWeight: '13–16%', description: 'how arguments are built and structured — the highest-weighted unit on the AP Lang exam.' }}
       topics={topics}
       basePath="/lang/unit-3"
+      videoId="wN19wer2DT0"
       courseHref="/lang"
     />
   )

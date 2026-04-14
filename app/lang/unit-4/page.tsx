@@ -16,6 +16,7 @@ export default function LangUnit4Page() {
       unit={{ number: 4, title: 'style', examWeight: '11–14%', description: 'the how of writing — diction, syntax, figurative language, and every device that shapes a reader\'s experience.' }}
       topics={topics}
       basePath="/lang/unit-4"
+      videoId="3l7FdwrEBww"
       courseHref="/lang"
     />
   )

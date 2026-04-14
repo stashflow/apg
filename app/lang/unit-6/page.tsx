@@ -16,6 +16,7 @@ export default function LangUnit6Page() {
       unit={{ number: 6, title: 'position, perspective & bias', examWeight: '11–14%', description: 'critical reading — understanding who is speaking, why, and what assumptions underpin their argument.' }}
       topics={topics}
       basePath="/lang/unit-6"
+      videoId="YQs1vg8B5m0"
       courseHref="/lang"
     />
   )

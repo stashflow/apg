@@ -16,6 +16,7 @@ export default function CSPUnit5Page() {
       unit={{ number: 5, title: 'big idea 5: impact of computing', examWeight: '21–26%', description: 'computing\'s effects on society, ethics, and individuals — plus the complete Create performance task guide.' }}
       topics={topics}
       basePath="/csp/unit-5"
+      videoId="Z_lf3wDBgn4"
       courseHref="/csp"
     />
   )

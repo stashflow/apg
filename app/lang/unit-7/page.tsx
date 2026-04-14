@@ -16,6 +16,7 @@ export default function LangUnit7Page() {
       unit={{ number: 7, title: 'developing an argument', examWeight: '11–14%', description: 'building complete, sophisticated arguments — the skills that directly drive your argument essay score.' }}
       topics={topics}
       basePath="/lang/unit-7"
+      videoId="F4xUKv5pHW4"
       courseHref="/lang"
     />
   )

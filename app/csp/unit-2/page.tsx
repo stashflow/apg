@@ -15,6 +15,7 @@ export default function CSPUnit2Page() {
       unit={{ number: 2, title: 'big idea 2: data', examWeight: '17–22%', description: 'how computers represent, store, compress, and analyze data — high-frequency MCQ territory.' }}
       topics={topics}
       basePath="/csp/unit-2"
+      videoId="D_cKCl4dN6s"
       courseHref="/csp"
     />
   )
