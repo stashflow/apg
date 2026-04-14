@@ -1,0 +1,170 @@
+'use client'
+
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { SiteNav } from './site-nav'
+
+interface Topic {
+  number: number
+  title: string
+  description: string
+}
+
+interface UnitPageProps {
+  course: {
+    label: string
+    short: string
+    accent: string
+    accentLight: string
+  }
+  unit: {
+    number: number
+    title: string
+    examWeight: string
+    description: string
+  }
+  topics: Topic[]
+  basePath: string
+  courseHref: string
+}
+
+export function UnitPage({ course, unit, topics, basePath, courseHref }: UnitPageProps) {
+  const [loaded, setLoaded] = useState(false)
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoaded(true), 80)
+    return () => clearTimeout(t)
+  }, [])
+
+  return (
+    <div className="min-h-screen" style={{ background: '#050d1a' }}>
+      <SiteNav />
+
+      {/* Breadcrumb & header */}
+      <div
+        className="px-6 md:px-12 pt-10 pb-8 border-b"
+        style={{ borderColor: 'rgba(26,108,245,0.2)' }}
+      >
+        {/* Breadcrumb */}
+        <div className="flex items-center gap-2 font-mono text-xs tracking-widest uppercase mb-6">
+          <Link href="/" className="transition-opacity hover:opacity-80" style={{ color: '#4a7090' }}>home</Link>
+          <span style={{ color: '#1a3050' }}>/</span>
+          <Link href={courseHref} className="transition-opacity hover:opacity-80" style={{ color: '#4a7090' }}>{course.short}</Link>
+          <span style={{ color: '#1a3050' }}>/</span>
+          <span style={{ color: course.accent }}>unit {unit.number}</span>
+        </div>
+
+        <div
+          style={{
+            opacity: loaded ? 1 : 0,
+            transform: loaded ? 'translateY(0)' : 'translateY(16px)',
+            transition: 'all 0.5s ease',
+          }}
+        >
+          <p
+            className="font-mono text-xs tracking-[0.25em] uppercase mb-1"
+            style={{ color: course.accentLight }}
+          >
+            {course.short} — unit {unit.number.toString().padStart(2, '0')}
+          </p>
+          <h1
+            className="text-4xl md:text-5xl font-black lowercase tracking-tight leading-none mb-3 text-balance"
+            style={{ color: '#f0f6ff' }}
+          >
+            {unit.title}
+          </h1>
+          <div className="flex items-center gap-4 flex-wrap">
+            <div
+              className="px-3 py-1 font-mono text-xs font-bold"
+              style={{
+                background: `${course.accent}22`,
+                color: course.accent,
+                border: `1px solid ${course.accent}55`,
+              }}
+            >
+              exam weight: {unit.examWeight}
+            </div>
+            <p className="text-sm leading-relaxed max-w-2xl" style={{ color: '#b8d0ee' }}>
+              {unit.description}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Topics list */}
+      <div className="px-6 md:px-12 py-10 max-w-5xl">
+        <div className="flex items-center gap-4 mb-6">
+          <h2 className="text-xl font-black lowercase" style={{ color: '#f0f6ff' }}>
+            topics in this unit
+          </h2>
+          <div className="flex-1 h-px" style={{ background: 'rgba(26,108,245,0.2)' }} />
+          <span className="font-mono text-xs" style={{ color: '#4a7090' }}>
+            {topics.length} topics
+          </span>
+        </div>
+
+        <div className="space-y-2">
+          {topics.map((topic, i) => (
+            <Link
+              key={topic.number}
+              href={`${basePath}/${topic.number}`}
+              className="group flex items-start gap-5 p-5 transition-all duration-200"
+              style={{
+                background: '#0a1929',
+                border: `1px solid rgba(26,48,80,0.8)`,
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? 'translateX(0)' : 'translateX(-20px)',
+                transition: `opacity 0.4s ease ${i * 0.04}s, transform 0.4s ease ${i * 0.04}s`,
+              }}
+              onMouseEnter={(e) => {
+                const el = e.currentTarget
+                el.style.borderColor = course.accent
+                el.style.background = '#0f2540'
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget
+                el.style.borderColor = 'rgba(26,48,80,0.8)'
+                el.style.background = '#0a1929'
+              }}
+            >
+              {/* Topic number */}
+              <div
+                className="shrink-0 w-10 h-10 flex items-center justify-center font-mono font-black text-base"
+                style={{
+                  background: `${course.accent}22`,
+                  color: course.accent,
+                  border: `1px solid ${course.accent}44`,
+                }}
+              >
+                {topic.number}
+              </div>
+
+              {/* Content */}
+              <div className="flex-1 min-w-0">
+                <h3
+                  className="font-black text-base lowercase leading-tight mb-1"
+                  style={{ color: '#f0f6ff' }}
+                >
+                  {topic.title}
+                </h3>
+                <p className="text-sm leading-relaxed" style={{ color: '#b8d0ee', opacity: 0.8 }}>
+                  {topic.description}
+                </p>
+              </div>
+
+              {/* Arrow */}
+              <div
+                className="shrink-0 self-center transition-transform duration-200 group-hover:translate-x-2"
+                style={{ color: course.accent }}
+              >
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                  <path d="M3 9h12M10 4l5 5-5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}

@@ -1,0 +1,257 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  /* ─── meade study plan. color system ─── */
+  --navy:        #050d1a;
+  --navy-mid:    #0a1929;
+  --navy-light:  #0f2540;
+  --blue:        #1a6cf5;
+  --blue-light:  #38a8ff;
+  --cyan:        #00d4ff;
+  --white:       #f0f6ff;
+  --off-white:   #b8d0ee;
+
+  /* ─── course accent colors ─── */
+  --enviro-green:  #22c55e;
+  --enviro-lime:   #86efac;
+  --apush-red:     #ef4444;
+  --apush-amber:   #f59e0b;
+  --lang-purple:   #a855f7;
+  --lang-pink:     #ec4899;
+  --csp-teal:      #14b8a6;
+  --csp-orange:    #f97316;
+
+  /* ─── shadcn tokens remapped to our palette ─── */
+  --background: var(--navy);
+  --foreground: var(--white);
+  --card: var(--navy-mid);
+  --card-foreground: var(--white);
+  --popover: var(--navy-mid);
+  --popover-foreground: var(--white);
+  --primary: var(--blue);
+  --primary-foreground: var(--white);
+  --secondary: var(--navy-light);
+  --secondary-foreground: var(--white);
+  --muted: var(--navy-light);
+  --muted-foreground: var(--off-white);
+  --accent: var(--cyan);
+  --accent-foreground: var(--navy);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: var(--white);
+  --border: #1a3050;
+  --input: var(--navy-light);
+  --ring: var(--blue-light);
+  --radius: 0rem;
+  --sidebar: var(--navy-mid);
+  --sidebar-foreground: var(--white);
+  --sidebar-primary: var(--blue);
+  --sidebar-primary-foreground: var(--white);
+  --sidebar-accent: var(--navy-light);
+  --sidebar-accent-foreground: var(--white);
+  --sidebar-border: #1a3050;
+  --sidebar-ring: var(--blue-light);
+}
+
+@theme inline {
+  --font-sans: var(--font-space-grotesk);
+  --font-mono: var(--font-space-mono);
+  --font-display: var(--font-space-grotesk);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: 0rem;
+  --radius-md: 0rem;
+  --radius-lg: 0rem;
+  --radius-xl: 0.25rem;
+  --color-navy: var(--navy);
+  --color-navy-mid: var(--navy-mid);
+  --color-navy-light: var(--navy-light);
+  --color-blue: var(--blue);
+  --color-blue-light: var(--blue-light);
+  --color-cyan: var(--cyan);
+  --color-white: var(--white);
+  --color-off-white: var(--off-white);
+  --color-enviro-green: var(--enviro-green);
+  --color-enviro-lime: var(--enviro-lime);
+  --color-apush-red: var(--apush-red);
+  --color-apush-amber: var(--apush-amber);
+  --color-lang-purple: var(--lang-purple);
+  --color-lang-pink: var(--lang-pink);
+  --color-csp-teal: var(--csp-teal);
+  --color-csp-orange: var(--csp-orange);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+/* ─── custom animations ─── */
+@keyframes tile-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes shimmer-slide {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes marquee-left {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes pulse-ring {
+  0%   { transform: scale(1);   opacity: 1; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slide-in-right {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.animate-tile-float { animation: tile-float 4s ease-in-out infinite; }
+.animate-marquee    { animation: marquee-left 20s linear infinite; }
+.animate-pulse-ring { animation: pulse-ring 1.5s ease-out infinite; }
+.animate-fade-up    { animation: fade-up 0.6s ease forwards; }
+.animate-fade-in    { animation: fade-in 0.5s ease forwards; }
+.animate-slide-left { animation: slide-in-left 0.5s ease forwards; }
+.animate-slide-right{ animation: slide-in-right 0.5s ease forwards; }
+.animate-spin-slow  { animation: spin-slow 8s linear infinite; }
+
+/* ─── hover tile scale ─── */
+.tile-hover {
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+              filter 0.35s ease;
+}
+.tile-hover:hover {
+  transform: scale(1.015);
+  filter: brightness(1.08);
+  z-index: 10;
+}
+
+/* ─── notes prose ─── */
+.notes-prose h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-top: 2rem;
+  margin-bottom: 0.5rem;
+}
+.notes-prose h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 1.5rem;
+  margin-bottom: 0.4rem;
+}
+.notes-prose p {
+  line-height: 1.7;
+  margin-bottom: 0.75rem;
+}
+.notes-prose ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+.notes-prose li {
+  line-height: 1.65;
+  margin-bottom: 0.35rem;
+}
+.notes-prose strong {
+  color: var(--cyan);
+}
+.notes-prose .callout {
+  border-left: 3px solid var(--blue);
+  background: var(--navy-light);
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  font-size: 0.95rem;
+}
+.notes-prose .exam-tip {
+  border-left: 3px solid var(--enviro-green);
+  background: rgba(34,197,94,0.08);
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+}
+.notes-prose .exam-tip::before {
+  content: "exam tip: ";
+  font-weight: 800;
+  text-transform: lowercase;
+  color: var(--enviro-green);
+}
+.notes-prose .frq-tip {
+  border-left: 3px solid var(--apush-amber);
+  background: rgba(245,158,11,0.08);
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+}
+.notes-prose .frq-tip::before {
+  content: "frq tip: ";
+  font-weight: 800;
+  text-transform: lowercase;
+  color: var(--apush-amber);
+}
+
+/* ─── scrollbar ─── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--navy-mid); }
+::-webkit-scrollbar-thumb { background: var(--navy-light); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--blue); }

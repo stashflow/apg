@@ -1,0 +1,171 @@
+import { CourseLayout } from '@/components/course-layout'
+import type { Unit } from '@/components/course-layout'
+
+const units: Unit[] = [
+  {
+    number: 1,
+    title: 'the living world — ecosystems',
+    examWeight: '6–8%',
+    topics: [
+      'introduction to ecosystems',
+      'terrestrial biomes',
+      'aquatic biomes',
+      'the carbon cycle',
+      'the nitrogen cycle',
+      'the phosphorus cycle',
+      'the hydrologic cycle',
+      'primary productivity',
+      'trophic levels & food webs',
+      'energy flow & ecological efficiency',
+    ],
+  },
+  {
+    number: 2,
+    title: 'the living world — biodiversity',
+    examWeight: '6–8%',
+    topics: [
+      'introduction to biodiversity',
+      'evolution & natural selection',
+      'ecosystem services',
+      'island biogeography',
+      'ecological tolerance',
+      'natural disruptions to ecosystems',
+      'anthropogenic disruptions',
+      'biodiversity loss & extinction',
+    ],
+  },
+  {
+    number: 3,
+    title: 'populations',
+    examWeight: '10–15%',
+    topics: [
+      'generalist vs. specialist species',
+      'K-selected vs. r-selected species',
+      'survivorship curves',
+      'carrying capacity',
+      'population growth & resource availability',
+      'age structure diagrams',
+      'total fertility rate',
+      'human population dynamics',
+      'demographic transition model',
+    ],
+  },
+  {
+    number: 4,
+    title: 'earth systems & resources',
+    examWeight: '10–15%',
+    topics: [
+      'plate tectonics & earth structure',
+      'soil formation & erosion',
+      'soil horizons',
+      'earth\'s atmosphere',
+      'solar radiation & the greenhouse effect',
+      'global wind patterns',
+      'watersheds',
+      'el niño & la niña',
+      'seasons & tilt',
+    ],
+  },
+  {
+    number: 5,
+    title: 'land & water use',
+    examWeight: '10–15%',
+    topics: [
+      'tragedy of the commons',
+      'clearcutting vs. selective cutting',
+      'the green revolution',
+      'impacts of agricultural practices',
+      'irrigation methods',
+      'pest management',
+      'meat production & the environment',
+      'urban sprawl',
+      'water management & purification',
+      'mining environmental impacts',
+    ],
+  },
+  {
+    number: 6,
+    title: 'energy resources & consumption',
+    examWeight: '10–15%',
+    topics: [
+      'renewable vs. nonrenewable energy',
+      'coal — extraction & impacts',
+      'oil & natural gas',
+      'nuclear energy — pros & cons',
+      'hydroelectric power',
+      'solar energy',
+      'wind energy',
+      'geothermal energy',
+      'hydrogen fuel cells',
+      'energy conservation strategies',
+    ],
+  },
+  {
+    number: 7,
+    title: 'atmospheric pollution',
+    examWeight: '7–10%',
+    topics: [
+      'air pollution sources & types',
+      'photochemical smog',
+      'thermal inversion',
+      'stratospheric ozone depletion',
+      'indoor air pollution',
+      'acid deposition',
+      'noise pollution',
+      'clean air act & regulations',
+    ],
+  },
+  {
+    number: 8,
+    title: 'aquatic & terrestrial pollution',
+    examWeight: '7–10%',
+    topics: [
+      'sources of water pollution',
+      'eutrophication',
+      'oil spills',
+      'heavy metal contamination',
+      'endocrine disruptors',
+      'solid waste management',
+      'hazardous waste',
+      'clean water act',
+      'biomagnification & bioaccumulation',
+    ],
+  },
+  {
+    number: 9,
+    title: 'global change',
+    examWeight: '15–20%',
+    topics: [
+      'the greenhouse effect & global warming',
+      'feedback loops',
+      'methane & other greenhouse gases',
+      'sea level rise',
+      'ocean acidification',
+      'species range shifts',
+      'coral bleaching',
+      'IPCC & climate models',
+      'climate change mitigation strategies',
+      'international environmental agreements',
+    ],
+  },
+]
+
+export default function APESPage() {
+  return (
+    <CourseLayout
+      course={{
+        id: 'apes',
+        label: 'ap environmental science',
+        short: 'apes',
+        description: 'the interdisciplinary study of Earth\'s systems, human impacts, and solutions to environmental problems. master every ecosystem, cycle, and crisis on the exam.',
+        banner: '/images/enviro-banner.jpg',
+        accent: '#22c55e',
+        accentLight: '#86efac',
+        bgClass: 'bg-enviro-green',
+        examDate: 'may 2025 — check collegeboard for exact date',
+        units,
+      }}
+      basePath="/apes"
+    />
+  )
+}
