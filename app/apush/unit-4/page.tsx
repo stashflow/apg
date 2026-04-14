@@ -18,6 +18,7 @@ export default function APUSHUnit4Page() {
       unit={{ number: 4, title: 'period 4: 1800–1848', examWeight: '10–17%', description: 'early republic, westward expansion, democracy\'s expansion, and the seeds of sectional conflict.' }}
       topics={topics}
       basePath="/apush/unit-4"
+      courseHref="/apush"
       videoId="6_rR4t1D4G4"
       examDate={{ date: 'Friday, May 9, 2025', time: '8:00 AM' }}
     />
