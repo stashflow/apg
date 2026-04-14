@@ -260,7 +260,7 @@ export default function HomePage() {
               }}
             />
 
-            {/* bsp — just three letters */}
+            {/* apg — abbreviated home logo */}
             <h1
               className="font-black leading-none select-none"
               style={{
@@ -270,7 +270,7 @@ export default function HomePage() {
                 lineHeight: 1,
               }}
             >
-              bsp
+              apg
             </h1>
           </div>
         </div>

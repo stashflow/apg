@@ -28,10 +28,11 @@ export function SiteNav() {
         {/* Logo */}
         <Link
           href="/"
-          className="font-black text-base md:text-lg lowercase tracking-tight transition-opacity duration-200 hover:opacity-80"
+          className="font-black text-base md:text-lg lowercase tracking-tight transition-opacity duration-200 hover:opacity-80 flex items-center gap-1"
           style={{ color: '#f0f6ff', letterSpacing: '-0.02em' }}
         >
-          meade<span style={{ color: '#1a6cf5' }}> study </span>plan<span style={{ color: '#00d4ff' }}>.</span>
+          ap grounds<span style={{ color: '#00d4ff' }}>.</span>
+          <span style={{ color: '#7a9ab0', fontSize: '0.875rem', fontWeight: 600, letterSpacing: 'normal' }}>ezo.lol</span>
         </Link>
 
         {/* Desktop links */}
@@ -101,11 +102,12 @@ export function SiteNav() {
       >
         <Link
           href="/"
-          className="font-black text-3xl lowercase tracking-tight mb-4"
+          className="font-black text-3xl lowercase tracking-tight mb-4 flex items-center gap-2"
           style={{ color: '#f0f6ff', letterSpacing: '-0.02em' }}
           onClick={() => setOpen(false)}
         >
-          meade<span style={{ color: '#1a6cf5' }}> study </span>plan<span style={{ color: '#00d4ff' }}>.</span>
+          ap grounds<span style={{ color: '#00d4ff' }}>.</span>
+          <span style={{ color: '#7a9ab0', fontSize: '1.5rem', fontWeight: 600, letterSpacing: 'normal' }}>ezo.lol</span>
         </Link>
         {courses.map((c) => (
           <Link
