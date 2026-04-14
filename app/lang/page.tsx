@@ -123,7 +123,7 @@ export default function LangPage() {
         accent: '#a855f7',
         accentLight: '#ec4899',
         bgClass: 'bg-lang-purple',
-        examDate: 'may 2026 — check collegeboard for exact date',
+        examDate: 'May 13, 2025 — morning session (8:00 AM ET)',
         units,
       }}
       basePath="/lang"

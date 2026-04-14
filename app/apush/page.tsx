@@ -142,7 +142,7 @@ export default function APUSHPage() {
         accent: '#ef4444',
         accentLight: '#f59e0b',
         bgClass: 'bg-apush-red',
-        examDate: 'may 2026 — check collegeboard for exact date',
+        examDate: 'May 8, 2025 — morning session (8:00 AM ET)',
         units,
       }}
       basePath="/apush"
