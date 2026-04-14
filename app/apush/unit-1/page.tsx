@@ -4,10 +4,12 @@ export const dynamic = 'force-dynamic'
 
 const topics = [
   { number: 1, title: 'native american societies', description: 'diverse pre-contact civilizations — Aztec, Inca, Pueblo, Iroquois, and Great Plains cultures before 1492.', videoId: 'fTv4S1q7p_c' },
-  { number: 2, title: 'columbian exchange', description: 'transfer of plants, animals, diseases, and people between hemispheres — and its catastrophic demographic effects.', videoId: 'fTv4S1q7p_c' },
-  { number: 3, title: 'spanish colonization', description: 'Columbus, conquistadors, the encomienda system, and Spain\'s empire-building model in the Americas.', videoId: 'fTv4S1q7p_c' },
-  { number: 4, title: 'encomienda system', description: 'forced indigenous labor, Catholic missionaries, Las Casas\'s critique, and the origins of racial hierarchy in the Americas.', videoId: 'fTv4S1q7p_c' },
-  { number: 5, title: 'columbian triangle trade beginnings', description: 'early transatlantic trade networks, European motives, and how commerce drove colonization.', videoId: 'fTv4S1q7p_c' },
+  { number: 2, title: 'european exploration motives', description: 'God, gold, and glory — religious conversion, wealth, and national prestige driving exploration.' },
+  { number: 3, title: 'columbian exchange', description: 'transfer of plants, animals, diseases, and people between hemispheres — and its catastrophic demographic effects.', videoId: 'fTv4S1q7p_c' },
+  { number: 4, title: 'spanish colonization', description: 'Columbus, conquistadors, the encomienda system, and Spain\'s empire-building model in the Americas.', videoId: 'fTv4S1q7p_c' },
+  { number: 5, title: 'labor & caste systems', description: 'encomienda, mita, hacienda systems and the racial hierarchy (casta) in Spanish colonies.' },
+  { number: 6, title: 'african slavery beginnings', description: 'the origins of African slavery in the Americas, Middle Passage, and early plantation economies.' },
+  { number: 7, title: 'native-european-african interactions', description: 'cultural exchanges, conflicts, alliances, and the devastating impact of disease on indigenous populations.' },
 ]
 
 export default function APUSHUnit1Page() {

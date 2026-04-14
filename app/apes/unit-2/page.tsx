@@ -3,12 +3,15 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'ecosystem diversity', description: 'variety of habitats, niches, and ecological communities — why diversity stabilizes ecosystems.', videoId: 'gMavNnExCQI' },
-  { number: 2, title: 'species diversity', description: 'species richness vs. evenness, Simpson\'s and Shannon indices, and hotspots.', videoId: '3QMSojbUHKk' },
-  { number: 3, title: 'genetic diversity', description: 'allelic variation, inbreeding depression, and why genetic diversity prevents extinction.', videoId: '3QMSojbUHKk' },
-  { number: 4, title: 'invasive species', description: 'how invasives displace native species, case studies, and management strategies.', videoId: 'ydncbgFiEQQ' },
-  { number: 5, title: 'habitat fragmentation', description: 'edge effects, island biogeography theory, corridors, and minimum viable populations.', videoId: 'ydncbgFiEQQ' },
-  { number: 6, title: 'endangered species', description: 'IUCN categories, the Endangered Species Act, captive breeding, and recovery plans.', videoId: 'gLaT0_hyVQk' },
+  { number: 1, title: 'ecosystem diversity', description: 'variety of habitats, niches, and ecological communities.', videoId: 'gMavNnExCQI' },
+  { number: 2, title: 'ecosystem services', description: 'provisioning, regulating, cultural, and supporting services.' },
+  { number: 3, title: 'species diversity', description: 'richness vs evenness, Simpson\'s and Shannon indices.', videoId: '3QMSojbUHKk' },
+  { number: 4, title: 'genetic diversity', description: 'allelic variation, inbreeding depression, and extinction prevention.', videoId: '3QMSojbUHKk' },
+  { number: 5, title: 'island biogeography', description: 'species-area relationships, immigration, extinction, and applications.' },
+  { number: 6, title: 'ecological tolerance', description: 'range of conditions species can survive, limiting factors.' },
+  { number: 7, title: 'invasive species', description: 'displacement of natives, case studies, and management.', videoId: 'ydncbgFiEQQ' },
+  { number: 8, title: 'habitat fragmentation', description: 'edge effects, corridors, and minimum viable populations.', videoId: 'ydncbgFiEQQ' },
+  { number: 9, title: 'endangered species', description: 'IUCN categories, ESA, captive breeding, and recovery.', videoId: 'gLaT0_hyVQk' },
 ]
 
 export default function APESUnit2Page() {

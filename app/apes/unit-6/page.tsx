@@ -3,11 +3,16 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'fossil fuels', description: 'coal, oil, and natural gas — formation, extraction, burning byproducts, and EROI.' },
-  { number: 2, title: 'renewable energy', description: 'solar, wind, hydroelectric, geothermal, and biomass — advantages, limitations, and land use.' },
-  { number: 3, title: 'nuclear energy', description: 'fission vs. fusion, pros/cons, waste storage, Chernobyl and Fukushima as case studies.' },
-  { number: 4, title: 'energy efficiency', description: 'energy return on investment (EROI), efficiency calculations, CAFE standards, and conservation.' },
-  { number: 5, title: 'sustainability', description: 'sustainable development goals, cogeneration, net metering, and transitioning off fossil fuels.' },
+  { number: 1, title: 'fossil fuels', description: 'coal, oil, natural gas — formation, extraction, byproducts, EROI.' },
+  { number: 2, title: 'global energy use', description: 'consumption patterns by country and sector.' },
+  { number: 3, title: 'solar energy', description: 'photovoltaic cells, solar thermal, advantages and limitations.' },
+  { number: 4, title: 'wind energy', description: 'turbines, wind farms, intermittency, and land use.' },
+  { number: 5, title: 'hydroelectric power', description: 'dams, run-of-river, pros/cons, and ecological impacts.' },
+  { number: 6, title: 'geothermal energy', description: 'heat pumps, power plants, and geographic limitations.' },
+  { number: 7, title: 'biofuels & ethanol', description: 'corn ethanol, biodiesel, land use, and EROI.' },
+  { number: 8, title: 'nuclear energy', description: 'fission vs fusion, waste, Chernobyl, Fukushima.' },
+  { number: 9, title: 'energy efficiency', description: 'EROI calculations, CAFE standards, conservation.' },
+  { number: 10, title: 'cogeneration', description: 'combined heat and power, efficiency gains.' },
 ]
 
 export default function APESUnit6Page() {

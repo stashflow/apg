@@ -3,11 +3,18 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'agriculture & irrigation', description: 'green revolution, GMOs, irrigation methods (flood, drip, furrow), and water use efficiency.' },
-  { number: 2, title: 'deforestation', description: 'causes, effects on carbon/water cycles, slash-and-burn, and sustainable forestry practices.' },
-  { number: 3, title: 'urbanization', description: 'urban heat islands, impervious surfaces, sprawl, smart growth, and green infrastructure.' },
-  { number: 4, title: 'fisheries', description: 'maximum sustainable yield, overfishing, bycatch, aquaculture pros/cons, and fishing regulations.' },
-  { number: 5, title: 'mining', description: 'surface vs. subsurface mining, acid mine drainage, tailings, mountaintop removal, and remediation.' },
+  { number: 1, title: 'tragedy of the commons', description: 'shared resources, overexploitation, and solutions.' },
+  { number: 2, title: 'green revolution', description: 'high-yield crops, fertilizers, irrigation, and impacts.' },
+  { number: 3, title: 'pest control methods', description: 'pesticides, IPM, biological control, and resistance.' },
+  { number: 4, title: 'meat production & CAFOs', description: 'concentrated animal feeding operations and environmental costs.' },
+  { number: 5, title: 'aquaculture', description: 'fish farming pros/cons, escapees, and pollution.' },
+  { number: 6, title: 'sustainable agriculture', description: 'crop rotation, organic farming, and permaculture.' },
+  { number: 7, title: 'deforestation', description: 'causes, carbon/water impacts, and sustainable forestry.' },
+  { number: 8, title: 'clear-cutting vs selective cutting', description: 'forest management methods and tradeoffs.' },
+  { number: 9, title: 'urbanization', description: 'heat islands, sprawl, smart growth, green infrastructure.' },
+  { number: 10, title: 'aquifer depletion', description: 'Ogallala aquifer, subsidence, and groundwater mining.' },
+  { number: 11, title: 'dams & desalination', description: 'water management tradeoffs and energy costs.' },
+  { number: 12, title: 'mining', description: 'surface vs subsurface, acid drainage, and remediation.' },
 ]
 
 export default function APESUnit5Page() {

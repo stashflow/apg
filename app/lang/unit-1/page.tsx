@@ -4,13 +4,15 @@ export const dynamic = 'force-dynamic'
 
 const topics = [
   { number: 1, title: 'speaker, audience & purpose', description: 'who speaks, who listens, and why — the three anchors of every rhetorical act.' },
-  { number: 2, title: 'exigence, context & occasion', description: 'the "why now?" — the urgent problem that calls rhetoric into existence, and the circumstances surrounding it.' },
-  { number: 3, title: 'message & SOAPSTone', description: 'how to break down any text: Subject, Occasion, Audience, Purpose, Speaker, Tone — the full method.' },
-  { number: 4, title: 'rhetorical triangle', description: 'Aristotle\'s model of rhetoric — the speaker, audience, and subject as three interlocking forces.' },
-  { number: 5, title: 'ethos, pathos & logos', description: 'the three classical appeals — credibility, emotion, and logic — and how writers deploy them strategically.' },
-  { number: 6, title: 'tone & shift in tone', description: 'how word choice, syntax, and context create tone — and how writers shift tone to create complexity.' },
-  { number: 7, title: 'point of view', description: 'first, second, and third person — and how POV shapes the reader\'s relationship to the text.' },
-  { number: 8, title: 'appeals to values & beliefs', description: 'how writers connect to audience values, beliefs, and cultural assumptions to make arguments persuasive.' },
+  { number: 2, title: 'exigence, context & occasion', description: 'the "why now?" — the urgent problem that calls rhetoric into existence.' },
+  { number: 3, title: 'kairos', description: 'the opportune moment — why a text is effective at a particular time and place.' },
+  { number: 4, title: 'genre & medium', description: 'how the form of communication (speech, essay, tweet) shapes rhetorical choices.' },
+  { number: 5, title: 'message & SOAPSTone', description: 'Subject, Occasion, Audience, Purpose, Speaker, Tone — the full breakdown method.' },
+  { number: 6, title: 'rhetorical triangle', description: 'Aristotle\'s model — speaker, audience, and subject as interlocking forces.' },
+  { number: 7, title: 'ethos, pathos & logos', description: 'the three classical appeals — credibility, emotion, and logic.' },
+  { number: 8, title: 'speaker-audience relationship', description: 'how the speaker establishes connection, trust, and rapport with their audience.' },
+  { number: 9, title: 'tone & shift in tone', description: 'how word choice and syntax create tone, and how shifts create complexity.' },
+  { number: 10, title: 'intended effect', description: 'what the writer wants the audience to think, feel, or do after reading.' },
 ]
 
 export default function LangUnit1Page() {

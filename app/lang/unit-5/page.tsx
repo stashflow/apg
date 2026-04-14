@@ -3,12 +3,16 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'combining appeals & evidence', description: 'how to layer ethos, pathos, and logos with evidence types to create persuasive, multidimensional arguments.' },
-  { number: 2, title: 'strong thesis construction', description: 'the anatomy of a high-scoring thesis — defensible, specific, nuanced, with a clear line of reasoning implied.' },
-  { number: 3, title: 'topic sentences & commentary integration', description: 'how to write topic sentences that connect to the thesis, and commentary that goes beyond restating evidence.' },
-  { number: 4, title: 'transitions & cohesion', description: 'transition words, phrases, and techniques that create flow — and how cohesion earns points on every FRQ.' },
-  { number: 5, title: 'essay organization', description: 'intro-body-conclusion structure, alternative arrangements, and how organization serves the argument.' },
-  { number: 6, title: 'introduction & conclusion techniques', description: 'hooks, context-setting, and thesis placement for intros; synthesis, call-to-action, and resonance for conclusions.' },
+  { number: 1, title: 'combining appeals & evidence', description: 'layering ethos, pathos, logos with evidence for persuasive arguments.' },
+  { number: 2, title: 'strong thesis construction', description: 'defensible, specific, nuanced thesis with clear line of reasoning.' },
+  { number: 3, title: 'embedding quotations', description: 'integrating quotes smoothly into your sentences without awkwardness.' },
+  { number: 4, title: 'blending evidence', description: 'weaving evidence into analysis rather than dumping quotes.' },
+  { number: 5, title: 'avoiding summary', description: 'analyzing rather than retelling — the key to commentary.' },
+  { number: 6, title: 'topic sentences & commentary', description: 'connecting to thesis and going beyond restating evidence.' },
+  { number: 7, title: 'transitions & cohesion', description: 'words, phrases, and techniques that create flow.' },
+  { number: 8, title: 'essay organization', description: 'intro-body-conclusion and alternative arrangements.' },
+  { number: 9, title: 'introduction & conclusion', description: 'hooks, context, thesis placement; synthesis and resonance.' },
+  { number: 10, title: 'sophistication point', description: 'what it means, how to earn it, and strategies for every essay.' },
 ]
 
 export default function LangUnit5Page() {

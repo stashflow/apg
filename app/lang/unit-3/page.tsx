@@ -3,12 +3,17 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'line of reasoning', description: 'how claims connect logically — the thread that ties thesis to subclaims to evidence to conclusion.' },
-  { number: 2, title: 'inductive & deductive reasoning', description: 'bottom-up (specific → general) vs. top-down (general → specific) — and how to identify each in passages.' },
-  { number: 3, title: 'cause & effect, compare & contrast', description: 'two common organizational modes — how writers use them and how to write about them in analysis essays.' },
-  { number: 4, title: 'definition, classification & exemplification', description: 'three rhetorical strategies for developing ideas — how to identify and write about each one.' },
-  { number: 5, title: 'organizational patterns', description: 'chronological, spatial, problem-solution, order of importance — how structure itself creates meaning.' },
-  { number: 6, title: 'logical fallacies', description: 'straw man, ad hominem, slippery slope, circular reasoning, false dilemma, hasty generalization, red herring — define, identify, explain effect.' },
+  { number: 1, title: 'line of reasoning', description: 'how claims connect logically — thesis to subclaims to evidence to conclusion.' },
+  { number: 2, title: 'inductive & deductive reasoning', description: 'specific → general vs general → specific reasoning patterns.' },
+  { number: 3, title: 'analogy as reasoning', description: 'using comparison to make abstract ideas concrete and persuasive.' },
+  { number: 4, title: 'cause & effect', description: 'analyzing and writing about causal relationships.' },
+  { number: 5, title: 'compare & contrast', description: 'using similarities and differences to develop arguments.' },
+  { number: 6, title: 'definition, classification & exemplification', description: 'three strategies for developing and clarifying ideas.' },
+  { number: 7, title: 'organizational patterns', description: 'chronological, spatial, problem-solution, order of importance.' },
+  { number: 8, title: 'straw man & ad hominem', description: 'attacking a weakened version or attacking the person.' },
+  { number: 9, title: 'slippery slope & false dilemma', description: 'exaggerated chain reactions and either/or reasoning.' },
+  { number: 10, title: 'hasty generalization & circular reasoning', description: 'insufficient evidence and conclusions that assume themselves.' },
+  { number: 11, title: 'faulty causation', description: 'post hoc fallacy and confusing correlation with causation.' },
 ]
 
 export default function LangUnit3Page() {

@@ -3,12 +3,16 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'perspective & bias', description: 'how a writer\'s background, identity, and experience shape what they argue — and what they leave out.' },
-  { number: 2, title: 'assumptions & cultural context', description: 'the unstated beliefs a writer assumes the audience shares — and how cultural context changes interpretation.' },
-  { number: 3, title: 'historical context', description: 'how the historical moment shapes a text\'s meaning — and why understanding context is essential to analysis.' },
-  { number: 4, title: 'intended audience & speaker credibility', description: 'who the writer is writing for, how credibility (ethos) is established or undermined, and why it matters.' },
-  { number: 5, title: 'multiple viewpoints', description: 'how to identify, represent, and evaluate competing perspectives on an issue — the foundation of synthesis.' },
-  { number: 6, title: 'author\'s position & reliability of a source', description: 'evaluating where a source comes from, what agenda it may have, and how to assess its trustworthiness.' },
+  { number: 1, title: 'perspective & bias', description: 'how a writer\'s background shapes what they argue and leave out.' },
+  { number: 2, title: 'recognizing bias in evidence', description: 'identifying slanted data, cherry-picked examples, and agenda.' },
+  { number: 3, title: 'loaded language', description: 'emotionally charged words that influence reader response.' },
+  { number: 4, title: 'propaganda techniques', description: 'bandwagon, card stacking, glittering generalities, and more.' },
+  { number: 5, title: 'assumptions & cultural context', description: 'unstated beliefs and how culture changes interpretation.' },
+  { number: 6, title: 'historical context', description: 'how the historical moment shapes a text\'s meaning.' },
+  { number: 7, title: 'credibility vs reliability', description: 'author credentials vs factual accuracy and source quality.' },
+  { number: 8, title: 'primary vs secondary sources', description: 'firsthand accounts vs interpretations and analyses.' },
+  { number: 9, title: 'multiple viewpoints', description: 'identifying and evaluating competing perspectives.' },
+  { number: 10, title: 'author\'s position & agenda', description: 'evaluating source origin and potential biases.' },
 ]
 
 export default function LangUnit6Page() {

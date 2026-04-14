@@ -1,13 +1,18 @@
 import { UnitPage } from '@/components/unit-page'
 
 const topics = [
-  { number: 1, title: 'climate change & greenhouse gases', description: 'the enhanced greenhouse effect, CO₂, methane, N₂O, water vapor — sources and global warming potential.' },
-  { number: 2, title: 'carbon cycle', description: 'carbon sources, sinks, feedbacks (permafrost, ice-albedo), and the role of the ocean.', videoId: 'pFrfOnw8TFs' },
-  { number: 3, title: 'sea level rise', description: 'thermal expansion, glacial melt, rate of rise, vulnerable regions, and projected impacts.' },
-  { number: 4, title: 'mitigation & adaptation', description: 'carbon taxes, cap-and-trade, carbon capture, renewable transitions, and community adaptation.' },
-  { number: 5, title: 'environmental laws & treaties', description: 'Clean Air Act, Clean Water Act, NEPA, ESA, Paris Agreement, Kyoto Protocol — know them all.' },
-  { number: 6, title: 'apes formulas & calculations', description: 'EROI, NPP, population growth rate, percent change, LD50, pH — every calculation the FRQ tests.' },
-  { number: 7, title: 'frq practice', description: 'structured FRQ strategies, identify-describe-explain-solve framework, and high-scoring sample answers.' },
+  { number: 1, title: 'greenhouse effect', description: 'enhanced effect, CO₂, methane, N₂O, global warming potential.' },
+  { number: 2, title: 'carbon cycle & feedbacks', description: 'sources, sinks, permafrost, ice-albedo feedback.', videoId: 'pFrfOnw8TFs' },
+  { number: 3, title: 'ocean warming & acidification', description: 'CO₂ absorption, pH changes, coral bleaching.' },
+  { number: 4, title: 'sea level rise', description: 'thermal expansion, glacial melt, vulnerable regions.' },
+  { number: 5, title: 'climate impacts on biodiversity', description: 'range shifts, phenology, extinctions.' },
+  { number: 6, title: 'climate tipping points', description: 'permafrost, ice sheets, and irreversible changes.' },
+  { number: 7, title: 'mitigation strategies', description: 'carbon taxes, cap-and-trade, carbon capture.' },
+  { number: 8, title: 'climate treaties', description: 'Montreal Protocol, Kyoto Protocol, Paris Agreement.' },
+  { number: 9, title: 'carbon footprint', description: 'calculating personal and national carbon emissions.' },
+  { number: 10, title: 'environmental laws', description: 'Clean Air Act, Clean Water Act, NEPA, ESA.' },
+  { number: 11, title: 'apes formulas', description: 'EROI, NPP, growth rate, percent change, LD50, pH.' },
+  { number: 12, title: 'frq practice', description: 'identify-describe-explain-solve framework and strategies.' },
 ]
 
 export default function APESUnit9Page() {

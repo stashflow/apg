@@ -3,11 +3,16 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'water pollution', description: 'point vs. nonpoint source pollution, pathogens, heavy metals, nitrates, and the Clean Water Act.' },
-  { number: 2, title: 'eutrophication', description: 'nutrient loading, algal blooms, hypoxic dead zones, biological oxygen demand (BOD), and Chesapeake Bay.' },
-  { number: 3, title: 'waste disposal', description: 'landfills, leachate, incineration, composting, the 5 Rs hierarchy, and e-waste.' },
-  { number: 4, title: 'oil spills', description: 'Deepwater Horizon and Exxon Valdez case studies, cleanup methods, and ecosystem recovery timelines.' },
-  { number: 5, title: 'plastic pollution', description: 'microplastics, ocean gyres, bioaccumulation, and policy responses to plastic waste.' },
+  { number: 1, title: 'water pollution sources', description: 'point vs nonpoint, pathogens, heavy metals, nitrates.' },
+  { number: 2, title: 'thermal pollution', description: 'power plant cooling, dissolved oxygen, and aquatic life.' },
+  { number: 3, title: 'eutrophication', description: 'nutrient loading, algal blooms, hypoxic dead zones, BOD.' },
+  { number: 4, title: 'bioaccumulation & biomagnification', description: 'toxins concentrating up the food chain.' },
+  { number: 5, title: 'pathogens & disease', description: 'waterborne diseases, fecal coliform, and treatment.' },
+  { number: 6, title: 'sewage treatment', description: 'primary, secondary, tertiary treatment, and septic systems.' },
+  { number: 7, title: 'solid waste & landfills', description: 'sanitary landfills, leachate, methane, and the 5 Rs.' },
+  { number: 8, title: 'incineration & hazardous waste', description: 'burning waste, toxic ash, and disposal methods.' },
+  { number: 9, title: 'oil spills', description: 'Deepwater Horizon, Exxon Valdez, cleanup, recovery.' },
+  { number: 10, title: 'plastic pollution', description: 'microplastics, ocean gyres, and policy responses.' },
 ]
 
 export default function APESUnit8Page() {

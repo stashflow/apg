@@ -3,12 +3,15 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'main claim & subclaim', description: 'the difference between a thesis (main claim) and the supporting claims (subclaims) that scaffold it.' },
-  { number: 2, title: 'thesis statement construction', description: 'how to write a defensible, specific, nuanced thesis — with templates and examples that score full points.' },
-  { number: 3, title: 'types of evidence', description: 'anecdotes, statistics, historical examples, expert testimony, personal experience, and analogy — all defined with exam use cases.' },
-  { number: 4, title: 'evidence relevance & sufficiency', description: 'how graders judge whether evidence is on-topic, adequate in amount, and actually supports the claim.' },
-  { number: 5, title: 'commentary & analysis', description: 'the "so what?" — how to explain why your evidence matters and connect it back to your thesis without just summarizing.' },
-  { number: 6, title: 'counterclaim, rebuttal & concession', description: 'how to acknowledge opposing views, concede valid points, and refute effectively — the mark of a sophisticated argument.' },
+  { number: 1, title: 'main claim & subclaim', description: 'thesis (main claim) vs supporting claims (subclaims) that scaffold it.' },
+  { number: 2, title: 'implicit vs explicit claims', description: 'stated claims vs claims the reader must infer from context.' },
+  { number: 3, title: 'thesis statement construction', description: 'defensible, specific, nuanced thesis — templates and examples.' },
+  { number: 4, title: 'qualification of claims', description: 'using "although," "while," "to an extent" to add nuance.' },
+  { number: 5, title: 'types of evidence', description: 'anecdotal, empirical, statistical, expert testimony, and analogy.' },
+  { number: 6, title: 'evidence relevance & sufficiency', description: 'on-topic, adequate, and actually supporting the claim.' },
+  { number: 7, title: 'warrant', description: 'the "why this evidence matters" — connecting evidence to claim.' },
+  { number: 8, title: 'commentary & analysis', description: 'the "so what?" — explaining why evidence supports your thesis.' },
+  { number: 9, title: 'counterclaim, rebuttal & concession', description: 'acknowledging, conceding, and refuting opposing views.' },
 ]
 
 export default function LangUnit2Page() {

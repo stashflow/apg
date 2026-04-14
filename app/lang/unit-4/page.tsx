@@ -3,12 +3,17 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'diction & syntax', description: 'word choice (connotation, denotation, register) and sentence structure (length, type, order) — and how each creates meaning.' },
-  { number: 2, title: 'imagery & figurative language', description: 'visual, auditory, tactile imagery — plus metaphor, simile, personification, and how they create emotional impact.' },
-  { number: 3, title: 'juxtaposition & parallelism', description: 'placing contrasting ideas side by side (juxtaposition) and using matching grammatical structure (parallelism) for emphasis.' },
-  { number: 4, title: 'anaphora, antithesis & repetition', description: 'anaphora (repeated openings), antithesis (contrasted opposites), and repetition — all as tools of emphasis and rhythm.' },
-  { number: 5, title: 'polysyndeton & asyndeton', description: 'adding many conjunctions (polysyndeton, slow/overwhelming) vs. removing them (asyndeton, fast/forceful) — know the effect of each.' },
-  { number: 6, title: 'sentence variety & formal vs informal style', description: 'mixing short and long sentences for rhythm, and the difference between formal, informal, and colloquial register.' },
+  { number: 1, title: 'diction & syntax', description: 'word choice (connotation, denotation, register) and sentence structure.' },
+  { number: 2, title: 'periodic vs loose sentences', description: 'delaying the main clause for suspense vs front-loading it for clarity.' },
+  { number: 3, title: 'imagery & figurative language', description: 'visual, auditory, tactile imagery plus metaphor, simile, personification.' },
+  { number: 4, title: 'understatement & litotes', description: 'downplaying for effect and double negatives for emphasis.' },
+  { number: 5, title: 'paradox & oxymoron', description: 'apparent contradictions that reveal deeper truths.' },
+  { number: 6, title: 'metonymy & synecdoche', description: 'substitution by association or part-for-whole.' },
+  { number: 7, title: 'juxtaposition & parallelism', description: 'contrasting ideas side by side and matching grammatical structure.' },
+  { number: 8, title: 'anaphora, antithesis & repetition', description: 'repeated openings, contrasted opposites, and emphasis through repetition.' },
+  { number: 9, title: 'polysyndeton & asyndeton', description: 'many conjunctions (slow) vs none (fast/forceful).' },
+  { number: 10, title: 'rhetorical question', description: 'questions asked for effect rather than answers.' },
+  { number: 11, title: 'sentence variety & register', description: 'mixing sentence lengths and formal vs informal style.' },
 ]
 
 export default function LangUnit4Page() {

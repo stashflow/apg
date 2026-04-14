@@ -3,11 +3,15 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'plate tectonics', description: 'tectonic plates, convergent/divergent/transform boundaries, earthquakes, volcanoes, and soil formation.' },
-  { number: 2, title: 'soil formation', description: 'parent material, weathering, O-A-B-C-R horizons, soil texture, permeability, and fertility.' },
-  { number: 3, title: 'watersheds', description: 'watershed structure, groundwater vs. surface water, aquifer types, and water table dynamics.' },
-  { number: 4, title: 'atmospheric circulation', description: 'Hadley/Ferrel/Polar cells, trade winds, Coriolis effect, rain shadows, and climate zones.' },
-  { number: 5, title: 'ocean currents', description: 'thermohaline circulation, El Niño/La Niña (ENSO), upwelling, and climate impacts.' },
+  { number: 1, title: 'plate tectonics', description: 'convergent/divergent/transform boundaries, earthquakes, volcanoes.' },
+  { number: 2, title: 'soil formation & erosion', description: 'weathering, horizons, texture, permeability, and erosion.' },
+  { number: 3, title: 'watersheds & aquifers', description: 'groundwater vs surface water, aquifer types, water table.' },
+  { number: 4, title: 'atmospheric layers', description: 'troposphere, stratosphere, mesosphere, thermosphere.' },
+  { number: 5, title: 'global wind patterns', description: 'Hadley/Ferrel/Polar cells, trade winds, Coriolis effect.' },
+  { number: 6, title: 'geography & climate', description: 'latitude, altitude, proximity to water, and rain shadows.' },
+  { number: 7, title: 'el niño & la niña', description: 'ENSO cycle, ocean temperature changes, and global impacts.' },
+  { number: 8, title: 'thermal inversion', description: 'temperature inversions, trapped pollutants, and smog.' },
+  { number: 9, title: 'ocean currents', description: 'thermohaline circulation, upwelling, and climate effects.' },
 ]
 
 export default function APESUnit4Page() {
