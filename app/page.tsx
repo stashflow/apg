@@ -233,12 +233,12 @@ export default function HomePage() {
           }}
         >
           <div
-            className="relative flex flex-col items-center px-5 py-3"
+            className="relative flex flex-col items-center px-3 py-2"
             style={{
-              background: 'rgba(5,13,26,0.85)',
-              backdropFilter: 'blur(16px)',
-              border: '1px solid rgba(26,108,245,0.28)',
-              boxShadow: '0 0 24px rgba(26,108,245,0.14), 0 0 48px rgba(0,212,255,0.05)',
+              background: 'rgba(5,13,26,0.8)',
+              backdropFilter: 'blur(14px)',
+              border: '1px solid rgba(26,108,245,0.24)',
+              boxShadow: '0 0 16px rgba(26,108,245,0.1)',
             }}
           >
             {/* Top shimmer line */}
@@ -260,88 +260,18 @@ export default function HomePage() {
               }}
             />
 
-            {/* bsp wordmark — b s p large (lowercase), surrounding letters small */}
+            {/* bsp — just three letters */}
             <h1
-              className="flex items-baseline gap-0 leading-none select-none"
-              aria-label="best study plan"
+              className="font-black leading-none select-none"
+              style={{
+                fontSize: '1rem',
+                color: '#00d4ff',
+                letterSpacing: '-0.02em',
+                lineHeight: 1,
+              }}
             >
-              {/* b — large, est — small */}
-              <span
-                className="font-black"
-                style={{ color: '#00d4ff', fontSize: 'clamp(1.4rem, 2.8vw, 2.2rem)', letterSpacing: '-0.02em', lineHeight: 1 }}
-              >
-                b
-              </span>
-              <span
-                className="font-semibold"
-                style={{ color: '#b8d0ee', fontSize: 'clamp(0.5rem, 0.85vw, 0.72rem)', opacity: 0.65, marginRight: '0.14em', letterSpacing: '0.02em' }}
-              >
-                est
-              </span>
-
-              {/* s — large, tudy — small */}
-              <span
-                className="font-black"
-                style={{ color: '#1a6cf5', fontSize: 'clamp(1.4rem, 2.8vw, 2.2rem)', letterSpacing: '-0.02em', lineHeight: 1 }}
-              >
-                s
-              </span>
-              <span
-                className="font-semibold"
-                style={{ color: '#b8d0ee', fontSize: 'clamp(0.5rem, 0.85vw, 0.72rem)', opacity: 0.65, marginRight: '0.14em', letterSpacing: '0.02em' }}
-              >
-                tudy
-              </span>
-
-              {/* p — large, lan — small, . — accent */}
-              <span
-                className="font-black"
-                style={{ color: '#38a8ff', fontSize: 'clamp(1.4rem, 2.8vw, 2.2rem)', letterSpacing: '-0.02em', lineHeight: 1 }}
-              >
-                p
-              </span>
-              <span
-                className="font-semibold"
-                style={{ color: '#b8d0ee', fontSize: 'clamp(0.5rem, 0.85vw, 0.72rem)', opacity: 0.65, letterSpacing: '0.02em' }}
-              >
-                lan
-              </span>
-              <span
-                className="font-black"
-                style={{ color: '#00d4ff', fontSize: 'clamp(0.9rem, 1.8vw, 1.4rem)', lineHeight: 1, marginLeft: '1px' }}
-              >
-                .
-              </span>
+              bsp
             </h1>
-
-            {/* URL + dots row */}
-            <div className="flex items-center gap-2 mt-1.5">
-              {[
-                { color: '#22c55e', delay: '0s' },
-                { color: '#ef4444', delay: '0.25s' },
-                { color: '#a855f7', delay: '0.5s' },
-                { color: '#14b8a6', delay: '0.75s' },
-              ].map((d, i) => (
-                <div key={i} className="relative flex items-center justify-center w-2.5 h-2.5">
-                  <div
-                    className="absolute rounded-full"
-                    style={{
-                      width: '10px', height: '10px',
-                      background: d.color,
-                      opacity: 0.3,
-                      animation: `pulse-ring 2s ease-out ${d.delay} infinite`,
-                    }}
-                  />
-                  <div className="w-1 h-1 rounded-full relative" style={{ background: d.color }} />
-                </div>
-              ))}
-              <span
-                className="font-mono"
-                style={{ color: '#2a4a6a', fontSize: '0.55rem', letterSpacing: '0.1em', marginLeft: '2px' }}
-              >
-                bsp.ezo.lol
-              </span>
-            </div>
           </div>
         </div>
       </div>
