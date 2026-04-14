@@ -15,4 +15,6 @@ export default function APESUnit5Page() {
       unit={{ number: 5, title: 'land & water use', examWeight: '10–15%', description: 'how humans use land and water — and the environmental consequences of those choices.' }}
       topics={topics}
       basePath="/apes/unit-5"
+      courseHref="/apes"
       videoId="Aq2K9R9lrtA"
+      examDate={{ date: 'Tuesday, May 6, 2025', time: '8:00 AM' }}

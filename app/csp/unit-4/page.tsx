@@ -16,8 +16,9 @@ export default function CSPUnit4Page() {
       unit={{ number: 4, title: 'big idea 4: computer systems & networks', examWeight: '11–15%', description: 'the internet\'s architecture, protocols, routing, and cybersecurity — clear conceptual understanding required.' }}
       topics={topics}
       basePath="/csp/unit-4"
-      videoId="4O_LEV3aHcU"
       courseHref="/csp"
+      videoId="4O_LEV3aHcU"
+      examDate={{ date: 'Thursday, May 15, 2025', time: '12:00 PM' }}
     />
   )
 }

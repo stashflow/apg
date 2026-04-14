@@ -15,4 +15,6 @@ export default function APESUnit6Page() {
       unit={{ number: 6, title: 'energy resources & consumption', examWeight: '10–15%', description: 'fossil fuels, renewables, nuclear power, and energy efficiency — tradeoffs and sustainability.' }}
       topics={topics}
       basePath="/apes/unit-6"
+      courseHref="/apes"
       videoId="kGS5gx_KLG0"
+      examDate={{ date: 'Tuesday, May 6, 2025', time: '8:00 AM' }}

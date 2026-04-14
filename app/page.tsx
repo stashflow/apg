@@ -165,37 +165,6 @@ function CourseTile({ course }: { course: typeof courses[0] }) {
   )
 }
 
-const examDates = [
-  {
-    course: 'AP Environmental Science',
-    short: 'apes',
-    date: 'Tuesday, May 6, 2025',
-    time: '8:00 AM',
-    accent: '#22c55e',
-  },
-  {
-    course: 'AP U.S. History',
-    short: 'apush',
-    date: 'Friday, May 9, 2025',
-    time: '8:00 AM',
-    accent: '#ef4444',
-  },
-  {
-    course: 'AP Computer Science Principles',
-    short: 'ap csp',
-    date: 'Thursday, May 15, 2025',
-    time: '12:00 PM',
-    accent: '#14b8a6',
-  },
-  {
-    course: 'AP Language & Composition',
-    short: 'ap lang',
-    date: 'Friday, May 16, 2025',
-    time: '12:00 PM',
-    accent: '#a855f7',
-  },
-]
-
 export default function HomePage() {
   const [loaded, setLoaded] = useState(false)
 
@@ -209,57 +178,10 @@ export default function HomePage() {
       className="relative w-full overflow-hidden"
       style={{ height: '100dvh', minHeight: '100svh' }}
     >
-      {/* Exam dates header — shown on top */}
-      <div
-        className="absolute top-0 left-0 right-0 z-50 px-6 md:px-12 pt-6 pb-4"
-        style={{
-          background: 'linear-gradient(180deg, rgba(5,13,26,0.95), transparent)',
-          backdropFilter: 'blur(8px)',
-          borderBottom: '1px solid rgba(26,108,245,0.15)',
-        }}
-      >
-        <div
-          style={{
-            opacity: loaded ? 1 : 0,
-            transform: loaded ? 'translateY(0)' : 'translateY(-16px)',
-            transition: 'all 0.6s ease 0.2s',
-          }}
-        >
-          <p className="font-mono text-xs tracking-widest uppercase mb-3" style={{ color: '#4a7090' }}>
-            2025 AP exam dates
-          </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {examDates.map((exam, i) => (
-              <div
-                key={exam.short}
-                className="p-3 border rounded-sm"
-                style={{
-                  borderColor: `${exam.accent}33`,
-                  background: `${exam.accent}08`,
-                  opacity: loaded ? 1 : 0,
-                  transform: loaded ? 'translateY(0)' : 'translateY(-12px)',
-                  transition: `opacity 0.5s ease ${0.3 + i * 0.05}s, transform 0.5s ease ${0.3 + i * 0.05}s`,
-                }}
-              >
-                <p className="font-mono text-xs tracking-widest uppercase mb-1" style={{ color: exam.accent }}>
-                  {exam.short}
-                </p>
-                <p className="text-xs font-bold leading-tight mb-1" style={{ color: '#f0f6ff' }}>
-                  {exam.date}
-                </p>
-                <p className="text-xs" style={{ color: '#7a9ab0' }}>
-                  {exam.time}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* 2×2 grid — no gap, completely fills viewport */}
       <div
         className="grid w-full h-full"
-        style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr', paddingTop: '180px' }}
+        style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr' }}
       >
         {courses.map((course, i) => {
           const dirs = [

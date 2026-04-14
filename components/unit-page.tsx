@@ -28,9 +28,13 @@ interface UnitPageProps {
   basePath: string
   courseHref: string
   videoId?: string
+  examDate?: {
+    date: string
+    time: string
+  }
 }
 
-export function UnitPage({ course, unit, topics, basePath, courseHref, videoId }: UnitPageProps) {
+export function UnitPage({ course, unit, topics, basePath, courseHref, videoId, examDate }: UnitPageProps) {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
@@ -191,6 +195,43 @@ export function UnitPage({ course, unit, topics, basePath, courseHref, videoId }
             ))}
           </div>
         </div>
+
+        {/* Exam date section at bottom */}
+        {examDate && (
+          <div
+            className="mt-16 pt-8 border-t"
+            style={{ borderColor: 'rgba(26,108,245,0.2)' }}
+          >
+            <div
+              style={{
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? 'translateY(0)' : 'translateY(16px)',
+                transition: 'opacity 0.6s ease 0.4s, transform 0.6s ease 0.4s',
+              }}
+            >
+              <p className="font-mono text-xs tracking-widest uppercase mb-4" style={{ color: '#4a7090' }}>
+                exam date
+              </p>
+              <div
+                className="p-6 border rounded-sm inline-block"
+                style={{
+                  borderColor: `${course.accent}44`,
+                  background: `${course.accent}0a`,
+                }}
+              >
+                <p className="font-mono text-xs tracking-[0.15em] uppercase mb-2" style={{ color: course.accent }}>
+                  {course.label}
+                </p>
+                <p className="text-2xl font-black lowercase leading-tight mb-2" style={{ color: '#f0f6ff' }}>
+                  {examDate.date}
+                </p>
+                <p className="text-sm font-mono" style={{ color: '#b8d0ee' }}>
+                  {examDate.time} local time
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )

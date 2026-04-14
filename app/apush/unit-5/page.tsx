@@ -18,4 +18,6 @@ export default function APUSHUnit5Page() {
       unit={{ number: 5, title: 'period 5: 1844–1877', examWeight: '10–17%', description: 'manifest destiny, civil war, and reconstruction — the most consequential decades in American history.' }}
       topics={topics}
       basePath="/apush/unit-5"
+      courseHref="/apush"
       videoId="MccUPVz1V2I"
+      examDate={{ date: 'Friday, May 9, 2025', time: '8:00 AM' }}

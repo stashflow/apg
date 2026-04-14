@@ -16,4 +16,6 @@ export default function APUSHUnit9Page() {
       unit={{ number: 9, title: 'period 9: 1980–present', examWeight: '4–6%', description: 'conservatism\'s rise, the end of the cold war, 9/11, and essay mastery for every APUSH FRQ format.' }}
       topics={topics}
       basePath="/apush/unit-9"
+      courseHref="/apush"
       videoId="uKLVN5SqBj8"
+      examDate={{ date: 'Friday, May 9, 2025', time: '8:00 AM' }}

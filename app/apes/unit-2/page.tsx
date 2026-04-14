@@ -16,4 +16,6 @@ export default function APESUnit2Page() {
       unit={{ number: 2, title: 'the living world: biodiversity', examWeight: '6–8%', description: 'three levels of biodiversity, threats to species, and conservation strategies.' }}
       topics={topics}
       basePath="/apes/unit-2"
+      courseHref="/apes"
       videoId="OWqXAL1uJ3I"
+      examDate={{ date: 'Tuesday, May 6, 2025', time: '8:00 AM' }}

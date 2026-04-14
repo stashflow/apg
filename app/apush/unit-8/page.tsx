@@ -16,4 +16,6 @@ export default function APUSHUnit8Page() {
       unit={{ number: 8, title: 'period 8: 1945–1980', examWeight: '10–17%', description: 'Cold War, civil rights, Vietnam, Great Society, and the collapse of liberal consensus.' }}
       topics={topics}
       basePath="/apush/unit-8"
+      courseHref="/apush"
       videoId="s4Dqk9FdOms"
+      examDate={{ date: 'Friday, May 9, 2025', time: '8:00 AM' }}

@@ -19,3 +19,4 @@ export default function APUSHUnit4Page() {
       topics={topics}
       basePath="/apush/unit-4"
       videoId="6_rR4t1D4G4"
+      examDate={{ date: 'Friday, May 9, 2025', time: '8:00 AM' }}

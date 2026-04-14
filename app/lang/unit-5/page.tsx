@@ -16,8 +16,9 @@ export default function LangUnit5Page() {
       unit={{ number: 5, title: 'putting it all together', examWeight: '11–14%', description: 'synthesizing every skill — how to build, organize, and polish a complete AP Lang essay.' }}
       topics={topics}
       basePath="/lang/unit-5"
-      videoId="0w-R4z4wvFU"
       courseHref="/lang"
+      videoId="0w-R4z4wvFU"
+      examDate={{ date: 'Friday, May 16, 2025', time: '12:00 PM' }}
     />
   )
 }

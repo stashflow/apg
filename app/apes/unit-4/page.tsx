@@ -15,4 +15,6 @@ export default function APESUnit4Page() {
       unit={{ number: 4, title: 'earth systems & resources', examWeight: '10–15%', description: 'earth\'s physical systems — geology, soil, atmosphere, and ocean currents.' }}
       topics={topics}
       basePath="/apes/unit-4"
+      courseHref="/apes"
       videoId="T5YzZxMBg_0"
+      examDate={{ date: 'Tuesday, May 6, 2025', time: '8:00 AM' }}

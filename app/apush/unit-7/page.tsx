@@ -17,4 +17,6 @@ export default function APUSHUnit7Page() {
       unit={{ number: 7, title: 'period 7: 1890–1945', examWeight: '10–17%', description: 'progressive reform, two world wars, the depression, and the New Deal — a half-century of upheaval.' }}
       topics={topics}
       basePath="/apush/unit-7"
+      courseHref="/apush"
       videoId="qSJiXsw-xMU"
+      examDate={{ date: 'Friday, May 9, 2025', time: '8:00 AM' }}

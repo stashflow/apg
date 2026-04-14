@@ -15,4 +15,6 @@ export default function APESUnit3Page() {
       unit={{ number: 3, title: 'populations', examWeight: '10–15%', description: 'population dynamics, growth models, carrying capacity, and human population patterns.' }}
       topics={topics}
       basePath="/apes/unit-3"
+      courseHref="/apes"
       videoId="AxfIhRlnRcE"
+      examDate={{ date: 'Tuesday, May 6, 2025', time: '8:00 AM' }}

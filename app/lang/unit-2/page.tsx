@@ -16,8 +16,9 @@ export default function LangUnit2Page() {
       unit={{ number: 2, title: 'claims & evidence', examWeight: '11–14%', description: 'how to build and support arguments — thesis construction, evidence types, and commentary.' }}
       topics={topics}
       basePath="/lang/unit-2"
-      videoId="vPJGDf0LmOA"
       courseHref="/lang"
+      videoId="vPJGDf0LmOA"
+      examDate={{ date: 'Friday, May 16, 2025', time: '12:00 PM' }}
     />
   )
 }

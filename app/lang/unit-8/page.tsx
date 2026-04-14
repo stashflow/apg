@@ -17,8 +17,9 @@ export default function LangUnit8Page() {
       unit={{ number: 8, title: 'stylistic choices & frq mastery', examWeight: '11–14%', description: 'advanced style devices plus complete FRQ mastery for all three essay types.' }}
       topics={topics}
       basePath="/lang/unit-8"
-      videoId="xKdJqjT1Yqk"
       courseHref="/lang"
+      videoId="xKdJqjT1Yqk"
+      examDate={{ date: 'Friday, May 16, 2025', time: '12:00 PM' }}
     />
   )
 }

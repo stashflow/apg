@@ -15,4 +15,6 @@ export default function APESUnit1Page() {
       unit={{ number: 1, title: 'the living world: ecosystems', examWeight: '6–8%', description: 'the foundation of APES — energy flow, nutrient cycling, and ecosystem dynamics.' }}
       topics={topics}
       basePath="/apes/unit-1"
+      courseHref="/apes"
       videoId="lZ3bPUKo5zc"
+      examDate={{ date: 'Tuesday, May 6, 2025', time: '8:00 AM' }}
