@@ -9,11 +9,12 @@ const topics = [
   { number: 4, title: 'technology & internet', description: 'digital revolution, social media, and transformation of communication.' },
   { number: 5, title: '9/11 & war on terror', description: 'September 11, PATRIOT Act, Afghanistan, Iraq War, and civil liberties.' },
   { number: 6, title: 'great recession', description: '2008 financial crisis, housing bubble, bank bailouts, and economic inequality.' },
-  { number: 7, title: 'immigration debates', description: 'DACA, border security, and ongoing controversies over immigration policy.' },
-  { number: 8, title: 'modern social movements', description: 'Black Lives Matter, #MeToo, marriage equality, and Obergefell.' },
-  { number: 9, title: 'political polarization', description: 'culture wars, partisan media, Tea Party, and ideological divisions.' },
-  { number: 10, title: 'supreme court landmark cases', description: 'Marbury, McCulloch, Dred Scott, Plessy, Brown, Miranda, Roe, Bush v. Gore.' },
-  { number: 11, title: 'dbq, leq & saq practice', description: 'DBQ strategies, LEQ thesis writing, SAQ precision, and scoring rubrics.', videoId: '3JVrLMpzBIQ' },
+  { number: 7, title: 'affordable care act', description: 'Obamacare, healthcare reform debates, individual mandate, and political backlash.' },
+  { number: 8, title: 'immigration debates', description: 'DACA, border security, and ongoing controversies over immigration policy.' },
+  { number: 9, title: 'modern social movements', description: 'Black Lives Matter, #MeToo, marriage equality, and Obergefell.' },
+  { number: 10, title: 'political polarization', description: 'culture wars, partisan media, Tea Party, and ideological divisions.' },
+  { number: 11, title: 'supreme court landmark cases', description: 'Marbury, McCulloch, Dred Scott, Plessy, Brown, Miranda, Roe, Bush v. Gore.' },
+  { number: 12, title: 'dbq, leq & saq practice', description: 'DBQ strategies, LEQ thesis writing, SAQ precision, and scoring rubrics.', videoId: '3JVrLMpzBIQ' },
 ]
 
 export default function APUSHUnit9Page() {
