@@ -16,7 +16,4 @@ export default function APUSHUnit6Page() {
       unit={{ number: 6, title: 'period 6: 1865–1898', examWeight: '10–17%', description: 'industrialization, immigration, labor struggles, and the birth of modern corporate America.' }}
       topics={topics}
       basePath="/apush/unit-6"
-      courseHref="/apush"
-    />
-  )
-}
+      videoId="h36PX_zM5V4"

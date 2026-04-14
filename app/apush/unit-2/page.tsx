@@ -19,6 +19,7 @@ export default function APUSHUnit2Page() {
       topics={topics}
       basePath="/apush/unit-2"
       courseHref="/apush"
+      videoId="lZ3bPUKo5zc"
     />
   )
 }

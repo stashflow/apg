@@ -15,7 +15,4 @@ export default function APESUnit7Page() {
       unit={{ number: 7, title: 'atmospheric pollution', examWeight: '7–10%', description: 'air pollutants, smog, acid rain, ozone depletion, and indoor air quality.' }}
       topics={topics}
       basePath="/apes/unit-7"
-      courseHref="/apes"
-    />
-  )
-}
+      videoId="Bp_BXxCBf-8"

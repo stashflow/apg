@@ -15,7 +15,4 @@ export default function APESUnit8Page() {
       unit={{ number: 8, title: 'aquatic & terrestrial pollution', examWeight: '7–10%', description: 'water pollution, eutrophication, waste management, oil spills, and plastic pollution.' }}
       topics={topics}
       basePath="/apes/unit-8"
-      courseHref="/apes"
-    />
-  )
-}
+      videoId="H0SUmO0qVxw"

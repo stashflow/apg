@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Space_Grotesk, Space_Mono } from 'next/font/google'
 import './globals.css'
+import { VideoProvider } from '@/contexts/video-context'
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -32,7 +33,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${spaceGrotesk.variable} ${spaceMono.variable} bg-navy`}>
       <body className="font-sans antialiased bg-navy text-white min-h-screen">
-        {children}
+        <VideoProvider>
+          {children}
+        </VideoProvider>
       </body>
     </html>
   )

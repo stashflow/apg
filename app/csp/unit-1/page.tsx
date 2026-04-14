@@ -15,7 +15,4 @@ export default function CSPUnit1Page() {
       unit={{ number: 1, title: 'big idea 1: creative development', examWeight: '10–13%', description: 'the design and collaboration skills behind every program — tested on MCQ and in the Create performance task.' }}
       topics={topics}
       basePath="/csp/unit-1"
-      courseHref="/csp"
-    />
-  )
-}
+      videoId="WmGdF1c3DK4"
