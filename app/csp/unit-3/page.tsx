@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'variables & data types', description: 'storing values with variables, data types (integer, string, boolean, float), and assignment statements in pseudocode.' },
   { number: 2, title: 'conditionals & boolean logic', description: 'IF/ELSE/ELSE IF, AND/OR/NOT operators, truth tables, and how conditionals control program flow.' },

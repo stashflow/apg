@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'line of reasoning', description: 'how claims connect logically — the thread that ties thesis to subclaims to evidence to conclusion.' },
   { number: 2, title: 'inductive & deductive reasoning', description: 'bottom-up (specific → general) vs. top-down (general → specific) — and how to identify each in passages.' },

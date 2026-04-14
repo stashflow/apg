@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'industrialization & railroads', description: 'transcontinental railroad, steel industry, Carnegie\'s vertical integration, and the transformation of the economy.' },
   { number: 2, title: 'big business & gospel of wealth', description: 'Rockefeller\'s Standard Oil, horizontal integration, trusts, Social Darwinism, and Carnegie\'s philanthropy rationale.' },

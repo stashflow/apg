@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'jefferson presidency', description: '"Revolution of 1800," strict construction, reducing federal power, Marbury v. Madison, and judicial review.' },
   { number: 2, title: 'louisiana purchase', description: 'Napoleon\'s sale, constitutional questions, Lewis & Clark, and the expansion of American territory.' },

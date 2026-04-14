@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'diction & syntax', description: 'word choice (connotation, denotation, register) and sentence structure (length, type, order) — and how each creates meaning.' },
   { number: 2, title: 'imagery & figurative language', description: 'visual, auditory, tactile imagery — plus metaphor, simile, personification, and how they create emotional impact.' },

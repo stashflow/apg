@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'carrying capacity', description: 'K, limiting factors (biotic & abiotic), and what happens when populations exceed K.' },
   { number: 2, title: 'population growth models', description: 'exponential (J-curve) vs. logistic (S-curve) growth — equations, graphs, and exam traps.' },

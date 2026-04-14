@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'air pollutants', description: 'primary vs. secondary pollutants, criteria pollutants, CO, SO₂, NOₓ, particulate matter, and VOCs.' },
   { number: 2, title: 'smog', description: 'photochemical smog formation, ground-level ozone, thermal inversions, and LA vs. London smog.' },

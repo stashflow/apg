@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'reagan revolution', description: 'supply-side economics, deregulation, Reaganomics, Iran-Contra, and the resurgence of American conservatism.' },
   { number: 2, title: 'end of cold war & globalization', description: 'fall of the Berlin Wall, USSR dissolution, NAFTA, WTO, and debates over America\'s global role.' },

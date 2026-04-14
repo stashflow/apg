@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'binary numbers & data representation', description: 'converting between binary and decimal, representing text/images/audio with bits, and why 8 bits = 1 byte.' },
   { number: 2, title: 'data compression', description: 'lossless (exact) vs. lossy (approximate) compression — how each works, tradeoffs, and examples like ZIP vs. JPEG.' },

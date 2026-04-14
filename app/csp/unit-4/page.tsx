@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'how the internet works', description: 'the internet as a network of networks — packets, TCP/IP, and how data travels from sender to receiver.' },
   { number: 2, title: 'ip addresses & packets', description: 'IPv4 vs. IPv6, how packets carry data, packet headers, and why packets may arrive out of order.' },

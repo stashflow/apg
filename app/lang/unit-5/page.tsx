@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'combining appeals & evidence', description: 'how to layer ethos, pathos, and logos with evidence types to create persuasive, multidimensional arguments.' },
   { number: 2, title: 'strong thesis construction', description: 'the anatomy of a high-scoring thesis — defensible, specific, nuanced, with a clear line of reasoning implied.' },

@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'manifest destiny', description: 'the ideology of westward expansion, Polk\'s aggressive policy, Oregon Territory, and Texas annexation.' },
   { number: 2, title: 'mexican-american war', description: 'causes, key battles, Treaty of Guadalupe Hidalgo, the Wilmot Proviso, and the slavery question it reopened.' },

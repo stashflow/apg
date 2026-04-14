@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'speaker, audience & purpose', description: 'who speaks, who listens, and why — the three anchors of every rhetorical act.' },
   { number: 2, title: 'exigence, context & occasion', description: 'the "why now?" — the urgent problem that calls rhetoric into existence, and the circumstances surrounding it.' },

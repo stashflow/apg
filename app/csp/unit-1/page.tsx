@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'program design process', description: 'how to move from an idea to a working program — decomposition, abstraction, and planning before coding.' },
   { number: 2, title: 'collaboration in computing', description: 'pair programming, version control, communication strategies, and how collaboration reduces bias and improves programs.' },

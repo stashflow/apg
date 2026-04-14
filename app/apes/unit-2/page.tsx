@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'ecosystem diversity', description: 'variety of habitats, niches, and ecological communities — why diversity stabilizes ecosystems.' },
   { number: 2, title: 'species diversity', description: 'species richness vs. evenness, Simpson\'s and Shannon indices, and hotspots.' },

@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'plate tectonics', description: 'tectonic plates, convergent/divergent/transform boundaries, earthquakes, volcanoes, and soil formation.' },
   { number: 2, title: 'soil formation', description: 'parent material, weathering, O-A-B-C-R horizons, soil texture, permeability, and fertility.' },

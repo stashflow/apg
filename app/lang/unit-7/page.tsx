@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'arguable & qualified claims', description: 'what makes a claim arguable (not a fact), and how to qualify it with "although," "while," "even though" for nuance.' },
   { number: 2, title: 'defending a claim', description: 'selecting and integrating the strongest evidence, writing commentary that bridges evidence to thesis, and sustaining an argument.' },

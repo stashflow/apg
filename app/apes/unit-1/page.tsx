@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'food chains & food webs', description: 'producers, consumers, decomposers — how energy moves through an ecosystem step by step.' },
   { number: 2, title: 'trophic levels', description: 'energy pyramids, the 10% rule, biomass at each level, and ecological efficiency.' },

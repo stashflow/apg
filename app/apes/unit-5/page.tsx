@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'agriculture & irrigation', description: 'green revolution, GMOs, irrigation methods (flood, drip, furrow), and water use efficiency.' },
   { number: 2, title: 'deforestation', description: 'causes, effects on carbon/water cycles, slash-and-burn, and sustainable forestry practices.' },

@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'main claim & subclaim', description: 'the difference between a thesis (main claim) and the supporting claims (subclaims) that scaffold it.' },
   { number: 2, title: 'thesis statement construction', description: 'how to write a defensible, specific, nuanced thesis — with templates and examples that score full points.' },

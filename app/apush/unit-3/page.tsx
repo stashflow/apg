@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'french & indian war', description: 'causes, Albany Plan, Proclamation of 1763, British debt, and how it ignited colonial grievances.' },
   { number: 2, title: 'taxation without representation', description: 'Stamp Act, Townshend Acts, colonial boycotts, Sons of Liberty, and natural rights philosophy.' },

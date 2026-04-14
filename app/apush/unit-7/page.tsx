@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'progressive era', description: 'muckrakers (Sinclair, Tarbell), trust-busting, 16th/17th/18th/19th amendments, and the Roosevelt/Taft/Wilson presidencies.' },
   { number: 2, title: 'imperialism', description: 'Spanish-American War, Philippines debate, Platt Amendment, Open Door Policy, and Roosevelt Corollary.' },

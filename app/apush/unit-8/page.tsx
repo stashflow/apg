@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'cold war & containment', description: 'Truman Doctrine, Marshall Plan, NATO, NSC-68, and the domino theory — the ideological logic of containment.' },
   { number: 2, title: 'truman doctrine & korean war', description: 'the 38th parallel, MacArthur\'s firing, limited war concept, and the Korean War\'s inconclusive end.' },

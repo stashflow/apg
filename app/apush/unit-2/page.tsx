@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'jamestown & virginia', description: 'the first permanent English colony, headright system, Bacon\'s Rebellion, and the tobacco economy.' },
   { number: 2, title: 'plymouth & massachusetts bay', description: 'Pilgrims, Puritans, the Mayflower Compact, theocracy, and the city on a hill.' },

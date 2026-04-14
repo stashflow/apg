@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'perspective & bias', description: 'how a writer\'s background, identity, and experience shape what they argue — and what they leave out.' },
   { number: 2, title: 'assumptions & cultural context', description: 'the unstated beliefs a writer assumes the audience shares — and how cultural context changes interpretation.' },

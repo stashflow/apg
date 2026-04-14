@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'water pollution', description: 'point vs. nonpoint source pollution, pathogens, heavy metals, nitrates, and the Clean Water Act.' },
   { number: 2, title: 'eutrophication', description: 'nutrient loading, algal blooms, hypoxic dead zones, biological oxygen demand (BOD), and Chesapeake Bay.' },

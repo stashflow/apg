@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'digital divide', description: 'unequal access to technology by income, geography, age, and disability — causes, effects, and policy responses.' },
   { number: 2, title: 'bias in algorithms', description: 'how biased training data produces biased outputs, facial recognition failures, hiring algorithm scandals, and remedies.' },

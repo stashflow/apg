@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'word choice & sentence structure', description: 'advanced diction analysis — denotation, connotation, register — plus syntax effects: fragments, periodic sentences, cumulative sentences.' },
   { number: 2, title: 'irony, satire & hyperbole', description: 'verbal, situational, and dramatic irony; satirical techniques; hyperbole for emphasis — and how to write about each on the exam.' },

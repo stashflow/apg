@@ -1,5 +1,7 @@
 import { UnitPage } from '@/components/unit-page'
 
+export const dynamic = 'force-dynamic'
+
 const topics = [
   { number: 1, title: 'fossil fuels', description: 'coal, oil, and natural gas — formation, extraction, burning byproducts, and EROI.' },
   { number: 2, title: 'renewable energy', description: 'solar, wind, hydroelectric, geothermal, and biomass — advantages, limitations, and land use.' },
