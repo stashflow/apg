@@ -184,6 +184,7 @@ export default function APESU1T2() {
       next={{ href: '/apes/unit-1/3', title: 'aquatic biomes' }}
       courseHref="/apes"
       unitHref="/apes/unit-1"
+      quizletUrl="https://quizlet.com/1168367442/apes-terrestrial-biomes-flash-cards/?i=3obpbv&x=1jqt"
     />
   )
 }

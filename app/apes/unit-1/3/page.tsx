@@ -57,6 +57,7 @@ export default function Page() {
       next={{ href: '/apes/unit-1/4', title: 'biogeochemical cycles' }}
       courseHref="/apes"
       unitHref="/apes/unit-1"
+      quizletUrl="https://quizlet.com/1168368961/apes-primary-productivity-flash-cards/?i=3obpbv&x=1jqt"
     />
   )
 }

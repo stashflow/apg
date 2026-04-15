@@ -62,6 +62,7 @@ export default function Page() {
       prev={{ href: '/apes/unit-1/4', title: 'biogeochemical cycles' }}
       courseHref="/apes"
       unitHref="/apes/unit-1"
+      quizletUrl="https://quizlet.com/1168369785/apes-ecological-succession-flash-cards/?i=3obpbv&x=1jqt"
     />
   )
 }
