@@ -10,6 +10,7 @@ interface Topic {
   title: string
   description: string
   videoId?: string
+  quizletUrl?: string
 }
 
 interface UnitPageProps {
@@ -182,6 +183,39 @@ export function UnitPage({ course, unit, topics, basePath, courseHref, videoId, 
                     </p>
                   </div>
 
+                  {/* Quizlet button */}
+                  {topic.quizletUrl && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        window.open(topic.quizletUrl, '_blank', 'noopener,noreferrer')
+                      }}
+                      className="shrink-0 self-center flex items-center gap-1.5 px-2.5 py-1.5 font-mono text-xs font-bold transition-all cursor-pointer"
+                      style={{
+                        background: '#4255ff18',
+                        color: '#4255ff',
+                        border: '1px solid #4255ff33',
+                      }}
+                      onMouseEnter={(e) => {
+                        const el = e.currentTarget
+                        el.style.background = '#4255ff30'
+                        el.style.borderColor = '#4255ff66'
+                      }}
+                      onMouseLeave={(e) => {
+                        const el = e.currentTarget
+                        el.style.background = '#4255ff18'
+                        el.style.borderColor = '#4255ff33'
+                      }}
+                    >
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+                      </svg>
+                      quizlet
+                    </button>
+                  )}
+
                   {/* Video button - using button to avoid nested <a> inside Link */}
                   {topic.videoId && (
                     <button
@@ -209,7 +243,7 @@ export function UnitPage({ course, unit, topics, basePath, courseHref, videoId, 
                       }}
                     >
                       <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
+                        <path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.010-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
                       </svg>
                       watch
                     </button>

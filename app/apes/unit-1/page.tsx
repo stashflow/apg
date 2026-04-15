@@ -3,13 +3,11 @@ import { UnitPage } from '@/components/unit-page'
 export const dynamic = 'force-dynamic'
 
 const topics = [
-  { number: 1, title: 'energy transfer & trophic levels', description: 'how energy flows through ecosystems, the 10% rule, and why energy is lost at each level.', videoId: 'SCKJJSsKqQY' },
-  { number: 2, title: 'food chains & food webs', description: 'producers, consumers, decomposers — how energy moves through ecosystems.', videoId: 'SCKJJSsKqQY' },
-  { number: 3, title: 'trophic levels & 10% rule', description: 'energy pyramids, biomass, and ecological efficiency.', videoId: 'tFvphrq_xsc' },
-  { number: 4, title: 'primary productivity', description: 'GPP vs NPP, limiting factors, and calculations.', videoId: 'tRXp-WPnjxE' },
-  { number: 5, title: 'terrestrial vs aquatic biomes', description: 'characteristics of major biomes and their distributions.' },
-  { number: 6, title: 'biogeochemical cycles', description: 'carbon, nitrogen, phosphorus, hydrologic — pathways and disruptions.', videoId: 'pFrfOnw8TFs' },
-  { number: 7, title: 'ecological succession', description: 'primary vs secondary, pioneer & climax communities.', videoId: '2g4ygzsjXNg' },
+  { number: 1, title: 'introduction to ecosystems', description: 'biotic & abiotic factors, food chains, food webs, trophic levels, energy transfer, keystone species, and the 10% rule.', videoId: 'SCKJJSsKqQY', quizletUrl: 'https://quizlet.com/1168266844/apes-introduction-to-ecosystems-flash-cards/?i=3obpbv&x=1jqt' },
+  { number: 2, title: 'terrestrial biomes', description: 'the 8 major biomes, precipitation vs temperature, soil types, and biodiversity hotspots.', videoId: 'tFvphrq_xsc' },
+  { number: 3, title: 'primary productivity', description: 'GPP vs NPP, limiting factors, and calculations.', videoId: 'tRXp-WPnjxE' },
+  { number: 4, title: 'biogeochemical cycles', description: 'carbon, nitrogen, phosphorus, hydrologic — pathways, reservoirs, and human disruptions.', videoId: 'pFrfOnw8TFs' },
+  { number: 5, title: 'ecological succession', description: 'primary vs secondary succession, pioneer & climax communities, and disturbance ecology.', videoId: '2g4ygzsjXNg' },
 ]
 
 export default function APESUnit1Page() {

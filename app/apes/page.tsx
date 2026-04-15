@@ -7,11 +7,9 @@ const units: Unit[] = [
     title: 'the living world: ecosystems',
     examWeight: '6–8%',
     topics: [
-      'energy transfer & trophic levels',
-      'food chains & food webs',
-      'trophic levels & 10% rule',
+      'introduction to ecosystems',
+      'terrestrial biomes',
       'primary productivity',
-      'terrestrial vs aquatic biomes',
       'biogeochemical cycles',
       'ecological succession',
     ],
