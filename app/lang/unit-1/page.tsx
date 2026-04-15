@@ -10,9 +10,7 @@ const topics = [
   { number: 5, title: 'message & SOAPSTone', description: 'Subject, Occasion, Audience, Purpose, Speaker, Tone — the full breakdown method.' },
   { number: 6, title: 'rhetorical triangle', description: 'Aristotle\'s model — speaker, audience, and subject as interlocking forces.' },
   { number: 7, title: 'ethos, pathos & logos', description: 'the three classical appeals — credibility, emotion, and logic.' },
-  { number: 8, title: 'speaker-audience relationship', description: 'how the speaker establishes connection, trust, and rapport with their audience.' },
-  { number: 9, title: 'tone & shift in tone', description: 'how word choice and syntax create tone, and how shifts create complexity.' },
-  { number: 10, title: 'intended effect', description: 'what the writer wants the audience to think, feel, or do after reading.' },
+  { number: 8, title: 'tone & intended effect', description: 'how word choice creates tone, shifts, and shapes audience response.' },
 ]
 
 export default function LangUnit1Page() {

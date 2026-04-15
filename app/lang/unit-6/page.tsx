@@ -4,15 +4,11 @@ export const dynamic = 'force-dynamic'
 
 const topics = [
   { number: 1, title: 'perspective & bias', description: 'how a writer\'s background shapes what they argue and leave out.' },
-  { number: 2, title: 'recognizing bias in evidence', description: 'identifying slanted data, cherry-picked examples, and agenda.' },
-  { number: 3, title: 'loaded language', description: 'emotionally charged words that influence reader response.' },
-  { number: 4, title: 'propaganda techniques', description: 'bandwagon, card stacking, glittering generalities, and more.' },
-  { number: 5, title: 'assumptions & cultural context', description: 'unstated beliefs and how culture changes interpretation.' },
-  { number: 6, title: 'historical context', description: 'how the historical moment shapes a text\'s meaning.' },
-  { number: 7, title: 'credibility vs reliability', description: 'author credentials vs factual accuracy and source quality.' },
-  { number: 8, title: 'primary vs secondary sources', description: 'firsthand accounts vs interpretations and analyses.' },
-  { number: 9, title: 'multiple viewpoints', description: 'identifying and evaluating competing perspectives.' },
-  { number: 10, title: 'author\'s position & agenda', description: 'evaluating source origin and potential biases.' },
+  { number: 2, title: 'loaded language & propaganda', description: 'emotionally charged words and persuasion techniques.' },
+  { number: 3, title: 'assumptions & cultural context', description: 'unstated beliefs and how culture changes interpretation.' },
+  { number: 4, title: 'historical context', description: 'how the historical moment shapes a text\'s meaning.' },
+  { number: 5, title: 'credibility vs reliability', description: 'author credentials vs factual accuracy and source quality.' },
+  { number: 6, title: 'multiple viewpoints', description: 'identifying and evaluating competing perspectives.' },
 ]
 
 export default function LangUnit6Page() {

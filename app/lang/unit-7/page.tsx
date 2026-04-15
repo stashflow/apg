@@ -4,15 +4,11 @@ export const dynamic = 'force-dynamic'
 
 const topics = [
   { number: 1, title: 'arguable & qualified claims', description: 'what makes a claim arguable, and qualifying with "although," "while."' },
-  { number: 2, title: 'qualifying an argument', description: 'acknowledging limits, exceptions, and conditions.' },
-  { number: 3, title: 'addressing complexity', description: 'dealing with tensions, contradictions, and multiple perspectives.' },
-  { number: 4, title: 'defending a claim', description: 'selecting strongest evidence and bridging it to thesis.' },
-  { number: 5, title: 'personal vs outside evidence', description: 'when to use personal experience vs broader examples.' },
-  { number: 6, title: 'counterargument & refutation', description: 'presenting and dismantling opposing views effectively.' },
-  { number: 7, title: 'synthesis of sources', description: 'using sources as a conversation without summarizing.' },
-  { number: 8, title: 'building a line of reasoning', description: 'connecting thesis, subclaims, evidence into coherent chain.' },
-  { number: 9, title: 'acknowledging limitations', description: 'admitting what your argument doesn\'t address.' },
-  { number: 10, title: 'building nuanced arguments', description: 'avoiding absolute claims and oversimplification.' },
+  { number: 2, title: 'addressing complexity', description: 'dealing with tensions, contradictions, and multiple perspectives.' },
+  { number: 3, title: 'defending a claim', description: 'selecting strongest evidence and bridging it to thesis.' },
+  { number: 4, title: 'counterargument & refutation', description: 'presenting and dismantling opposing views effectively.' },
+  { number: 5, title: 'synthesis of sources', description: 'using sources as a conversation without summarizing.' },
+  { number: 6, title: 'building a line of reasoning', description: 'connecting thesis, subclaims, evidence into coherent chain.' },
 ]
 
 export default function LangUnit7Page() {

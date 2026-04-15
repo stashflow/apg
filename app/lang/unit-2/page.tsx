@@ -8,10 +8,9 @@ const topics = [
   { number: 3, title: 'thesis statement construction', description: 'defensible, specific, nuanced thesis — templates and examples.' },
   { number: 4, title: 'qualification of claims', description: 'using "although," "while," "to an extent" to add nuance.' },
   { number: 5, title: 'types of evidence', description: 'anecdotal, empirical, statistical, expert testimony, and analogy.' },
-  { number: 6, title: 'evidence relevance & sufficiency', description: 'on-topic, adequate, and actually supporting the claim.' },
-  { number: 7, title: 'warrant', description: 'the "why this evidence matters" — connecting evidence to claim.' },
-  { number: 8, title: 'commentary & analysis', description: 'the "so what?" — explaining why evidence supports your thesis.' },
-  { number: 9, title: 'counterclaim, rebuttal & concession', description: 'acknowledging, conceding, and refuting opposing views.' },
+  { number: 6, title: 'warrant', description: 'the "why this evidence matters" — connecting evidence to claim.' },
+  { number: 7, title: 'commentary & analysis', description: 'the "so what?" — explaining why evidence supports your thesis.' },
+  { number: 8, title: 'counterclaim, rebuttal & concession', description: 'acknowledging, conceding, and refuting opposing views.' },
 ]
 
 export default function LangUnit2Page() {
