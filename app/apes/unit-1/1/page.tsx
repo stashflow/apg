@@ -202,6 +202,7 @@ export default function APESU1T1() {
       next={{ href: '/apes/unit-1/2', title: 'terrestrial biomes' }}
       courseHref="/apes"
       unitHref="/apes/unit-1"
+      quizletUrl="https://quizlet.com/1168266844/apes-introduction-to-ecosystems-flash-cards/?i=3obpbv&x=1jqt"
     />
   )
 }

@@ -67,10 +67,11 @@ interface NotesPageProps {
   unitHref?: string
   videoId?: string
   videoTitle?: string
+  quizletUrl?: string
 }
 
 export function NotesPage({
-  course, unit, topic, sections: sectionsProp, content, prev, next, courseHref: courseHrefProp, unitHref: unitHrefProp, videoId, videoTitle
+  course, unit, topic, sections: sectionsProp, content, prev, next, courseHref: courseHrefProp, unitHref: unitHrefProp, videoId, videoTitle, quizletUrl
 }: NotesPageProps) {
   const sections: NotesSection[] = sectionsProp ?? (content ? parseContent(content) : [])
   const courseSlug = course.short.replace(/\s+/g, '-').replace('ap-', '')
@@ -281,24 +282,86 @@ export function NotesPage({
             {topic.title}
           </h1>
 
-          {/* Key terms */}
-          {topic.keyTerms && topic.keyTerms.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-8">
-              {topic.keyTerms.map((term, i) => (
-                <span
-                  key={i}
-                  className="px-2 py-0.5 font-mono text-xs"
-                  style={{
-                    background: `${course.accent}18`,
-                    color: course.accent,
-                    border: `1px solid ${course.accent}33`,
-                  }}
-                >
-                  {term}
-                </span>
-              ))}
-            </div>
-          )}
+          {/* Key terms + Buttons */}
+          <div className="flex flex-col gap-3">
+            {topic.keyTerms && topic.keyTerms.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {topic.keyTerms.map((term, i) => (
+                  <span
+                    key={i}
+                    className="px-2 py-0.5 font-mono text-xs"
+                    style={{
+                      background: `${course.accent}18`,
+                      color: course.accent,
+                      border: `1px solid ${course.accent}33`,
+                    }}
+                  >
+                    {term}
+                  </span>
+                ))}
+              </div>
+            )}
+            
+            {/* Study buttons */}
+            {(quizletUrl || videoId) && (
+              <div className="flex flex-wrap gap-2">
+                {quizletUrl && (
+                  <button
+                    type="button"
+                    onClick={() => window.open(quizletUrl, '_blank', 'noopener,noreferrer')}
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 font-mono text-xs font-bold transition-all cursor-pointer"
+                    style={{
+                      background: '#4255ff18',
+                      color: '#4255ff',
+                      border: '1px solid #4255ff33',
+                    }}
+                    onMouseEnter={(e) => {
+                      const el = e.currentTarget
+                      el.style.background = '#4255ff30'
+                      el.style.borderColor = '#4255ff66'
+                    }}
+                    onMouseLeave={(e) => {
+                      const el = e.currentTarget
+                      el.style.background = '#4255ff18'
+                      el.style.borderColor = '#4255ff33'
+                    }}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
+                    </svg>
+                    quizlet
+                  </button>
+                )}
+                {videoId && (
+                  <button
+                    type="button"
+                    onClick={() => window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank', 'noopener,noreferrer')}
+                    className="flex items-center gap-1.5 px-2.5 py-1.5 font-mono text-xs font-bold transition-all cursor-pointer"
+                    style={{
+                      background: '#ff000018',
+                      color: '#ff4444',
+                      border: '1px solid #ff000033',
+                    }}
+                    onMouseEnter={(e) => {
+                      const el = e.currentTarget
+                      el.style.background = '#ff000030'
+                      el.style.borderColor = '#ff000066'
+                    }}
+                    onMouseLeave={(e) => {
+                      const el = e.currentTarget
+                      el.style.background = '#ff000018'
+                      el.style.borderColor = '#ff000033'
+                    }}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
+                    </svg>
+                    watch
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Accent divider */}
