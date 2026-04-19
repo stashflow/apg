@@ -2,65 +2,99 @@ import { NotesPage } from '@/components/notes-page'
 import type { NotesSection } from '@/components/notes-page'
 
 const lang = { label: 'ap language & composition', short: 'ap lang', accent: '#a855f7', accentLight: '#ec4899' }
-const unit = { number: 4, title: 'syntax & sentence structure' }
+const unit = { number: 4, title: 'style' }
 
 const sections: NotesSection[] = [
   {
     type: 'heading',
-    content: 'syntax — structure as meaning',
+    content: 'diction — word choice as rhetorical power',
   },
   {
     type: 'body',
-    content: 'Syntax refers to the arrangement of words and phrases to create sentences. Like diction, syntax is both a grammatical fact and a rhetorical choice. The length, type, and structure of a sentence determines its rhythm, emphasis, and emotional effect. Skilled writers manipulate syntax to control how the reader experiences an argument.',
+    content: 'Diction refers to a writer\'s choice of words. Every word carries a denotation (literal meaning) and a connotation (emotional associations). Skilled writers manipulate diction to create tone, shape perception, and persuade. The same fact expressed with different words becomes a different argument.',
   },
   {
     type: 'heading',
-    content: 'sentence types and their effects',
+    content: 'types of diction',
   },
   {
     type: 'table',
     content: '',
-    tableHeaders: ['sentence type', 'structure', 'rhetorical effect'],
+    tableHeaders: ['diction type', 'definition', 'example', 'effect'],
     tableRows: [
-      ['Simple', 'One independent clause', 'Direct, forceful, declarative; creates certainty or impact'],
-      ['Compound', 'Two+ independent clauses joined by coordinating conjunction', 'Shows parallel or equal relationship between ideas; balanced'],
-      ['Complex', 'Independent + one/more dependent clauses', 'Shows hierarchy: main idea + qualification, condition, or context'],
-      ['Compound-complex', 'Multiple independent + dependent clauses', 'Can express sophisticated, nuanced ideas; can feel elaborate or overwhelming'],
-      ['Cumulative', 'Main clause first, then modification piles on', 'Exploratory, additive, builds on an initial statement; mimics natural thought'],
-      ['Periodic', 'Main clause withheld until the end', 'Creates suspense; all modifiers lead to a climactic main point'],
+      ['Formal/Academic', 'Technical, sophisticated, specialized vocabulary', '"The amelioration of economic disparities requires systemic intervention."', 'Creates credibility; signals expertise and authority'],
+      ['Colloquial', 'Casual, conversational, everyday language', '"We gotta fix how money gets spread around."', 'Creates intimacy; makes argument accessible; informal'],
+      ['Informal/Slang', 'Contemporary, trendy, youth-culture language', '"This policy is fire and the opposition is sus."', 'Creates connection with certain audiences; ages quickly'],
+      ['Concrete', 'Specific nouns and verbs; appeals to senses', '"The rusted factory churned out clouds of black smoke."', 'Creates vivid imagery; reader feels what is described'],
+      ['Abstract', 'General, conceptual language; appeals to intellect', '"Economic justice requires systemic change."', 'Philosophical; can feel distant or pretentious'],
     ],
   },
   {
     type: 'heading',
-    content: 'sentence length variation',
+    content: 'connotation vs. denotation',
   },
   {
     type: 'bullets',
     content: '',
     bullets: [
-      '**Long sentences**: create complexity, nuance, elaboration; mimic the experience of thinking through something carefully; can create breathlessness or grandeur',
-      '**Short sentences**: create punch, finality, clarity; often used for impact after a buildup of long sentences',
-      '**Fragment (intentional)**: creates emphasis; signals incompletion; Like this.',
-      'Rhythm: alternating long and short sentences creates a rhythm that moves the reader forward',
-      'Key pattern: a series of long sentences followed by a very short one → the short sentence carries maximum emphasis',
+      '**Denotation**: the dictionary definition — "slim" literally means thin',
+      '**Connotation**: emotional associations — "slim" is positive (elegant, fit), while "scrawny" is negative (unhealthy, weak), though both mean thin',
+      'Writers choose words for connotations, not just meaning: "activist" vs. "radical," "undocumented immigrant" vs. "illegal alien," "pro-choice" vs. "pro-abortion"',
+      'The same object described as "vintage," "old," "retro," or "decrepit" creates completely different impressions',
     ],
   },
   {
     type: 'heading',
-    content: 'periodic vs. cumulative sentences',
+    content: 'registers and registers shifts',
   },
   {
     type: 'bullets',
     content: '',
     bullets: [
-      '**Periodic**: "Despite the warnings of experts, despite the evidence of history, despite the pleas of citizens in the streets, the government moved ahead." — suspense builds; the reader waits for the main event',
-      '**Cumulative**: "The government moved ahead, ignoring experts, dismissing history, silencing the streets." — the main event is stated, then its implications accumulate',
-      'Periodic sentences create anticipation; cumulative sentences create elaboration and weight',
+      'Register is the level of formality appropriate to the context',
+      'Formal register: academic papers, government documents, professional communications',
+      'Informal register: text messages, social media, casual conversations',
+      'Registers can shift within a text — the effect depends on what the shift communicates',
+      'Intentional shifts can be powerful: a formal essay that suddenly uses slang creates emphasis and intimacy',
+    ],
+  },
+  {
+    type: 'heading',
+    content: 'syntax — sentence structure',
+  },
+  {
+    type: 'body',
+    content: 'Syntax refers to how words are arranged into sentences. Like diction, syntax is both grammatically correct and rhetorically powerful. The length, complexity, and structure of sentences determine pace, emphasis, and emotional effect.',
+  },
+  {
+    type: 'table',
+    content: '',
+    tableHeaders: ['sentence element', 'definition', 'rhetorical effect'],
+    tableRows: [
+      ['Simple', 'One independent clause', 'Direct, forceful, declarative'],
+      ['Compound', 'Two independent clauses (usually with "and," "but," "or")', 'Shows equal relationship; balanced rhythm'],
+      ['Complex', 'Independent clause + dependent clauses', 'Shows hierarchy; main idea is primary'],
+      ['Cumulative', 'Main clause first, then modifiers add detail', 'Exploratory; feels natural and organic'],
+      ['Periodic', 'Modifiers first, main clause delayed', 'Creates suspense; all elements build to climax'],
+    ],
+  },
+  {
+    type: 'heading',
+    content: 'sentence length and rhythm',
+  },
+  {
+    type: 'bullets',
+    content: '',
+    bullets: [
+      '**Long sentences** create complexity, sophistication, and breathlessness',
+      '**Short sentences** create impact, finality, and punch',
+      'Variation in length creates rhythm — readers expect patterns and are jolted when patterns break',
+      'Key pattern: multiple long sentences followed by one very short sentence = maximum emphasis on the short one',
     ],
   },
   {
     type: 'examtip',
-    content: 'On the rhetorical analysis FRQ, analyzing syntax means more than saying "the author uses short sentences." Explain what the sentence structure DOES: "The shift to a series of staccato, three-word sentences — \'We were lied to. We were used. We were discarded.\' — creates a drumbeat rhythm that transforms individual grievances into a collective indictment, the simplicity of structure mirroring the simplicity of the demand for accountability."',
+    content: 'For rhetorical analysis, never say "the author uses short sentences" without explaining the effect. Say: "The shift to a series of short, declarative sentences — each beginning with a verb, each stating a fact — creates a staccato rhythm that mirrors the jerky, disorienting experience being described. The simplicity of structure conveys the urgency of the message."',
   },
 ]
 
@@ -71,11 +105,11 @@ export default function LangU4T1() {
       unit={unit}
       topic={{
         number: 1,
-        title: 'sentence types & length',
-        keyTerms: ['syntax', 'simple sentence', 'compound sentence', 'complex sentence', 'periodic sentence', 'cumulative sentence', 'fragment', 'sentence variety', 'rhythm'],
+        title: 'diction & syntax',
+        keyTerms: ['diction', 'connotation', 'denotation', 'register', 'formal', 'colloquial', 'syntax', 'sentence structure', 'clause', 'simple sentence', 'complex sentence'],
       }}
       sections={sections}
-      next={{ href: '/lang/unit-4/2', title: 'rhetorical schemes' }}
+      next={{ href: '/lang/unit-4/2', title: 'periodic vs loose sentences' }}
       courseHref="/lang"
       unitHref="/lang/unit-4"
     />

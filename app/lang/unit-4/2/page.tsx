@@ -2,50 +2,80 @@ import { NotesPage } from '@/components/notes-page'
 import type { NotesSection } from '@/components/notes-page'
 
 const lang = { label: 'ap language & composition', short: 'ap lang', accent: '#a855f7', accentLight: '#ec4899' }
-const unit = { number: 4, title: 'syntax & sentence structure' }
+const unit = { number: 4, title: 'style' }
 
 const sections: NotesSection[] = [
   {
     type: 'heading',
-    content: 'rhetorical schemes — patterns of arrangement',
+    content: 'periodic vs loose sentences',
   },
   {
     type: 'body',
-    content: 'Rhetorical schemes are figures of speech that involve the arrangement (not the meaning) of words. Unlike tropes (which change meaning, like metaphor), schemes create patterns through repetition, balance, or contrast of words and structures. They create rhythm, emphasis, and memorable phrasing — which is why political speeches, sermons, and classic rhetoric are so full of them.',
-  },
-  {
-    type: 'table',
-    content: '',
-    tableHeaders: ['scheme', 'definition', 'example', 'effect'],
-    tableRows: [
-      ['Anaphora', 'Repetition of word/phrase at start of successive clauses', '"We shall fight on the beaches, we shall fight on the landing grounds, we shall fight in the fields..." — Churchill', 'Builds momentum, emphasis, and emotional crescendo'],
-      ['Epistrophe', 'Repetition at the END of successive clauses', '"...government of the people, by the people, for the people" — Lincoln', 'Creates finality; the repeated word carries maximum weight'],
-      ['Antithesis', 'Contrasting ideas in parallel structure', '"Ask not what your country can do for you — ask what you can do for your country" — JFK', 'Sharpens the contrast; makes both ideas more memorable'],
-      ['Parallelism', 'Using the same grammatical structure for related ideas', '"I came, I saw, I conquered"', 'Creates balance, equality, and rhythm; implies ideas are equivalent'],
-      ['Chiasmus', 'Reversed grammatical structure in successive clauses', '"It\'s not the men in my life that counts — it\'s the life in my men" — Mae West', 'Creates elegant reversal; makes the relationship between ideas vivid'],
-      ['Asyndeton', 'Omitting conjunctions between clauses', '"I came, I saw, I conquered"', 'Creates speed, urgency, and staccato impact'],
-      ['Polysyndeton', 'Using many conjunctions between clauses', '"We ate and drank and laughed and sang and danced"', 'Creates slowness, accumulation, or breathlessness'],
-      ['Anadiplosis', 'Last word of a clause repeated at start of next', '"Fear leads to anger. Anger leads to hate. Hate leads to suffering."', 'Creates chain-link effect; shows inevitability or progression'],
-    ],
+    content: 'Periodic and cumulative sentences represent two opposing approaches to structure. Periodic sentences withhold the main clause until the end, creating anticipation. Cumulative sentences place the main clause first, then elaborate on it. Each creates different effects and serves different rhetorical purposes.',
   },
   {
     type: 'heading',
-    content: 'how to analyze schemes in essays',
+    content: 'periodic sentences — withholding for suspense',
   },
   {
     type: 'bullets',
     content: '',
     bullets: [
-      'Identify the scheme and quote the specific instance',
-      'Name the structural pattern: "the parallel structure of three verb phrases..."',
-      'Explain the SOUND effect: rhythm, speed, emphasis',
-      'Explain the MEANING effect: what does the pattern emphasize about the content?',
-      'Connect to purpose: how does this structural choice serve the writer\'s overall goal?',
+      'Structure: modifiers → main clause (withheld to the end)',
+      'Example: "Though exhausted by the journey, depleted of resources, and surrounded by enemies, the general refused to surrender."',
+      'Effect: Creates suspense; reader waits for the main revelation',
+      'The longer the delay, the greater the anticipation builds',
+      'Used in formal, persuasive, or dramatic contexts where you want to build a case before revealing the conclusion',
+    ],
+  },
+  {
+    type: 'heading',
+    content: 'cumulative/loose sentences — building on an idea',
+  },
+  {
+    type: 'bullets',
+    content: '',
+    bullets: [
+      'Structure: main clause → modifiers (elaboration follows)',
+      'Example: "The general refused to surrender, exhausted by the journey, depleted of resources, surrounded by enemies, yet unbowed."',
+      'Effect: Statement is made, then its implications unfold naturally; feels exploratory and organic',
+      'Mimic how thought actually develops — start with an idea, then keep adding details',
+      'Used for narrative, observation, and reflection — the reader stays grounded in the main point while details accumulate',
+    ],
+  },
+  {
+    type: 'heading',
+    content: 'rhetorical effects and comparison',
+  },
+  {
+    type: 'table',
+    content: '',
+    tableHeaders: ['aspect', 'periodic', 'cumulative'],
+    tableRows: [
+      ['Pace', 'Builds toward a climax', 'Unfolds naturally'],
+      ['Reader experience', 'Anticipation; waiting for the point', 'Grounded in main idea; watching it elaborate'],
+      ['Tone', 'Formal, deliberate, dramatic', 'Natural, conversational, reflective'],
+      ['Best for', 'Legal writing, rhetoric, formal arguments', 'Narrative, descriptive writing, essays'],
+      ['Key example', 'Churchill, MLK speeches (formal persuasion)', 'Personal essays, nature writing'],
+    ],
+  },
+  {
+    type: 'heading',
+    content: 'mixing periodic and cumulative structures',
+  },
+  {
+    type: 'bullets',
+    content: '',
+    bullets: [
+      'Skilled writers alternate between periodic and cumulative sentences to create rhythm',
+      'A long cumulative sentence followed by a short periodic structure creates balance',
+      'Deliberate breaks in pattern create emphasis — if cumulative sentences dominate, one periodic sentence stands out',
+      'MLK alternates between both: "I have a dream that one day..." (cumulative, expanding), then "...that the sons of former slaves and the sons of former slaveowners will be able to sit down..." (periodic, building to main clause)',
     ],
   },
   {
     type: 'examtip',
-    content: 'Anaphora is by far the most-tested scheme in AP Lang. Know it cold and be able to explain why it works: the repetition creates a drumbeat that builds emotional intensity and makes each successive example feel more inevitable and powerful than the last. MLK\'s "I Have a Dream" speech, Churchill\'s wartime speeches, and Obama\'s "Yes We Can" all rely heavily on anaphora — they are models of how it works.',
+    content: 'On rhetorical analysis essays, identify whether sentences are periodic or cumulative, then explain the effect: "The author primarily uses cumulative sentences, which allows the reader to remain grounded in the main argument while details accrue, creating a sense that the point is inevitable and self-evident. Occasionally, a periodic sentence interrupts — like \'Despite all these obstacles, change is possible.\' — creating emphasis through breaking the established pattern."',
   },
 ]
 
@@ -56,12 +86,12 @@ export default function LangU4T2() {
       unit={unit}
       topic={{
         number: 2,
-        title: 'rhetorical schemes',
-        keyTerms: ['anaphora', 'epistrophe', 'antithesis', 'parallelism', 'chiasmus', 'asyndeton', 'polysyndeton', 'anadiplosis', 'rhetorical schemes', 'figures of speech'],
+        title: 'periodic vs loose sentences',
+        keyTerms: ['periodic sentence', 'cumulative sentence', 'loose sentence', 'syntactic structure', 'anticipation', 'elaboration', 'modifiers', 'main clause'],
       }}
       sections={sections}
-      prev={{ href: '/lang/unit-4/1', title: 'sentence types & length' }}
-      next={{ href: '/lang/unit-4/3', title: 'voice & style' }}
+      prev={{ href: '/lang/unit-4/1', title: 'diction & syntax' }}
+      next={{ href: '/lang/unit-4/3', title: 'figurative language & devices' }}
       courseHref="/lang"
       unitHref="/lang/unit-4"
     />

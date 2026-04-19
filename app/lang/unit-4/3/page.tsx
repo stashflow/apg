@@ -2,63 +2,88 @@ import { NotesPage } from '@/components/notes-page'
 import type { NotesSection } from '@/components/notes-page'
 
 const lang = { label: 'ap language & composition', short: 'ap lang', accent: '#a855f7', accentLight: '#ec4899' }
-const unit = { number: 4, title: 'syntax & sentence structure' }
+const unit = { number: 4, title: 'style' }
 
 const sections: NotesSection[] = [
   {
     type: 'heading',
-    content: 'voice — the writer\'s presence on the page',
+    content: 'figurative language — meaning beyond the literal',
   },
   {
     type: 'body',
-    content: 'Voice is the overall personality a writer projects through their text — a combination of diction, syntax, tone, and perspective that makes their writing recognizable and distinct. Voice is how a reader feels the writer\'s presence even when the writer is invisible. Style is the sum of all the technical choices (diction, syntax, imagery, structure) that create voice.',
-  },
-  {
-    type: 'bullets',
-    content: '',
-    bullets: [
-      'Voice emerges from: word choice (formal vs. colloquial), sentence length and variety, use of humor or irony, degree of emotional engagement, types of evidence used',
-      '**Authoritative voice**: formal diction, complex sentence structures, citations, measured tone — used for academic and journalistic writing',
-      '**Personal/Intimate voice**: first person, conversational diction, anecdote, emotional directness — used for personal essays and testimonials',
-      '**Ironic voice**: understated language, gap between what is said and meant, knowing tone — used for satire and critique',
-      '**Urgent voice**: short sentences, direct address ("you"), imperative mood, passionate diction — used for calls to action',
-    ],
+    content: 'Figurative language describes language that communicates something other than its literal meaning. It uses comparison, exaggeration, or substitution to create vivid imagery, emotional impact, and deeper meaning. Figurative language is essential to both literary and rhetorical writing.',
   },
   {
     type: 'heading',
-    content: 'style analysis — what to look for',
+    content: 'tropes — changing meaning',
   },
   {
     type: 'table',
     content: '',
-    tableHeaders: ['element', 'questions to ask'],
+    tableHeaders: ['trope', 'definition', 'example', 'effect'],
     tableRows: [
-      ['Diction level', 'Formal or colloquial? Technical or accessible? Latinate (abstract) or Anglo-Saxon (concrete)?'],
-      ['Sentence variety', 'Long or short? Simple or complex? What patterns recur?'],
-      ['Tone', 'Urgent, measured, ironic, passionate? How does it shift?'],
-      ['Figurative language', 'What tropes dominate? What do they suggest about the writer\'s worldview?'],
-      ['Structural patterns', 'Are there schemes (anaphora, parallelism)? How do they create emphasis?'],
-      ['Point of view', 'First, second, or third? What does this choice imply?'],
+      ['Metaphor', 'Stating that one thing IS another (implicit comparison)', '"Time is money"', 'Creates a lens through which to understand a concept'],
+      ['Simile', 'Comparing two things using "like" or "as"', '"She was like a ghost in the room"', 'Explicitly shows comparison; softer than metaphor'],
+      ['Personification', 'Giving human qualities to non-human things', '"The wind whispered secrets"', 'Makes the inanimate relatable; creates mood'],
+      ['Hyperbole', 'Extreme exaggeration for effect', '"I\'ve told you a million times"', 'Creates emphasis or humor'],
+      ['Understatement', 'Deliberate downplaying of something', '"The Titanic had a bit of a problem with ice"', 'Creates irony; can be humorous or darkly comedic'],
+      ['Irony', 'Contrast between what is said and what is meant', 'Saying "Great job" when someone fails', 'Creates a gap for readers to interpret; can be sarcastic'],
+      ['Oxymoron', 'Combining contradictory terms', '"Deafening silence," "sweet sorrow"', 'Creates paradox; makes the reader think about contradiction'],
+      ['Metonymy', 'Substituting the name of something with the name of something associated with it', '"The White House announced a new policy" (= the President)', 'Efficient; shows relationships between things'],
+      ['Synecdoche', 'A part represents the whole, or vice versa', '"All hands on deck" (hands = sailors)', 'Vivid; focuses attention on a specific part'],
     ],
   },
   {
     type: 'heading',
-    content: 'developing your own style',
+    content: 'schemes — arrangement patterns',
   },
   {
     type: 'bullets',
     content: '',
     bullets: [
-      'Read widely and analytically — notice how writers you admire make choices',
-      'Vary your sentence length deliberately — break long passages of complex sentences with short, direct ones for impact',
-      'Use concrete, specific imagery rather than abstract generalization',
-      'Avoid passive voice when you can — active voice creates more energy',
-      'Let your diction match your audience — match the formality level to the context',
+      '**Anaphora**: repetition at the start of successive clauses ("I came, I saw, I conquered")',
+      '**Epistrophe**: repetition at the END of successive clauses ("government of the people, by the people, for the people")',
+      '**Parallelism**: same grammatical structure for related ideas',
+      '**Antithesis**: contrasting ideas in parallel structure ("Ask not what your country can do for you — ask what you can do for your country")',
+      '**Chiasmus**: reversed structure in successive clauses ("It\'s not the men in my life, it\'s the life in my men")',
+      '**Asyndeton**: omitting conjunctions for speed ("I came, I saw, I conquered")',
+      '**Polysyndeton**: using many conjunctions for emphasis ("We fought and struggled and persisted and won")',
+    ],
+  },
+  {
+    type: 'heading',
+    content: 'imagery and sensory detail',
+  },
+  {
+    type: 'bullets',
+    content: '',
+    bullets: [
+      '**Visual imagery**: sight — "The scarlet sunset painted the sky"',
+      '**Auditory imagery**: sound — "The screech of brakes, the blare of horns"',
+      '**Olfactory imagery**: smell — "The sweet rot of decay"',
+      '**Tactile imagery**: touch — "The rough concrete scraped my skin"',
+      '**Gustatory imagery**: taste — "The bitter metallic taste of blood"',
+      '**Kinesthetic imagery**: motion — "My stomach lurched as the plane descended"',
+    ],
+  },
+  {
+    type: 'heading',
+    content: 'analyzing figurative language for AP Lang',
+  },
+  {
+    type: 'bullets',
+    content: '',
+    bullets: [
+      'Identify the specific device (metaphor, anaphora, etc.) and quote it',
+      'Explain the literal meaning vs. the figurative meaning',
+      'Describe the sensory or emotional effect it creates',
+      'Connect to the larger purpose: what does this device help the writer accomplish?',
+      'Look for patterns: repeated use of certain devices reveals the writer\'s style and priorities',
     ],
   },
   {
     type: 'examtip',
-    content: 'Style analysis questions on MCQ often ask: "Which of the following best describes the author\'s style?" The answer choices will use style vocabulary: "precise and analytical," "lyrical and introspective," "formal and authoritative," "conversational and ironic." Practice identifying style from short passages and connecting it to the specific diction/syntax choices that create it.',
+    content: 'In rhetorical analysis, never just identify a device. For example: "The author uses a series of metaphors comparing failure to a journey: \'stumbling,\' \'losing the path,\' \'being stranded.\' These metaphors make abstract failure concrete and relatable, inviting the reader to empathize with the struggling individual. The journey metaphor also suggests that failure is temporary — one can find a new path — which reinforces the author\'s ultimately hopeful purpose."',
   },
 ]
 
@@ -69,11 +94,11 @@ export default function LangU4T3() {
       unit={unit}
       topic={{
         number: 3,
-        title: 'voice & style',
-        keyTerms: ['voice', 'style', 'authoritative voice', 'personal voice', 'ironic voice', 'style analysis', 'register', 'persona', 'active voice'],
+        title: 'figurative language & devices',
+        keyTerms: ['metaphor', 'simile', 'personification', 'hyperbole', 'understatement', 'irony', 'anaphora', 'parallelism', 'imagery', 'trope', 'scheme'],
       }}
       sections={sections}
-      prev={{ href: '/lang/unit-4/2', title: 'rhetorical schemes' }}
+      prev={{ href: '/lang/unit-4/2', title: 'periodic vs loose sentences' }}
       courseHref="/lang"
       unitHref="/lang/unit-4"
     />
