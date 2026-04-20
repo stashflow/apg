@@ -4,14 +4,14 @@ export const dynamic = 'force-dynamic'
 
 const topics = [
   { number: 1, title: 'plate tectonics', description: 'convergent/divergent/transform boundaries, earthquakes, volcanoes.' },
-  { number: 2, title: 'soil formation & erosion', description: 'weathering, horizons, texture, permeability, and erosion.' },
-  { number: 3, title: 'watersheds & aquifers', description: 'groundwater vs surface water, aquifer types, water table.' },
-  { number: 4, title: 'atmospheric layers', description: 'troposphere, stratosphere, mesosphere, thermosphere.' },
-  { number: 5, title: 'global wind patterns', description: 'Hadley/Ferrel/Polar cells, trade winds, Coriolis effect.' },
-  { number: 6, title: 'geography & climate', description: 'latitude, altitude, proximity to water, and rain shadows.' },
-  { number: 7, title: 'el niño & la niña', description: 'ENSO cycle, ocean temperature changes, and global impacts.' },
-  { number: 8, title: 'thermal inversion', description: 'temperature inversions, trapped pollutants, and smog.' },
-  { number: 9, title: 'ocean currents', description: 'thermohaline circulation, upwelling, and climate effects.' },
+  { number: 2, title: 'soil formation & composition', description: 'weathering, horizons, texture, permeability, and erosion.' },
+  { number: 3, title: 'soil erosion & conservation', description: 'causes of erosion, desertification, and conservation methods.' },
+  { number: 4, title: 'earth\'s atmosphere', description: 'atmospheric composition, layers, and properties.' },
+  { number: 5, title: 'global wind patterns', description: 'Hadley/Ferrel/Polar cells, trade winds, Coriolis effect.', videoId: 'zVhS19LNeH4' },
+  { number: 6, title: 'watersheds', description: 'drainage basins, groundwater, aquifers, and water table.' },
+  { number: 7, title: 'solar radiation & earth\'s seasons', description: 'tilt, seasons, latitude effects on climate.' },
+  { number: 8, title: 'earth\'s geography & climate', description: 'latitude, altitude, proximity to water, and rain shadows.' },
+  { number: 9, title: 'el niño & la niña', description: 'ENSO cycle, ocean temperature changes, and global impacts.', videoId: 'Am3LAfIIm7M' },
 ]
 
 export default function APESUnit4Page() {
@@ -22,7 +22,7 @@ export default function APESUnit4Page() {
       topics={topics}
       basePath="/apes/unit-4"
       courseHref="/apes"
-
+      videoId="z-rAgbQ2AoA"
       examDate={{ date: 'Tuesday, May 6, 2025', time: '8:00 AM' }}
     />
   )

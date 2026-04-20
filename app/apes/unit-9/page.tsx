@@ -1,18 +1,16 @@
 import { UnitPage } from '@/components/unit-page'
 
 const topics = [
-  { number: 1, title: 'greenhouse effect', description: 'enhanced effect, CO₂, methane, N₂O, global warming potential.' },
-  { number: 2, title: 'carbon cycle & feedbacks', description: 'sources, sinks, permafrost, ice-albedo feedback.', videoId: 'pFrfOnw8TFs' },
-  { number: 3, title: 'ocean warming & acidification', description: 'CO₂ absorption, pH changes, coral bleaching.' },
-  { number: 4, title: 'sea level rise', description: 'thermal expansion, glacial melt, vulnerable regions.' },
-  { number: 5, title: 'climate impacts on biodiversity', description: 'range shifts, phenology, extinctions.' },
-  { number: 6, title: 'climate tipping points', description: 'permafrost, ice sheets, and irreversible changes.' },
-  { number: 7, title: 'mitigation strategies', description: 'carbon taxes, cap-and-trade, carbon capture.' },
-  { number: 8, title: 'climate treaties', description: 'Montreal Protocol, Kyoto Protocol, Paris Agreement.' },
-  { number: 9, title: 'carbon footprint', description: 'calculating personal and national carbon emissions.' },
-  { number: 10, title: 'environmental laws', description: 'Clean Air Act, Clean Water Act, NEPA, ESA.' },
-  { number: 11, title: 'apes formulas', description: 'EROI, NPP, growth rate, percent change, LD50, pH.' },
-  { number: 12, title: 'frq practice', description: 'identify-describe-explain-solve framework and strategies.' },
+  { number: 1, title: 'stratospheric ozone depletion', description: 'CFCs, ozone hole, UV radiation, and health effects.', videoId: 'hhGCV2-O8zc' },
+  { number: 2, title: 'reducing ozone depletion', description: 'Montreal Protocol, CFC alternatives, and recovery.' },
+  { number: 3, title: 'the greenhouse effect', description: 'natural vs enhanced effect, CO₂, methane, N₂O.', videoId: 'sMM17cmB_jc' },
+  { number: 4, title: 'increases in greenhouse gases', description: 'sources, trends, and global warming potential.', videoId: 'p2bgIvuMSLg' },
+  { number: 5, title: 'global climate change', description: 'evidence, impacts, and projections.', videoId: 'pINiCtUUJYo' },
+  { number: 6, title: 'ocean warming & acidification', description: 'CO₂ absorption, pH changes, coral bleaching.' },
+  { number: 7, title: 'invasive species & climate', description: 'range shifts, phenology changes, and ecosystem impacts.' },
+  { number: 8, title: 'human impacts on ecosystems', description: 'habitat destruction, pollution, and biodiversity loss.' },
+  { number: 9, title: 'endangered species legislation', description: 'ESA, CITES, and conservation strategies.' },
+  { number: 10, title: 'human impacts on wetlands & mangroves', description: 'ecosystem services loss and restoration.' },
 ]
 
 export default function APESUnit9Page() {
@@ -23,6 +21,8 @@ export default function APESUnit9Page() {
       topics={topics}
       basePath="/apes/unit-9"
       courseHref="/apes"
+      videoId="PfSm29EyANU"
+      examDate={{ date: 'Tuesday, May 6, 2025', time: '8:00 AM' }}
     />
   )
 }
