@@ -197,7 +197,7 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
           </div>
           <div className="flex items-center gap-2">
             <div
-              className="h-8 px-2 font-mono text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5"
+              className="h-8 px-2 font-mono text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 animate-glow-pulse"
               style={{
                 background: '#12233b',
                 color: '#7dd3fc',
@@ -220,6 +220,17 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
                 color: '#dbeafe',
                 border: '1px solid #1e3a5f',
                 outline: 'none',
+                transition: 'border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease',
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = '#38bdf8'
+                e.currentTarget.style.background = '#102238'
+                e.currentTarget.style.boxShadow = '0 0 0 2px rgba(56,189,248,0.2)'
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = '#1e3a5f'
+                e.currentTarget.style.background = '#0b1a2c'
+                e.currentTarget.style.boxShadow = 'none'
               }}
             />
             {hasSearch && (
@@ -256,8 +267,13 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
                   background: isHovered ? '#0f2540' : '#0a1929',
                   border: `1px solid ${isHovered ? course.accent : 'rgba(26,48,80,0.7)'}`,
                   opacity: loaded ? 1 : 0,
-                  transform: loaded ? 'translateY(0)' : 'translateY(20px)',
-                  transition: `opacity 0.5s ease ${i * 0.05}s, transform 0.5s ease ${i * 0.05}s, border-color 0.2s, background 0.2s`,
+                  transform: loaded
+                    ? isHovered
+                      ? 'translateY(-2px) scale(1.004)'
+                      : 'translateY(0) scale(1)'
+                    : 'translateY(20px) scale(1)',
+                  boxShadow: isHovered ? `0 14px 28px ${course.accent}22` : '0 0 0 rgba(0,0,0,0)',
+                  transition: `opacity 0.5s ease ${i * 0.05}s, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s, background 0.2s, box-shadow 0.25s ease`,
                   cursor: 'default',
                 }}
                 onMouseEnter={() => setHoveredUnit(unit.number)}

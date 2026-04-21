@@ -168,6 +168,22 @@
   to   { transform: rotate(360deg); }
 }
 
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 rgba(56, 189, 248, 0); }
+  50% { box-shadow: 0 0 22px rgba(56, 189, 248, 0.22); }
+}
+
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes float-soft {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
 .animate-tile-float { animation: tile-float 4s ease-in-out infinite; }
 .animate-marquee    { animation: marquee-left 20s linear infinite; }
 .animate-pulse-ring { animation: pulse-ring 1.5s ease-out infinite; }
@@ -176,6 +192,9 @@
 .animate-slide-left { animation: slide-in-left 0.5s ease forwards; }
 .animate-slide-right{ animation: slide-in-right 0.5s ease forwards; }
 .animate-spin-slow  { animation: spin-slow 8s linear infinite; }
+.animate-glow-pulse { animation: glow-pulse 2.4s ease-in-out infinite; }
+.animate-gradient-shift { animation: gradient-shift 6s ease infinite; background-size: 200% 200%; }
+.animate-float-soft { animation: float-soft 3.2s ease-in-out infinite; }
 
 /* ─── hover tile scale ─── */
 .tile-hover {

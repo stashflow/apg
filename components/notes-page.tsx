@@ -296,11 +296,12 @@ export function NotesPage({
                 {topic.keyTerms.map((term, i) => (
                   <span
                     key={i}
-                    className="px-2 py-0.5 font-mono text-xs"
+                    className="px-2 py-0.5 font-mono text-xs animate-float-soft"
                     style={{
                       background: `${course.accent}18`,
                       color: course.accent,
                       border: `1px solid ${course.accent}33`,
+                      animationDelay: `${(i % 4) * 0.12}s`,
                     }}
                   >
                     {term}
@@ -319,17 +320,22 @@ export function NotesPage({
                   background: '#4255ff24',
                   color: '#4255ff',
                   border: '1px solid #4255ff55',
+                  boxShadow: '0 0 0 rgba(66,85,255,0)',
                 }}
                 title={quizletUrl ? 'Open Quizlet set' : 'Search Quizlet for this topic'}
                 onMouseEnter={(e) => {
                   const el = e.currentTarget
                   el.style.background = '#4255ff36'
                   el.style.borderColor = '#4255ff88'
+                  el.style.transform = 'translateY(-1px)'
+                  el.style.boxShadow = '0 10px 20px rgba(66,85,255,0.2)'
                 }}
                 onMouseLeave={(e) => {
                   const el = e.currentTarget
                   el.style.background = '#4255ff24'
                   el.style.borderColor = '#4255ff55'
+                  el.style.transform = 'translateY(0)'
+                  el.style.boxShadow = '0 0 0 rgba(66,85,255,0)'
                 }}
               >
                 Q
@@ -343,17 +349,22 @@ export function NotesPage({
                   background: '#ff000024',
                   color: '#ff4444',
                   border: '1px solid #ff000055',
+                  boxShadow: '0 0 0 rgba(255,0,0,0)',
                 }}
                 title={videoId ? 'Watch topic video' : 'Search YouTube for this topic'}
                 onMouseEnter={(e) => {
                   const el = e.currentTarget
                   el.style.background = '#ff000036'
                   el.style.borderColor = '#ff000088'
+                  el.style.transform = 'translateY(-1px)'
+                  el.style.boxShadow = '0 10px 20px rgba(255,68,68,0.2)'
                 }}
                 onMouseLeave={(e) => {
                   const el = e.currentTarget
                   el.style.background = '#ff000024'
                   el.style.borderColor = '#ff000055'
+                  el.style.transform = 'translateY(0)'
+                  el.style.boxShadow = '0 0 0 rgba(255,0,0,0)'
                 }}
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">

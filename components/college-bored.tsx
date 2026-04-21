@@ -374,6 +374,39 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
     return [seed, ...sameUnit, ...otherUnits].slice(0, targetCount)
   }
 
+  const learningModeIdeas = [
+    {
+      name: 'Weak-Topic Rehab',
+      focus: 'Auto-builds sets from the units/topics you miss most, then retests 24h later.',
+      level: 'adaptive',
+    },
+    {
+      name: 'Mixed Sprint',
+      focus: 'High-tempo 12-question run with tighter timing and instant confidence tracking.',
+      level: 'speed',
+    },
+    {
+      name: 'FRQ Rubric Mirror',
+      focus: 'You self-score each FRQ part against a live rubric checklist before reveal.',
+      level: 'writing',
+    },
+    {
+      name: 'Error Log Loop',
+      focus: 'Turns every miss into spaced-repetition flash drills with explanation prompts.',
+      level: 'mastery',
+    },
+    {
+      name: 'Interleaved Unit Shuffle',
+      focus: 'Alternates topics in exam order to force transfer, not memorization-by-chunk.',
+      level: 'exam-like',
+    },
+    {
+      name: 'Confidence Calibration',
+      focus: 'After each answer, rate confidence to catch lucky guesses and hidden weak spots.',
+      level: 'metacognition',
+    },
+  ] as const
+
   const startExam = (qs: Question[], timeSeconds: number) => {
     setExamQs(qs.map(shuffleMcqOptions))
     setQIndex(0)
@@ -461,14 +494,17 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
     return (
       <div className="flex flex-col h-full overflow-auto p-8 bg-white">
         {/* Random exam button */}
-        <div className="mb-8 p-5 rounded-lg" style={{ background: '#1e1b4b' }}>
+        <div
+          className="mb-8 p-5 rounded-lg animate-gradient-shift"
+          style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 45%, #0f172a 100%)' }}
+        >
           <h3 className="text-white font-bold text-base mb-1">Random Practice Set</h3>
           <p className="text-indigo-200 text-sm mb-3">Run a full 30-question sequence, mixed exam-style set, or targeted MCQ drill.</p>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
               onClick={() => startExam(getFullExamRun(courseShort), 90 * 60)}
-              className="flex items-center gap-2 px-4 py-2 rounded font-semibold text-sm transition-all"
+              className="flex items-center gap-2 px-4 py-2 rounded font-semibold text-sm transition-all hover:-translate-y-0.5"
               style={{ background: '#0f172a', color: '#fff' }}
             >
               Start Full 30Q Run
@@ -476,7 +512,7 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
             <button
               type="button"
               onClick={() => startExam(getRandomExamSet(courseShort), 90 * 60)}
-              className="flex items-center gap-2 px-4 py-2 rounded font-semibold text-sm transition-all"
+              className="flex items-center gap-2 px-4 py-2 rounded font-semibold text-sm transition-all hover:-translate-y-0.5"
               style={{ background: '#fff', color: '#1e1b4b' }}
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
@@ -491,11 +527,39 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
                 const timeSeconds = Math.max(10 * 60, mcqSet.length * 75)
                 startExam(mcqSet, timeSeconds)
               }}
-              className="flex items-center gap-2 px-4 py-2 rounded font-semibold text-sm transition-all"
+              className="flex items-center gap-2 px-4 py-2 rounded font-semibold text-sm transition-all hover:-translate-y-0.5"
               style={{ background: '#312e81', color: '#fff' }}
             >
               Start MCQ Drill
             </button>
+          </div>
+        </div>
+
+        <div className="mb-8 rounded-xl border border-indigo-100 bg-slate-50 p-5">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded bg-indigo-100 text-indigo-900">
+              brainstorm
+            </span>
+            <h4 className="text-sm font-bold text-slate-900">New Learning Modes To Add Next</h4>
+          </div>
+          <p className="text-xs text-slate-600 mb-4">
+            Proposed modes for deeper prep. Current live modes are unchanged above.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-2">
+            {learningModeIdeas.map((idea) => (
+              <div
+                key={idea.name}
+                className="rounded-lg border border-slate-200 bg-white p-3 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+              >
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <p className="text-sm font-semibold text-slate-900">{idea.name}</p>
+                  <span className="text-[10px] uppercase tracking-wider font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">
+                    {idea.level}
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 leading-relaxed">{idea.focus}</p>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -883,7 +947,7 @@ export function CollegeBored({ courseShort }: CollegeBoredProps) {
         {/* Left: logo + name */}
         <div className="flex items-center gap-3 flex-wrap">
           <div
-            className="flex items-center gap-2 px-3 py-1.5 rounded font-bold text-white text-sm transition-all duration-300"
+            className="flex items-center gap-2 px-3 py-1.5 rounded font-bold text-white text-sm transition-all duration-300 hover:-translate-y-0.5"
             style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)' }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
