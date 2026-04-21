@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Suspense, useMemo, useState } from 'react'
+import { Suspense, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { SiteNav } from '@/components/site-nav'
 import { getQuestionsForCourse, normalizeCourseKey, type MCQOption, type Question } from '@/lib/college-bored-data'
@@ -84,6 +84,24 @@ function FlashcardFrenzy({ courseKey }: { courseKey: string }) {
     return (total / (deck.length * 5)) * 100
   }, [deck, progress])
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const tag = (e.target as HTMLElement | null)?.tagName?.toLowerCase()
+      if (tag === 'textarea' || tag === 'input' || tag === 'select') return
+      if (e.key === ' ') {
+        e.preventDefault()
+        setFlipped((v) => !v)
+      }
+      if (e.key.toLowerCase() === 'n') pickNext()
+      if (e.key === '1') grade('again')
+      if (e.key === '2') grade('hard')
+      if (e.key === '3') grade('good')
+      if (e.key === '4') grade('easy')
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  })
+
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-2">
@@ -107,10 +125,21 @@ function FlashcardFrenzy({ courseKey }: { courseKey: string }) {
         >
           next card
         </button>
+        <button
+          type="button"
+          onClick={() => setProgress({})}
+          className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider border"
+          style={{ background: '#fee2e2', color: '#991b1b', borderColor: '#fecaca' }}
+        >
+          reset deck
+        </button>
         <span className="ml-auto text-xs font-mono" style={{ color: '#86efac' }}>
           mastery {mastery.toFixed(0)}%
         </span>
       </div>
+      <p className="text-[11px] font-mono" style={{ color: '#c4b5fd' }}>
+        shortcuts: space flip · N next · 1/2/3/4 grade
+      </p>
 
       {currentCard ? (
         <div
@@ -566,6 +595,7 @@ function EzoLearnCenterContent() {
   const searchParams = useSearchParams()
   const activeCourse = useMemo(() => normalizeCourseKey(searchParams.get('course') ?? 'apes'), [searchParams])
   const [mode, setMode] = useState<ModeKey>('flashcard-frenzy')
+  const [loadedPref, setLoadedPref] = useState(false)
 
   const modes: { key: ModeKey; title: string; detail: string }[] = [
     { key: 'flashcard-frenzy', title: 'Flashcard Frenzy', detail: 'Quizlet-style adaptive flashcards by unit with spaced bucket learning.' },
@@ -575,17 +605,49 @@ function EzoLearnCenterContent() {
     { key: 'unit-boss-battles', title: 'Unit Boss Battles', detail: 'Mixed unit challenges with performance rank feedback.' },
   ]
 
+  useEffect(() => {
+    const saved = window.localStorage.getItem(`ezo-mode-${activeCourse}`) as ModeKey | null
+    if (saved && modes.some((m) => m.key === saved)) setMode(saved)
+    setLoadedPref(true)
+  }, [activeCourse])
+
+  useEffect(() => {
+    if (!loadedPref) return
+    window.localStorage.setItem(`ezo-mode-${activeCourse}`, mode)
+  }, [mode, activeCourse, loadedPref])
+
+  const modeIndex = modes.findIndex((m) => m.key === mode)
+  const prevMode = modes[(modeIndex - 1 + modes.length) % modes.length]
+  const nextMode = modes[(modeIndex + 1) % modes.length]
+
   return (
-    <div className="min-h-screen" style={{ background: '#050d1a' }}>
+    <div className="min-h-screen relative overflow-hidden" style={{ background: '#050d1a' }}>
       <SiteNav />
+      <div
+        className="pointer-events-none absolute -top-24 -left-20 w-[460px] h-[460px] rounded-full blur-3xl opacity-50"
+        style={{ background: 'radial-gradient(circle at 30% 30%, rgba(187,247,208,0.45), rgba(187,247,208,0))' }}
+      />
+      <div
+        className="pointer-events-none absolute top-32 right-[-140px] w-[520px] h-[520px] rounded-full blur-3xl opacity-40"
+        style={{ background: 'radial-gradient(circle at 50% 50%, rgba(196,181,253,0.55), rgba(196,181,253,0))' }}
+      />
+      <div
+        className="pointer-events-none absolute bottom-[-180px] left-1/3 w-[500px] h-[500px] rounded-full blur-3xl opacity-35"
+        style={{ background: 'radial-gradient(circle at 50% 50%, rgba(34,211,238,0.35), rgba(34,211,238,0))' }}
+      />
       <div className="max-w-6xl mx-auto px-6 md:px-10 py-10">
         <div
-          className="mb-8 p-6 md:p-8 border"
+          className="mb-8 p-6 md:p-8 border relative overflow-hidden"
           style={{
-            background: 'linear-gradient(135deg, #dcfce7 0%, #f3e8ff 50%, #ecfdf5 100%)',
+            background: 'linear-gradient(120deg, rgba(220,252,231,0.95) 0%, rgba(243,232,255,0.9) 42%, rgba(236,253,245,0.95) 100%)',
             borderColor: '#c4b5fd',
+            boxShadow: '0 24px 50px rgba(17, 24, 39, 0.28)',
           }}
         >
+          <div
+            className="absolute inset-0 opacity-60 pointer-events-none animate-gradient-shift"
+            style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.28), rgba(255,255,255,0))' }}
+          />
           <p className="font-mono text-xs uppercase tracking-[0.25em]" style={{ color: '#6d28d9' }}>
             ezo learn center
           </p>
@@ -595,7 +657,7 @@ function EzoLearnCenterContent() {
           <p className="mt-3 text-sm md:text-base leading-relaxed" style={{ color: '#166534' }}>
             Active course: <span className="font-bold">{COURSE_LABELS[activeCourse] ?? activeCourse.toUpperCase()}</span>. All modes use your CollegeBoard-style bank.
           </p>
-          <div className="mt-4 flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap gap-2 items-center">
             <Link
               href={`/collegebored?course=${encodeURIComponent(activeCourse)}`}
               className="inline-flex items-center gap-2 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider border"
@@ -603,7 +665,32 @@ function EzoLearnCenterContent() {
             >
               back to collegebored
             </Link>
+            <span className="text-xs font-mono" style={{ color: '#166534' }}>
+              mode memory: saved per course
+            </span>
           </div>
+        </div>
+
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          <button
+            type="button"
+            onClick={() => setMode(prevMode.key)}
+            className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider border"
+            style={{ background: '#dcfce7', color: '#166534', borderColor: '#86efac' }}
+          >
+            previous mode
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode(nextMode.key)}
+            className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider border"
+            style={{ background: '#ede9fe', color: '#5b21b6', borderColor: '#c4b5fd' }}
+          >
+            next mode
+          </button>
+          <span className="text-xs font-mono ml-auto" style={{ color: '#c4b5fd' }}>
+            current: {modes[modeIndex]?.title ?? 'Mode'}
+          </span>
         </div>
 
         <div className="mb-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-2">
@@ -616,9 +703,10 @@ function EzoLearnCenterContent() {
                 onClick={() => setMode(entry.key)}
                 className="text-left p-3 border transition-all duration-200"
                 style={{
-                  background: active ? 'linear-gradient(135deg, #dcfce7 0%, #f3e8ff 100%)' : '#0b1a2c',
+                  background: active ? 'linear-gradient(130deg, #dcfce7 0%, #f3e8ff 100%)' : 'linear-gradient(145deg, #0b1a2c 0%, #0c2139 100%)',
                   borderColor: active ? '#c4b5fd' : '#1e3a5f',
                   color: active ? '#14532d' : '#d1fae5',
+                  boxShadow: active ? '0 12px 22px rgba(196,181,253,0.3)' : 'none',
                 }}
               >
                 <p className="text-xs font-bold uppercase tracking-wider">{entry.title}</p>
@@ -628,7 +716,18 @@ function EzoLearnCenterContent() {
           })}
         </div>
 
-        <div className="border p-5" style={{ background: '#071425', borderColor: '#1e3a5f' }}>
+        <div
+          className="border p-5 relative overflow-hidden"
+          style={{ background: 'linear-gradient(145deg, #071425 0%, #0a1f38 100%)', borderColor: '#1e3a5f', boxShadow: '0 20px 48px rgba(0,0,0,0.35)' }}
+        >
+          <div
+            className="absolute -top-24 -right-24 w-72 h-72 rounded-full blur-3xl opacity-30 pointer-events-none"
+            style={{ background: 'radial-gradient(circle, rgba(196,181,253,0.7), rgba(196,181,253,0))' }}
+          />
+          <div
+            className="absolute -bottom-24 -left-16 w-72 h-72 rounded-full blur-3xl opacity-25 pointer-events-none"
+            style={{ background: 'radial-gradient(circle, rgba(110,231,183,0.7), rgba(110,231,183,0))' }}
+          />
           {mode === 'flashcard-frenzy' && <FlashcardFrenzy courseKey={activeCourse} />}
           {mode === 'distractor-hunter' && <DistractorHunter courseKey={activeCourse} />}
           {mode === 'explain-to-win' && <ExplainToWin courseKey={activeCourse} />}

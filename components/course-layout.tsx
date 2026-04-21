@@ -437,48 +437,57 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
           <p className="font-mono text-xs tracking-widest uppercase" style={{ color: '#9ca3ff' }}>
             collegeboard-aligned practice tools
           </p>
-          <div className="flex flex-col items-end gap-2">
-            <Link
-              href={`/collegebored?course=${encodeURIComponent(course.id)}`}
-              className="flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all"
-              style={{
-                background: '#1e1b4b22',
-                color: '#6366f1',
-                border: '1px solid #6366f133',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.background = '#1e1b4b33'
-                e.currentTarget.style.borderColor = '#6366f166'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.background = '#1e1b4b22'
-                e.currentTarget.style.borderColor = '#6366f133'
-              }}
-            >
-              open collegebored
-            </Link>
-            <Link
-              href={`/ezo-learn-center?course=${encodeURIComponent(course.id)}`}
-              className="flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all"
-              style={{
-                background: 'linear-gradient(135deg, #dcfce7 0%, #f3e8ff 100%)',
-                color: '#166534',
-                border: '1px solid #bbf7d0',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.filter = 'brightness(1.03)'
-                e.currentTarget.style.borderColor = '#c4b5fd'
-                e.currentTarget.style.transform = 'translateY(-1px)'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.filter = 'brightness(1)'
-                e.currentTarget.style.borderColor = '#bbf7d0'
-                e.currentTarget.style.transform = 'translateY(0)'
-              }}
-            >
-              open ezo learn center
-            </Link>
-          </div>
+          <Link
+            href={`/collegebored?course=${encodeURIComponent(course.id)}`}
+            className="flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all"
+            style={{
+              background: '#1e1b4b22',
+              color: '#6366f1',
+              border: '1px solid #6366f133',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#1e1b4b33'
+              e.currentTarget.style.borderColor = '#6366f166'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#1e1b4b22'
+              e.currentTarget.style.borderColor = '#6366f133'
+            }}
+          >
+            open collegebored
+          </Link>
+        </div>
+
+        <div className="mt-3 flex justify-end">
+          <Link
+            href={`/ezo-learn-center?course=${encodeURIComponent(course.id)}`}
+            className="group relative inline-flex items-center gap-2 px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider transition-all duration-300"
+            style={{
+              background: 'linear-gradient(120deg, #bbf7d0 0%, #e9d5ff 35%, #d9f99d 100%)',
+              color: '#14532d',
+              border: '1px solid #c4b5fd',
+              boxShadow: '0 10px 22px rgba(196,181,253,0.24)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px) scale(1.01)'
+              e.currentTarget.style.boxShadow = '0 16px 28px rgba(196,181,253,0.32)'
+              e.currentTarget.style.filter = 'saturate(1.05)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0) scale(1)'
+              e.currentTarget.style.boxShadow = '0 10px 22px rgba(196,181,253,0.24)'
+              e.currentTarget.style.filter = 'saturate(1)'
+            }}
+          >
+            <span
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+              style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent)' }}
+            />
+            <span className="relative">open ezo learn center</span>
+            <svg className="relative" width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 6h8M6.5 2.5l3.5 3.5-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </Link>
         </div>
 
         {/* Exam info */}
