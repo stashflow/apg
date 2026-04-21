@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { SiteNav } from './site-nav'
 
 export interface TopicLink {
@@ -39,21 +39,18 @@ interface CourseLayoutProps {
 export function CourseLayout({ course, basePath }: CourseLayoutProps) {
   const [loaded, setLoaded] = useState(false)
   const [hoveredUnit, setHoveredUnit] = useState<number | null>(null)
-  const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
-  const searchInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 80)
     return () => clearTimeout(t)
   }, [])
 
-  useEffect(() => {
-    if (searchOpen) searchInputRef.current?.focus()
-  }, [searchOpen])
-
   const normalizedSearch = searchQuery.trim().toLowerCase()
   const hasSearch = normalizedSearch.length > 0
+  const collectionLabel = course.units.every((unit) => unit.title.toLowerCase().startsWith('period '))
+    ? 'all periods'
+    : 'all units'
 
   const visibleUnits = useMemo(() => {
     const normalized = normalizedSearch
@@ -194,50 +191,13 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
         <div className="flex items-center justify-between gap-4 mb-8 flex-wrap">
           <div className="flex items-center gap-4 min-w-0 flex-1">
             <h2 className="text-xl font-black lowercase tracking-tight shrink-0" style={{ color: '#f0f6ff' }}>
-              all units
+              {collectionLabel}
             </h2>
             <div className="flex-1 h-px" style={{ background: 'rgba(26,108,245,0.2)' }} />
           </div>
           <div className="flex items-center gap-2">
-            {searchOpen && (
-              <div className="flex items-center gap-2">
-                <input
-                  ref={searchInputRef}
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="search units/topics..."
-                  className="h-8 w-56 px-3 text-xs font-mono"
-                  style={{
-                    background: '#0b1a2c',
-                    color: '#dbeafe',
-                    border: '1px solid #1e3a5f',
-                    outline: 'none',
-                  }}
-                />
-                {hasSearch && (
-                  <button
-                    type="button"
-                    onClick={() => setSearchQuery('')}
-                    className="h-8 px-2 font-mono text-[10px] uppercase tracking-wider"
-                    style={{
-                      background: '#13253b',
-                      color: '#93c5fd',
-                      border: '1px solid #1e3a5f',
-                    }}
-                  >
-                    clear
-                  </button>
-                )}
-              </div>
-            )}
-            <button
-              type="button"
-              onClick={() => {
-                if (searchOpen && !hasSearch) setSearchOpen(false)
-                else setSearchOpen(true)
-              }}
-              className="h-8 px-3 font-mono text-xs font-bold uppercase tracking-wider flex items-center gap-1.5"
+            <div
+              className="h-8 px-2 font-mono text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5"
               style={{
                 background: '#12233b',
                 color: '#7dd3fc',
@@ -247,8 +207,35 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
               </svg>
-              search
-            </button>
+            </div>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={`search ${collectionLabel} or topics...`}
+              aria-label={`Search ${collectionLabel} and topics`}
+              className="h-8 w-64 md:w-72 px-3 text-xs font-mono"
+              style={{
+                background: '#0b1a2c',
+                color: '#dbeafe',
+                border: '1px solid #1e3a5f',
+                outline: 'none',
+              }}
+            />
+            {hasSearch && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="h-8 px-2 font-mono text-[10px] uppercase tracking-wider"
+                style={{
+                  background: '#13253b',
+                  color: '#93c5fd',
+                  border: '1px solid #1e3a5f',
+                }}
+              >
+                clear
+              </button>
+            )}
           </div>
         </div>
 

@@ -314,51 +314,52 @@ export function NotesPage({
               <button
                 type="button"
                 onClick={() => window.open(quizletHref, '_blank', 'noopener,noreferrer')}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 font-mono text-xs font-bold transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
                 style={{
-                  background: '#4255ff18',
+                  background: '#4255ff24',
                   color: '#4255ff',
-                  border: '1px solid #4255ff33',
+                  border: '1px solid #4255ff55',
                 }}
                 title={quizletUrl ? 'Open Quizlet set' : 'Search Quizlet for this topic'}
                 onMouseEnter={(e) => {
                   const el = e.currentTarget
-                  el.style.background = '#4255ff30'
-                  el.style.borderColor = '#4255ff66'
+                  el.style.background = '#4255ff36'
+                  el.style.borderColor = '#4255ff88'
                 }}
                 onMouseLeave={(e) => {
                   const el = e.currentTarget
-                  el.style.background = '#4255ff18'
-                  el.style.borderColor = '#4255ff33'
+                  el.style.background = '#4255ff24'
+                  el.style.borderColor = '#4255ff55'
                 }}
               >
                 Q
+                <span>quizlet</span>
               </button>
               <button
                 type="button"
                 onClick={() => window.open(youtubeHref, '_blank', 'noopener,noreferrer')}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 font-mono text-xs font-bold transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
                 style={{
-                  background: '#ff000018',
+                  background: '#ff000024',
                   color: '#ff4444',
-                  border: '1px solid #ff000033',
+                  border: '1px solid #ff000055',
                 }}
                 title={videoId ? 'Watch topic video' : 'Search YouTube for this topic'}
                 onMouseEnter={(e) => {
                   const el = e.currentTarget
-                  el.style.background = '#ff000030'
-                  el.style.borderColor = '#ff000066'
+                  el.style.background = '#ff000036'
+                  el.style.borderColor = '#ff000088'
                 }}
                 onMouseLeave={(e) => {
                   const el = e.currentTarget
-                  el.style.background = '#ff000018'
-                  el.style.borderColor = '#ff000033'
+                  el.style.background = '#ff000024'
+                  el.style.borderColor = '#ff000055'
                 }}
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                   <path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
                 </svg>
-                watch
+                <span>youtube</span>
               </button>
             </div>
           </div>
