@@ -68,6 +68,9 @@ function FlashcardFrenzyGame({ courseKey, onExit }: { courseKey: string; onExit:
   const [selected, setSelected] = useState<string | null>(null)
   const [revealed, setRevealed] = useState(false)
   const [correctCount, setCorrectCount] = useState(0)
+  const [confidence, setConfidence] = useState<'low' | 'medium' | 'high'>('medium')
+  const [results, setResults] = useState<Record<string, { correct: boolean; confidence: 'low' | 'medium' | 'high' }>>({})
+  const [isRetryRound, setIsRetryRound] = useState(false)
 
   const startRound = () => {
     const pool = unitFilter === 'all' ? mcqs : mcqs.filter((q) => q.unit === unitFilter)
@@ -77,10 +80,18 @@ function FlashcardFrenzyGame({ courseKey, onExit }: { courseKey: string; onExit:
     setSelected(null)
     setRevealed(false)
     setCorrectCount(0)
+    setConfidence('medium')
+    setResults({})
+    setIsRetryRound(false)
     setPhase('play')
   }
 
   const q = round[index]
+  const missed = round.filter((item) => results[item.id] && !results[item.id].correct)
+  const overconfidentMisses = Object.values(results).filter((r) => !r.correct && r.confidence === 'high').length
+  const weakTopics = Array.from(
+    new Set(missed.map((m) => m.topic?.trim() || `Unit ${m.unit}`)),
+  ).slice(0, 5)
 
   if (phase === 'setup') {
     return (
@@ -118,10 +129,33 @@ function FlashcardFrenzyGame({ courseKey, onExit }: { courseKey: string; onExit:
         <div className="border p-4" style={panelStyle()}>
           <p className="text-lg font-bold" style={{ color: '#d1fae5' }}>Score {correctCount}/{round.length}</p>
           <p className="text-sm" style={{ color: '#a7f3d0' }}>Accuracy {pct.toFixed(0)}%</p>
+          <p className="text-xs mt-2" style={{ color: '#c4b5fd' }}>
+            Overconfident misses: {overconfidentMisses} · Missed topics: {weakTopics.length > 0 ? weakTopics.join(' · ') : 'none'}
+          </p>
         </div>
         <div className="mt-3 flex gap-2">
           <button type="button" onClick={() => setPhase('setup')} className="px-4 py-2 text-xs font-bold uppercase border" style={{ background: '#dcfce7', color: '#166534', borderColor: '#86efac' }}>new setup</button>
           <button type="button" onClick={startRound} className="px-4 py-2 text-xs font-bold uppercase border" style={{ background: '#ede9fe', color: '#5b21b6', borderColor: '#c4b5fd' }}>play again</button>
+          {missed.length > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                setRound(shuffle(missed))
+                setIndex(0)
+                setSelected(null)
+                setRevealed(false)
+                setCorrectCount(0)
+                setConfidence('medium')
+                setResults({})
+                setIsRetryRound(true)
+                setPhase('play')
+              }}
+              className="px-4 py-2 text-xs font-bold uppercase border"
+              style={{ background: '#fef3c7', color: '#92400e', borderColor: '#fcd34d' }}
+            >
+              retry missed only
+            </button>
+          )}
         </div>
       </GameShell>
     )
@@ -130,7 +164,7 @@ function FlashcardFrenzyGame({ courseKey, onExit }: { courseKey: string; onExit:
   if (!q) return null
 
   return (
-    <GameShell title="Flashcard Frenzy" subtitle="Answer first, then reveal all choices" onExit={onExit}>
+    <GameShell title="Flashcard Frenzy" subtitle={isRetryRound ? 'Retry round: fix weak spots' : 'Answer first, then reveal all choices'} onExit={onExit}>
       <div className="flex items-center gap-2 mb-3">
         <p className="text-xs font-mono" style={{ color: '#c4b5fd' }}>question {index + 1}/{round.length}</p>
         <div className="flex-1 h-1.5" style={{ background: '#102238' }}>
@@ -169,18 +203,42 @@ function FlashcardFrenzyGame({ courseKey, onExit }: { courseKey: string; onExit:
 
       <div className="mt-3 flex gap-2">
         {!revealed ? (
-          <button
-            type="button"
-            disabled={!selected}
-            onClick={() => {
-              if (selected === q.correctAnswer) setCorrectCount((c) => c + 1)
-              setRevealed(true)
-            }}
-            className="px-4 py-2 text-xs font-bold uppercase border disabled:opacity-50"
-            style={{ background: '#ede9fe', color: '#5b21b6', borderColor: '#c4b5fd' }}
-          >
-            check answer
-          </button>
+          <>
+            <div className="flex items-center gap-1.5">
+              {(['low', 'medium', 'high'] as const).map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setConfidence(c)}
+                  className="px-2.5 py-2 text-[11px] font-bold uppercase border"
+                  style={{
+                    background: confidence === c ? '#e9d5ff' : '#102238',
+                    color: confidence === c ? '#6b21a8' : '#c4b5fd',
+                    borderColor: '#7c3aed55',
+                  }}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              disabled={!selected}
+              onClick={() => {
+                const isCorrect = selected === q.correctAnswer
+                if (isCorrect) setCorrectCount((c) => c + 1)
+                setResults((prev) => ({
+                  ...prev,
+                  [q.id]: { correct: isCorrect, confidence },
+                }))
+                setRevealed(true)
+              }}
+              className="px-4 py-2 text-xs font-bold uppercase border disabled:opacity-50"
+              style={{ background: '#ede9fe', color: '#5b21b6', borderColor: '#c4b5fd' }}
+            >
+              check answer
+            </button>
+          </>
         ) : (
           <button
             type="button"
@@ -190,6 +248,7 @@ function FlashcardFrenzyGame({ courseKey, onExit }: { courseKey: string; onExit:
                 setIndex((i) => i + 1)
                 setSelected(null)
                 setRevealed(false)
+                setConfidence('medium')
               }
             }}
             className="px-4 py-2 text-xs font-bold uppercase border"
@@ -211,6 +270,9 @@ function DistractorHunterGame({ courseKey, onExit }: { courseKey: string; onExit
   const [selected, setSelected] = useState('')
   const [note, setNote] = useState('')
   const [score, setScore] = useState(0)
+  const [revealed, setRevealed] = useState(false)
+  const [confidence, setConfidence] = useState<'low' | 'medium' | 'high'>('medium')
+  const [highConfMisses, setHighConfMisses] = useState(0)
 
   const startRound = () => {
     setRound(shuffle(mcqs).slice(0, Math.min(8, mcqs.length)))
@@ -218,6 +280,9 @@ function DistractorHunterGame({ courseKey, onExit }: { courseKey: string; onExit
     setSelected('')
     setNote('')
     setScore(0)
+    setRevealed(false)
+    setConfidence('medium')
+    setHighConfMisses(0)
     setPhase('play')
   }
 
@@ -237,6 +302,7 @@ function DistractorHunterGame({ courseKey, onExit }: { courseKey: string; onExit
       <GameShell title="Distractor Hunter" subtitle="Round complete" onExit={onExit}>
         <p className="text-lg font-bold" style={{ color: '#d1fae5' }}>Score {score}/{round.length * 2}</p>
         <p className="text-sm" style={{ color: '#a7f3d0' }}>1 point for correct choice + 1 point for solid distractor analysis each question.</p>
+        <p className="text-xs mt-2" style={{ color: '#c4b5fd' }}>High-confidence misses: {highConfMisses}</p>
         <button type="button" onClick={startRound} className="mt-3 px-4 py-2 text-xs font-bold uppercase border" style={{ background: '#dcfce7', color: '#166534', borderColor: '#86efac' }}>play again</button>
       </GameShell>
     )
@@ -257,26 +323,64 @@ function DistractorHunterGame({ courseKey, onExit }: { courseKey: string; onExit
         </div>
         <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={3} className="w-full p-2 text-sm border" style={{ background: '#102238', color: '#d1fae5', borderColor: '#1e3a5f' }} placeholder="Why is one incorrect answer tempting but wrong?" />
       </div>
-      <button
-        type="button"
-        disabled={!selected}
-        onClick={() => {
-          let earned = 0
-          if (selected === q.correctAnswer) earned += 1
-          if (note.trim().length >= 20) earned += 1
-          setScore((s) => s + earned)
-          if (index >= round.length - 1) setPhase('done')
-          else {
-            setIndex((i) => i + 1)
-            setSelected('')
-            setNote('')
-          }
-        }}
-        className="mt-3 px-4 py-2 text-xs font-bold uppercase border disabled:opacity-50"
-        style={{ background: '#dcfce7', color: '#166534', borderColor: '#86efac' }}
-      >
-        submit and continue
-      </button>
+      {!revealed ? (
+        <div className="mt-3 flex gap-2 items-center flex-wrap">
+          <div className="flex items-center gap-1.5">
+            {(['low', 'medium', 'high'] as const).map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setConfidence(c)}
+                className="px-2.5 py-2 text-[11px] font-bold uppercase border"
+                style={{ background: confidence === c ? '#e9d5ff' : '#102238', color: confidence === c ? '#6b21a8' : '#c4b5fd', borderColor: '#7c3aed55' }}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+          <button
+            type="button"
+            disabled={!selected}
+            onClick={() => {
+              let earned = 0
+              const correctPick = selected === q.correctAnswer
+              if (correctPick) earned += 1
+              if (note.trim().length >= 20) earned += 1
+              if (!correctPick && confidence === 'high') setHighConfMisses((v) => v + 1)
+              setScore((s) => s + earned)
+              setRevealed(true)
+            }}
+            className="px-4 py-2 text-xs font-bold uppercase border disabled:opacity-50"
+            style={{ background: '#dcfce7', color: '#166534', borderColor: '#86efac' }}
+          >
+            reveal feedback
+          </button>
+        </div>
+      ) : (
+        <div className="mt-3 space-y-2">
+          <div className="border p-3 text-xs" style={{ ...panelStyle(), color: '#a7f3d0' }}>
+            <p><span className="font-bold">Correct:</span> {q.correctAnswer}</p>
+            <p className="mt-1"><span className="font-bold">Why:</span> {q.explanation}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              if (index >= round.length - 1) setPhase('done')
+              else {
+                setIndex((i) => i + 1)
+                setSelected('')
+                setNote('')
+                setRevealed(false)
+                setConfidence('medium')
+              }
+            }}
+            className="px-4 py-2 text-xs font-bold uppercase border"
+            style={{ background: '#ede9fe', color: '#5b21b6', borderColor: '#c4b5fd' }}
+          >
+            {index >= round.length - 1 ? 'finish round' : 'next question'}
+          </button>
+        </div>
+      )}
     </GameShell>
   )
 }
@@ -289,6 +393,7 @@ function ExplainToWinGame({ courseKey, onExit }: { courseKey: string; onExit: ()
   const [selected, setSelected] = useState('')
   const [explain, setExplain] = useState('')
   const [score, setScore] = useState(0)
+  const [revealed, setRevealed] = useState(false)
 
   const startRound = () => {
     setRound(shuffle(mcqs).slice(0, Math.min(8, mcqs.length)))
@@ -296,6 +401,7 @@ function ExplainToWinGame({ courseKey, onExit }: { courseKey: string; onExit: ()
     setSelected('')
     setExplain('')
     setScore(0)
+    setRevealed(false)
     setPhase('play')
   }
 
@@ -333,27 +439,47 @@ function ExplainToWinGame({ courseKey, onExit }: { courseKey: string; onExit: ()
         </div>
         <textarea value={explain} onChange={(e) => setExplain(e.target.value)} rows={4} className="w-full p-2 text-sm border" style={{ background: '#102238', color: '#d1fae5', borderColor: '#1e3a5f' }} placeholder="Explain why the correct answer is right." />
       </div>
-      <button
-        type="button"
-        disabled={!selected}
-        onClick={() => {
-          let earned = 0
-          if (selected === q.correctAnswer) earned += 1
-          if (explain.trim().length >= 55) earned += 1
-          if (/because|therefore|which means|so that/i.test(explain)) earned += 1
-          setScore((s) => s + earned)
-          if (index >= round.length - 1) setPhase('done')
-          else {
-            setIndex((i) => i + 1)
-            setSelected('')
-            setExplain('')
-          }
-        }}
-        className="mt-3 px-4 py-2 text-xs font-bold uppercase border disabled:opacity-50"
-        style={{ background: '#dcfce7', color: '#166534', borderColor: '#86efac' }}
-      >
-        submit and continue
-      </button>
+      {!revealed ? (
+        <button
+          type="button"
+          disabled={!selected}
+          onClick={() => {
+            let earned = 0
+            if (selected === q.correctAnswer) earned += 1
+            if (explain.trim().length >= 55) earned += 1
+            if (/because|therefore|which means|so that/i.test(explain)) earned += 1
+            setScore((s) => s + earned)
+            setRevealed(true)
+          }}
+          className="mt-3 px-4 py-2 text-xs font-bold uppercase border disabled:opacity-50"
+          style={{ background: '#dcfce7', color: '#166534', borderColor: '#86efac' }}
+        >
+          reveal coaching
+        </button>
+      ) : (
+        <div className="mt-3 space-y-2">
+          <div className="border p-3 text-xs" style={{ ...panelStyle(), color: '#a7f3d0' }}>
+            <p><span className="font-bold">Correct:</span> {q.correctAnswer}</p>
+            <p className="mt-1"><span className="font-bold">Coach:</span> {q.explanation}</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              if (index >= round.length - 1) setPhase('done')
+              else {
+                setIndex((i) => i + 1)
+                setSelected('')
+                setExplain('')
+                setRevealed(false)
+              }
+            }}
+            className="px-4 py-2 text-xs font-bold uppercase border"
+            style={{ background: '#ede9fe', color: '#5b21b6', borderColor: '#c4b5fd' }}
+          >
+            {index >= round.length - 1 ? 'finish round' : 'next question'}
+          </button>
+        </div>
+      )}
     </GameShell>
   )
 }
@@ -439,6 +565,7 @@ function UnitBossBattlesGame({ courseKey, onExit }: { courseKey: string; onExit:
   const [frqResponses, setFrqResponses] = useState<Record<string, string>>({})
   const [revealed, setRevealed] = useState(false)
   const [score, setScore] = useState(0)
+  const [results, setResults] = useState<Record<string, boolean>>({})
 
   const startBattle = () => {
     const pool = all.filter((q) => q.unit === unit)
@@ -450,10 +577,12 @@ function UnitBossBattlesGame({ courseKey, onExit }: { courseKey: string; onExit:
     setFrqResponses({})
     setRevealed(false)
     setScore(0)
+    setResults({})
     setPhase('play')
   }
 
   const q = battle[index]
+  const missed = battle.filter((item) => results[item.id] === false)
 
   if (phase === 'setup') {
     const unitMcq = all.filter((x) => x.unit === unit && x.type === 'mcq').length
@@ -491,6 +620,25 @@ function UnitBossBattlesGame({ courseKey, onExit }: { courseKey: string; onExit:
         <div className="mt-3 flex gap-2">
           <button type="button" onClick={() => setPhase('setup')} className="px-4 py-2 text-xs font-bold uppercase border" style={{ background: '#dcfce7', color: '#166534', borderColor: '#86efac' }}>new setup</button>
           <button type="button" onClick={startBattle} className="px-4 py-2 text-xs font-bold uppercase border" style={{ background: '#ede9fe', color: '#5b21b6', borderColor: '#c4b5fd' }}>replay battle</button>
+          {missed.length > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                setBattle(shuffle(missed))
+                setIndex(0)
+                setSelected('')
+                setFrqResponses({})
+                setRevealed(false)
+                setScore(0)
+                setResults({})
+                setPhase('play')
+              }}
+              className="px-4 py-2 text-xs font-bold uppercase border"
+              style={{ background: '#fef3c7', color: '#92400e', borderColor: '#fcd34d' }}
+            >
+              retry missed fights
+            </button>
+          )}
         </div>
       </GameShell>
     )
@@ -527,6 +675,17 @@ function UnitBossBattlesGame({ courseKey, onExit }: { courseKey: string; onExit:
             })}
           </div>
         )}
+        {q.type === 'mcq' && revealed && (
+          <div className="mt-3 border p-3" style={{ ...panelStyle(), color: '#a7f3d0' }}>
+            <p className="text-xs font-bold mb-1">Incorrect options review</p>
+            <ul className="space-y-1 text-xs">
+              {(q.options ?? []).filter((o) => o.letter !== q.correctAnswer).map((o) => (
+                <li key={o.letter}><span className="font-mono mr-1">{o.letter}.</span>{o.text}</li>
+              ))}
+            </ul>
+            <p className="mt-2 text-xs"><span className="font-bold">Why correct:</span> {q.explanation}</p>
+          </div>
+        )}
 
         {q.type === 'frq' && (
           <div className="space-y-3">
@@ -549,8 +708,15 @@ function UnitBossBattlesGame({ courseKey, onExit }: { courseKey: string; onExit:
             type="button"
             disabled={(q.type === 'mcq' && !selected) || (q.type === 'frq' && !canSubmitFrq)}
             onClick={() => {
-              if (q.type === 'mcq' && selected === q.correctAnswer) setScore((s) => s + 1)
-              if (q.type === 'frq') setScore((s) => s + 1)
+              if (q.type === 'mcq') {
+                const ok = selected === q.correctAnswer
+                if (ok) setScore((s) => s + 1)
+                setResults((prev) => ({ ...prev, [q.id]: ok }))
+              }
+              if (q.type === 'frq') {
+                setScore((s) => s + 1)
+                setResults((prev) => ({ ...prev, [q.id]: true }))
+              }
               setRevealed(true)
             }}
             className="px-4 py-2 text-xs font-bold uppercase border disabled:opacity-50"
