@@ -30,13 +30,14 @@ interface UnitPageProps {
   basePath: string
   courseHref: string
   videoId?: string
+  quizletUrl?: string  // Unit-level quizlet for review
   examDate?: {
     date: string
     time: string
   }
 }
 
-export function UnitPage({ course, unit, topics, basePath, courseHref, videoId, examDate }: UnitPageProps) {
+export function UnitPage({ course, unit, topics, basePath, courseHref, videoId, quizletUrl, examDate }: UnitPageProps) {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
@@ -92,6 +93,56 @@ export function UnitPage({ course, unit, topics, basePath, courseHref, videoId, 
             >
               exam weight: {unit.examWeight}
             </div>
+            
+            {/* Unit review buttons */}
+            <a
+              href={quizletUrl || `https://quizlet.com/search?query=${encodeURIComponent(`${course.short.toUpperCase()} Unit ${unit.number}`)}&type=sets`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-2.5 py-1 font-mono text-xs font-bold transition-all"
+              style={{
+                background: quizletUrl ? '#4255ff22' : '#4255ff12',
+                color: quizletUrl ? '#4255ff' : '#6b8ab0',
+                border: `1px solid ${quizletUrl ? '#4255ff44' : '#4255ff22'}`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#4255ff33'
+                e.currentTarget.style.borderColor = '#4255ff66'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = quizletUrl ? '#4255ff22' : '#4255ff12'
+                e.currentTarget.style.borderColor = quizletUrl ? '#4255ff44' : '#4255ff22'
+              }}
+            >
+              <span className="font-black">Q</span>
+              <span>{quizletUrl ? 'unit review' : 'search quizlet'}</span>
+            </a>
+            
+            <a
+              href={videoId ? `https://www.youtube.com/watch?v=${videoId}` : `https://www.youtube.com/results?search_query=${encodeURIComponent(`${course.short.toUpperCase()} - UNIT ${unit.number}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 px-2.5 py-1 font-mono text-xs font-bold transition-all"
+              style={{
+                background: videoId ? '#ff000022' : '#ff000012',
+                color: videoId ? '#ff4444' : '#b06b6b',
+                border: `1px solid ${videoId ? '#ff000044' : '#ff000022'}`,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#ff000033'
+                e.currentTarget.style.borderColor = '#ff000066'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = videoId ? '#ff000022' : '#ff000012'
+                e.currentTarget.style.borderColor = videoId ? '#ff000044' : '#ff000022'
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
+              </svg>
+              <span>{videoId ? 'unit overview' : 'search youtube'}</span>
+            </a>
+            
             <p className="text-sm leading-relaxed max-w-2xl" style={{ color: '#b8d0ee' }}>
               {unit.description}
             </p>
@@ -183,71 +234,69 @@ export function UnitPage({ course, unit, topics, basePath, courseHref, videoId, 
                     </p>
                   </div>
 
-                  {/* Quizlet button */}
-                  {topic.quizletUrl && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        window.open(topic.quizletUrl, '_blank', 'noopener,noreferrer')
-                      }}
-                      className="shrink-0 self-center flex items-center gap-1.5 px-2.5 py-1.5 font-mono text-xs font-bold transition-all cursor-pointer"
-                      style={{
-                        background: '#4255ff18',
-                        color: '#4255ff',
-                        border: '1px solid #4255ff33',
-                      }}
-                      onMouseEnter={(e) => {
-                        const el = e.currentTarget
-                        el.style.background = '#4255ff30'
-                        el.style.borderColor = '#4255ff66'
-                      }}
-                      onMouseLeave={(e) => {
-                        const el = e.currentTarget
-                        el.style.background = '#4255ff18'
-                        el.style.borderColor = '#4255ff33'
-                      }}
-                    >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
-                      </svg>
-                      quizlet
-                    </button>
-                  )}
+                  {/* Quizlet button - always show, with search fallback */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      const url = topic.quizletUrl || `https://quizlet.com/search?query=${encodeURIComponent(`${course.short.toUpperCase()} - ${topic.title}`)}&type=sets`
+                      window.open(url, '_blank', 'noopener,noreferrer')
+                    }}
+                    className="shrink-0 self-center flex items-center gap-1.5 px-2.5 py-1.5 font-mono text-xs font-bold transition-all cursor-pointer"
+                    style={{
+                      background: topic.quizletUrl ? '#4255ff18' : '#4255ff10',
+                      color: topic.quizletUrl ? '#4255ff' : '#6b8ab0',
+                      border: `1px solid ${topic.quizletUrl ? '#4255ff33' : '#4255ff22'}`,
+                    }}
+                    onMouseEnter={(e) => {
+                      const el = e.currentTarget
+                      el.style.background = '#4255ff30'
+                      el.style.borderColor = '#4255ff66'
+                    }}
+                    onMouseLeave={(e) => {
+                      const el = e.currentTarget
+                      el.style.background = topic.quizletUrl ? '#4255ff18' : '#4255ff10'
+                      el.style.borderColor = topic.quizletUrl ? '#4255ff33' : '#4255ff22'
+                    }}
+                    title={topic.quizletUrl ? 'Open Quizlet' : 'Search Quizlet'}
+                  >
+                    <span className="font-black text-[10px]">Q</span>
+                  </button>
 
-                  {/* Video button - using button to avoid nested <a> inside Link */}
-                  {topic.videoId && (
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        window.open(`https://www.youtube.com/watch?v=${topic.videoId}`, '_blank', 'noopener,noreferrer')
-                      }}
-                      className="shrink-0 self-center flex items-center gap-1.5 px-2.5 py-1.5 font-mono text-xs font-bold transition-all cursor-pointer"
-                      style={{
-                        background: '#ff000018',
-                        color: '#ff4444',
-                        border: '1px solid #ff000033',
-                      }}
-                      onMouseEnter={(e) => {
-                        const el = e.currentTarget
-                        el.style.background = '#ff000030'
-                        el.style.borderColor = '#ff000066'
-                      }}
-                      onMouseLeave={(e) => {
-                        const el = e.currentTarget
-                        el.style.background = '#ff000018'
-                        el.style.borderColor = '#ff000033'
-                      }}
-                    >
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.010-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
-                      </svg>
-                      watch
-                    </button>
-                  )}
+                  {/* Video button - always show, with search fallback */}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      const url = topic.videoId 
+                        ? `https://www.youtube.com/watch?v=${topic.videoId}` 
+                        : `https://www.youtube.com/results?search_query=${encodeURIComponent(`${course.short.toUpperCase()} - ${topic.title}`)}`
+                      window.open(url, '_blank', 'noopener,noreferrer')
+                    }}
+                    className="shrink-0 self-center flex items-center gap-1.5 px-2.5 py-1.5 font-mono text-xs font-bold transition-all cursor-pointer"
+                    style={{
+                      background: topic.videoId ? '#ff000018' : '#ff000010',
+                      color: topic.videoId ? '#ff4444' : '#b06b6b',
+                      border: `1px solid ${topic.videoId ? '#ff000033' : '#ff000022'}`,
+                    }}
+                    onMouseEnter={(e) => {
+                      const el = e.currentTarget
+                      el.style.background = '#ff000030'
+                      el.style.borderColor = '#ff000066'
+                    }}
+                    onMouseLeave={(e) => {
+                      const el = e.currentTarget
+                      el.style.background = topic.videoId ? '#ff000018' : '#ff000010'
+                      el.style.borderColor = topic.videoId ? '#ff000033' : '#ff000022'
+                    }}
+                    title={topic.videoId ? 'Watch Video' : 'Search YouTube'}
+                  >
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
+                    </svg>
+                  </button>
 
                   {/* Arrow */}
                   <div

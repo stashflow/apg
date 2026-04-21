@@ -5,11 +5,19 @@ import Image from 'next/image'
 import { useEffect, useState } from 'react'
 import { SiteNav } from './site-nav'
 
+export interface TopicLink {
+  quizletUrl?: string
+  videoId?: string
+}
+
 export interface Unit {
   number: number
   title: string
   topics: string[]
   examWeight: string
+  quizletUrl?: string  // Unit-level quizlet for review
+  videoId?: string     // Unit-level video for review
+  topicLinks?: TopicLink[] // Per-topic quizlet/video links
 }
 
 interface CourseLayoutProps {
@@ -207,29 +215,72 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
 
                   {/* Topics */}
                   <div className="space-y-0.5 mb-4">
-                    {unit.topics.map((topic, ti) => (
-                      <Link
-                        key={ti}
-                        href={`${basePath}/unit-${unit.number}/${ti + 1}`}
-                        className="flex items-center gap-2 py-1 px-1 text-sm transition-all duration-150 group/t"
-                        style={{ color: '#8aabb0', borderRadius: '2px' }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.color = '#f0f6ff'
-                          e.currentTarget.style.background = `${course.accent}15`
-                          e.currentTarget.style.paddingLeft = '6px'
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.color = '#8aabb0'
-                          e.currentTarget.style.background = 'transparent'
-                          e.currentTarget.style.paddingLeft = '4px'
-                        }}
-                      >
-                        <span className="shrink-0 font-mono text-xs" style={{ color: course.accentLight, opacity: 0.7, minWidth: '16px' }}>
-                          {(ti + 1).toString().padStart(2, '0')}
-                        </span>
-                        <span className="truncate">{topic}</span>
-                      </Link>
-                    ))}
+                    {unit.topics.map((topic, ti) => {
+                      const topicLink = unit.topicLinks?.[ti]
+                      const hasQuizlet = !!topicLink?.quizletUrl
+                      const hasVideo = !!topicLink?.videoId
+                      const searchQuery = `${course.short.toUpperCase()} - ${topic}`
+                      
+                      return (
+                        <div
+                          key={ti}
+                          className="flex items-center gap-1 group/row"
+                        >
+                          <Link
+                            href={`${basePath}/unit-${unit.number}/${ti + 1}`}
+                            className="flex items-center gap-2 py-1 px-1 text-sm transition-all duration-150 group/t flex-1 min-w-0"
+                            style={{ color: '#8aabb0', borderRadius: '2px' }}
+                            onMouseEnter={(e) => {
+                              e.currentTarget.style.color = '#f0f6ff'
+                              e.currentTarget.style.background = `${course.accent}15`
+                              e.currentTarget.style.paddingLeft = '6px'
+                            }}
+                            onMouseLeave={(e) => {
+                              e.currentTarget.style.color = '#8aabb0'
+                              e.currentTarget.style.background = 'transparent'
+                              e.currentTarget.style.paddingLeft = '4px'
+                            }}
+                          >
+                            <span className="shrink-0 font-mono text-xs" style={{ color: course.accentLight, opacity: 0.7, minWidth: '16px' }}>
+                              {(ti + 1).toString().padStart(2, '0')}
+                            </span>
+                            <span className="truncate">{topic}</span>
+                          </Link>
+                          
+                          {/* Quizlet button */}
+                          <a
+                            href={hasQuizlet ? topicLink.quizletUrl : `https://quizlet.com/search?query=${encodeURIComponent(searchQuery)}&type=sets`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="shrink-0 w-5 h-5 flex items-center justify-center text-xs font-bold opacity-40 hover:opacity-100 transition-opacity"
+                            style={{ 
+                              color: hasQuizlet ? '#4255ff' : '#6b7280',
+                            }}
+                            title={hasQuizlet ? 'Open Quizlet' : 'Search Quizlet'}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Q
+                          </a>
+                          
+                          {/* YouTube button */}
+                          <a
+                            href={hasVideo ? `https://www.youtube.com/watch?v=${topicLink.videoId}` : `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="shrink-0 w-5 h-5 flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity"
+                            style={{ 
+                              color: hasVideo ? '#ff4444' : '#6b7280',
+                            }}
+                            title={hasVideo ? 'Watch Video' : 'Search YouTube'}
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                              <path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
+                            </svg>
+                          </a>
+                        </div>
+                      )
+                    })}
                   </div>
 
                   {/* View unit CTA */}
