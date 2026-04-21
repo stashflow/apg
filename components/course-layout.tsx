@@ -437,25 +437,48 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
           <p className="font-mono text-xs tracking-widest uppercase" style={{ color: '#9ca3ff' }}>
             collegeboard-aligned practice tools
           </p>
-          <Link
-            href={`/collegebored?course=${encodeURIComponent(course.id)}`}
-            className="flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all"
-            style={{
-              background: '#1e1b4b22',
-              color: '#6366f1',
-              border: '1px solid #6366f133',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = '#1e1b4b33'
-              e.currentTarget.style.borderColor = '#6366f166'
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = '#1e1b4b22'
-              e.currentTarget.style.borderColor = '#6366f133'
-            }}
-          >
-            open collegebored
-          </Link>
+          <div className="flex flex-col items-end gap-2">
+            <Link
+              href={`/collegebored?course=${encodeURIComponent(course.id)}`}
+              className="flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all"
+              style={{
+                background: '#1e1b4b22',
+                color: '#6366f1',
+                border: '1px solid #6366f133',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = '#1e1b4b33'
+                e.currentTarget.style.borderColor = '#6366f166'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = '#1e1b4b22'
+                e.currentTarget.style.borderColor = '#6366f133'
+              }}
+            >
+              open collegebored
+            </Link>
+            <Link
+              href={`/ezo-learn-center?course=${encodeURIComponent(course.id)}`}
+              className="flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all"
+              style={{
+                background: 'linear-gradient(135deg, #dcfce7 0%, #f3e8ff 100%)',
+                color: '#166534',
+                border: '1px solid #bbf7d0',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.filter = 'brightness(1.03)'
+                e.currentTarget.style.borderColor = '#c4b5fd'
+                e.currentTarget.style.transform = 'translateY(-1px)'
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.filter = 'brightness(1)'
+                e.currentTarget.style.borderColor = '#bbf7d0'
+                e.currentTarget.style.transform = 'translateY(0)'
+              }}
+            >
+              open ezo learn center
+            </Link>
+          </div>
         </div>
 
         {/* Exam info */}
