@@ -304,6 +304,37 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
           })}
         </div>
 
+        <div
+          className="mt-6 px-5 py-4 flex items-center justify-between gap-3 flex-wrap"
+          style={{
+            background: '#1e1b4b12',
+            border: '1px solid #6366f122',
+          }}
+        >
+          <p className="font-mono text-xs tracking-widest uppercase" style={{ color: '#9ca3ff' }}>
+            collegeboard-aligned practice tools
+          </p>
+          <Link
+            href={`/collegebored?course=${encodeURIComponent(course.id)}`}
+            className="flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all"
+            style={{
+              background: '#1e1b4b22',
+              color: '#6366f1',
+              border: '1px solid #6366f133',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#1e1b4b33'
+              e.currentTarget.style.borderColor = '#6366f166'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#1e1b4b22'
+              e.currentTarget.style.borderColor = '#6366f133'
+            }}
+          >
+            open collegebored
+          </Link>
+        </div>
+
         {/* Exam info */}
         {course.examDate && (
           <div
@@ -321,6 +352,7 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
           </div>
         )}
       </div>
+
     </div>
   )
 }

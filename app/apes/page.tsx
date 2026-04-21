@@ -164,7 +164,7 @@ export default function APESPage() {
         accent: '#22c55e',
         accentLight: '#86efac',
         bgClass: 'bg-enviro-green',
-        examDate: 'May 15, 2025 — morning session (8:00 AM ET)',
+        examDate: 'May 15, 2026 — morning session (8:00 AM local)',
         units,
       }}
       basePath="/apes"

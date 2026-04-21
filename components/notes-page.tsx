@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { SiteNav } from './site-nav'
 import { VideoDropdown } from './video-dropdown'
-import { CollegeBored } from './college-bored'
 
 export interface NotesSection {
   type: 'heading' | 'subheading' | 'body' | 'bullets' | 'callout' | 'examtip' | 'frqtip' | 'table'
@@ -80,7 +79,6 @@ export function NotesPage({
   const unitHref = unitHrefProp ?? `/${courseSlug}/unit-${unit.number}`
   const [loaded, setLoaded] = useState(false)
   const [readPct, setReadPct] = useState(0)
-  const [showCollegeBored, setShowCollegeBored] = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 80)
@@ -306,31 +304,6 @@ export function NotesPage({
             
             {/* Study buttons */}
             <div className="flex flex-wrap gap-2">
-              {/* CollegeBored button — always visible */}
-              <button
-                type="button"
-                onClick={() => setShowCollegeBored(true)}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 font-mono text-xs font-bold transition-all cursor-pointer"
-                style={{
-                  background: '#1e1b4b22',
-                  color: '#6366f1',
-                  border: '1px solid #6366f133',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#1e1b4b33'
-                  e.currentTarget.style.borderColor = '#6366f166'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#1e1b4b22'
-                  e.currentTarget.style.borderColor = '#6366f133'
-                }}
-              >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                </svg>
-                collegebored
-              </button>
-
               {(quizletUrl || videoId) && (
               <>
                 {quizletUrl && (
@@ -463,13 +436,6 @@ export function NotesPage({
         </div>
       </div>
 
-      {/* CollegeBored modal */}
-      {showCollegeBored && (
-        <CollegeBored
-          courseShort={course.short}
-          onClose={() => setShowCollegeBored(false)}
-        />
-      )}
     </div>
   )
 }

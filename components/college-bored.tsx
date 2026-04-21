@@ -1,13 +1,21 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
-import type { Question, ExamFormat } from '@/lib/college-bored-data'
-import { examFormats, getQuestionsForCourse, getRandomExamSet } from '@/lib/college-bored-data'
+import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { usePathname, useRouter } from 'next/navigation'
+import type { Question } from '@/lib/college-bored-data'
+import { examFormats, getCoverageReport, getFullExamRun, getQuestionQualityReport, getQuestionsForCourse, getRandomExamSet, getResourcesForCourse, normalizeCourseKey } from '@/lib/college-bored-data'
 
 interface CollegeBoredProps {
   courseShort: string  // e.g. "apes"
-  onClose: () => void
 }
+
+const COURSE_OPTIONS = [
+  { key: 'apes', label: 'AP Environmental Science', path: '/apes' },
+  { key: 'apush', label: 'AP United States History', path: '/apush' },
+  { key: 'csp', label: 'AP Computer Science Principles', path: '/csp' },
+  { key: 'lang', label: 'AP English Language & Composition', path: '/lang' },
+]
 
 // ─── TIMER ───────────────────────────────────────────────────────────────────
 function useTimer(initialSeconds: number, running: boolean) {
@@ -30,8 +38,14 @@ function useTimer(initialSeconds: number, running: boolean) {
 
 // ─── EXAM FORMAT TAB ─────────────────────────────────────────────────────────
 function ExamFormatTab({ courseShort }: { courseShort: string }) {
-  const [selected, setSelected] = useState(courseShort.toLowerCase())
+  const normalizedCourse = normalizeCourseKey(courseShort)
+  const fallbackCourse = Object.keys(examFormats)[0]
+  const [selected, setSelected] = useState(examFormats[normalizedCourse] ? normalizedCourse : fallbackCourse)
   const info = examFormats[selected]
+
+  useEffect(() => {
+    setSelected(examFormats[normalizedCourse] ? normalizedCourse : fallbackCourse)
+  }, [fallbackCourse, normalizedCourse])
 
   return (
     <div className="flex flex-col h-full overflow-auto p-8" style={{ color: '#1a1a2e' }}>
@@ -105,6 +119,84 @@ function ExamFormatTab({ courseShort }: { courseShort: string }) {
   )
 }
 
+// ─── RESOURCES TAB ──────────────────────────────────────────────────────────
+function ResourcesTab({ courseShort }: { courseShort: string }) {
+  const resources = getResourcesForCourse(courseShort)
+  const coverage = getCoverageReport(courseShort)
+  const quality = getQuestionQualityReport(courseShort)
+
+  return (
+    <div className="flex flex-col h-full overflow-auto p-8 bg-white text-gray-800">
+      <div className="mb-6 p-4 rounded-lg border border-indigo-200" style={{ background: '#f5f7ff' }}>
+        <h2 className="text-lg font-bold text-gray-900 mb-1">Official Resources</h2>
+        <p className="text-sm text-gray-600">
+          Curated links from College Board + a built-in coverage validator for this course.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 mb-8">
+        {resources.links.map((link, i) => (
+          <a
+            key={`${link.url}-${i}`}
+            href={link.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="p-4 rounded border border-gray-200 hover:border-indigo-400 transition-colors"
+            style={{ background: '#fff' }}
+          >
+            <p className="font-semibold text-sm text-indigo-900">{link.label}</p>
+            <p className="text-xs text-gray-500 mt-1">{link.detail}</p>
+          </a>
+        ))}
+      </div>
+
+      <div className="rounded-lg border border-gray-200 overflow-hidden">
+        <div className="px-5 py-3 border-b border-gray-200" style={{ background: '#fafafa' }}>
+          <h3 className="font-bold text-sm text-gray-900">Coverage Validation (Ordered by Unit)</h3>
+          <p className="text-xs text-gray-500 mt-0.5">
+            Questions: {coverage.totalQuestions}/{coverage.targetQuestions} · Topics covered: {coverage.coveredTopics}/{coverage.topicCount} · Units in order: {coverage.unitsInOrder ? 'yes' : 'no'}
+          </p>
+          <p className="text-xs text-gray-500 mt-0.5">
+            Data checks: duplicate IDs {quality.duplicateIdCount} · invalid MCQ keys {quality.invalidMcqAnswerKeyCount} · MCQ option issues {quality.mcqOptionCountIssues} · FRQ structure issues {quality.frqStructureIssues} · topic mapping issues {quality.topicTagIssues}
+          </p>
+        </div>
+
+        <div className="divide-y divide-gray-200">
+          {coverage.units.map((unit) => (
+            <div key={unit.unit} className="p-4">
+              <div className="flex flex-wrap items-center gap-2 mb-2">
+                <span className="font-mono text-xs px-2 py-0.5 rounded bg-indigo-100 text-indigo-900">
+                  unit {unit.unit}
+                </span>
+                <span className="text-sm font-semibold text-gray-900">{unit.title}</span>
+                <span className="ml-auto text-xs text-gray-500">
+                  {unit.questionCount} Q · {unit.mcqCount} MCQ · {unit.frqCount} FRQ
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {unit.topics.map((topic, i) => (
+                  <span
+                    key={`${unit.unit}-${i}-${topic.topic}`}
+                    className="text-[11px] px-2 py-0.5 rounded border"
+                    style={{
+                      borderColor: topic.covered ? '#86efac' : '#fecaca',
+                      background: topic.covered ? '#f0fdf4' : '#fef2f2',
+                      color: topic.covered ? '#166534' : '#991b1b',
+                    }}
+                    title={`${topic.questionCount} question(s) mapped`}
+                  >
+                    {topic.covered ? 'covered' : 'review'} · {topic.topic}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 // ─── MCQ QUESTION PANEL ───────────────────────────────────────────────────────
 function MCQPanel({
   q,
@@ -132,7 +224,7 @@ function MCQPanel({
             )}
           </>
         ) : (
-          <p className="text-gray-400 italic">No stimulus for this question.</p>
+          <p className="text-gray-400 italic">This is a stand-alone question with no attached stimulus.</p>
         )}
       </div>
 
@@ -210,7 +302,7 @@ function FRQPanel({ q, revealed }: { q: Question; revealed: boolean }) {
         {q.stimulus ? (
           <p className="whitespace-pre-line">{q.stimulus}</p>
         ) : (
-          <p className="text-gray-400 italic">No stimulus for this question.</p>
+          <p className="text-gray-400 italic">This FRQ is stand-alone and does not include a stimulus.</p>
         )}
       </div>
 
@@ -232,7 +324,7 @@ function FRQPanel({ q, revealed }: { q: Question; revealed: boolean }) {
               onChange={e => setResponses(r => ({ ...r, [part.part]: e.target.value }))}
               rows={3}
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm text-gray-800 resize-y focus:outline-none focus:ring-2 focus:ring-indigo-400 disabled:bg-gray-50"
-              placeholder="Write your response here..."
+              placeholder="Type your response..."
             />
           </div>
         ))}
@@ -265,6 +357,22 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
   // 90 minutes default for practice
   const { seconds, fmt, reset } = useTimer(90 * 60, timerRunning)
 
+  const buildMcqSet = (seed?: Question) => {
+    const mcqs = allQs.filter(q => q.type === 'mcq')
+    if (mcqs.length === 0) return []
+
+    const targetCount = Math.min(10, mcqs.length)
+    const shuffle = (pool: Question[]) => [...pool].sort(() => Math.random() - 0.5)
+
+    if (!seed) {
+      return shuffle(mcqs).slice(0, targetCount)
+    }
+
+    const sameUnit = shuffle(mcqs.filter(q => q.id !== seed.id && q.unit === seed.unit))
+    const otherUnits = shuffle(mcqs.filter(q => q.id !== seed.id && q.unit !== seed.unit))
+    return [seed, ...sameUnit, ...otherUnits].slice(0, targetCount)
+  }
+
   const startExam = (qs: Question[], timeSeconds: number) => {
     setExamQs(qs)
     setQIndex(0)
@@ -288,18 +396,40 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
         {/* Random exam button */}
         <div className="mb-8 p-5 rounded-lg" style={{ background: '#1e1b4b' }}>
           <h3 className="text-white font-bold text-base mb-1">Random Practice Set</h3>
-          <p className="text-indigo-200 text-sm mb-3">Randomly selected MCQs + FRQs in real exam format. Timer included.</p>
-          <button
-            type="button"
-            onClick={() => startExam(getRandomExamSet(courseShort), 90 * 60)}
-            className="flex items-center gap-2 px-4 py-2 rounded font-semibold text-sm transition-all"
-            style={{ background: '#fff', color: '#1e1b4b' }}
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/>
-            </svg>
-            Start Random Exam
-          </button>
+          <p className="text-indigo-200 text-sm mb-3">Run a full 30-question sequence, mixed exam-style set, or targeted MCQ drill.</p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => startExam(getFullExamRun(courseShort), 90 * 60)}
+              className="flex items-center gap-2 px-4 py-2 rounded font-semibold text-sm transition-all"
+              style={{ background: '#0f172a', color: '#fff' }}
+            >
+              Start Full 30Q Run
+            </button>
+            <button
+              type="button"
+              onClick={() => startExam(getRandomExamSet(courseShort), 90 * 60)}
+              className="flex items-center gap-2 px-4 py-2 rounded font-semibold text-sm transition-all"
+              style={{ background: '#fff', color: '#1e1b4b' }}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17 1l4 4-4 4M3 11V9a4 4 0 0 1 4-4h14M7 23l-4-4 4-4M21 13v2a4 4 0 0 1-4 4H3"/>
+              </svg>
+              Start Mixed Set
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                const mcqSet = buildMcqSet()
+                const timeSeconds = Math.max(10 * 60, mcqSet.length * 75)
+                startExam(mcqSet, timeSeconds)
+              }}
+              className="flex items-center gap-2 px-4 py-2 rounded font-semibold text-sm transition-all"
+              style={{ background: '#312e81', color: '#fff' }}
+            >
+              Start MCQ Drill
+            </button>
+          </div>
         </div>
 
         {/* MCQs */}
@@ -314,7 +444,11 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
                 <button
                   key={q.id}
                   type="button"
-                  onClick={() => startExam([q], 90 * 60)}
+                  onClick={() => {
+                    const mcqSet = buildMcqSet(q)
+                    const timeSeconds = Math.max(10 * 60, mcqSet.length * 75)
+                    startExam(mcqSet, timeSeconds)
+                  }}
                   className="w-full flex items-start gap-3 p-4 rounded text-left transition-all hover:bg-gray-50 border border-gray-200 hover:border-indigo-300"
                 >
                   <span
@@ -395,7 +529,7 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
 
         {allQs.length === 0 && (
           <div className="flex-1 flex items-center justify-center">
-            <p className="text-gray-400 text-sm">No questions available for this course yet.</p>
+            <p className="text-gray-400 text-sm">Question bank unavailable for this course.</p>
           </div>
         )}
       </div>
@@ -567,98 +701,106 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
   )
 }
 
-// ─── MAIN MODAL ───────────────────────────────────────────────────────────────
-export function CollegeBored({ courseShort, onClose }: CollegeBoredProps) {
-  const [tab, setTab] = useState<'format' | 'practice'>('practice')
-  const overlayRef = useRef<HTMLDivElement>(null)
-
-  // Close on Escape
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [onClose])
+// ─── MAIN PANEL ───────────────────────────────────────────────────────────────
+export function CollegeBored({ courseShort }: CollegeBoredProps) {
+  const [tab, setTab] = useState<'format' | 'practice' | 'resources'>('practice')
+  const router = useRouter()
+  const pathname = usePathname()
+  const selectedCourse = normalizeCourseKey(courseShort)
+  const selectedMeta = COURSE_OPTIONS.find((course) => course.key === selectedCourse) ?? COURSE_OPTIONS[0]
 
   return (
     <div
-      ref={overlayRef}
-      className="fixed inset-0 z-50 flex flex-col"
-      style={{ background: 'rgba(0,0,0,0.7)' }}
-      onClick={e => { if (e.target === overlayRef.current) onClose() }}
+      className="relative flex flex-col w-full h-full min-h-[calc(100vh-64px)] overflow-hidden"
+      style={{ background: '#fff' }}
     >
+      {/* Header — CollegeBoard style */}
       <div
-        className="relative flex flex-col w-full h-full max-w-6xl mx-auto my-4 rounded-xl overflow-hidden shadow-2xl"
+        className="shrink-0 flex items-center justify-between px-6 py-3 border-b border-gray-200 gap-3 flex-wrap"
         style={{ background: '#fff' }}
-        onClick={e => e.stopPropagation()}
       >
-        {/* Header — CollegeBoard style */}
-        <div
-          className="shrink-0 flex items-center justify-between px-6 py-3 border-b border-gray-200"
-          style={{ background: '#fff' }}
-        >
-          {/* Left: logo + name */}
-          <div className="flex items-center gap-3">
-            <div
-              className="flex items-center gap-2 px-3 py-1.5 rounded font-bold text-white text-sm"
-              style={{ background: '#1e1b4b' }}
-            >
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-              </svg>
-              CollegeBored
-            </div>
-            <span className="text-xs font-mono text-gray-400 border-l border-gray-200 pl-3">
-              {courseShort.toUpperCase()} Practice
-            </span>
+        {/* Left: logo + name */}
+        <div className="flex items-center gap-3">
+          <div
+            className="flex items-center gap-2 px-3 py-1.5 rounded font-bold text-white text-sm"
+            style={{ background: '#1e1b4b' }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            CollegeBored
           </div>
+          <span className="text-xs font-mono text-gray-400 border-l border-gray-200 pl-3">
+            {selectedCourse.toUpperCase()} Practice
+          </span>
+          <select
+            aria-label="Select course"
+            value={selectedCourse}
+            onChange={(e) => {
+              const next = normalizeCourseKey(e.target.value)
+              router.push(`${pathname}?course=${encodeURIComponent(next)}`)
+            }}
+            className="border border-gray-300 rounded px-2.5 py-1.5 text-xs font-semibold bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          >
+            {COURSE_OPTIONS.map((course) => (
+              <option key={course.key} value={course.key}>
+                {course.label}
+              </option>
+            ))}
+          </select>
+        </div>
 
-          {/* Center: tabs */}
-          <div className="flex items-center gap-1 rounded-lg p-1" style={{ background: '#f3f4f6' }}>
-            <button
-              type="button"
-              onClick={() => setTab('practice')}
-              className="px-4 py-1.5 rounded-md text-sm font-semibold transition-all"
-              style={{
-                background: tab === 'practice' ? '#1e1b4b' : 'transparent',
-                color: tab === 'practice' ? '#fff' : '#6b7280',
-              }}
-            >
-              Practice Questions
-            </button>
-            <button
-              type="button"
-              onClick={() => setTab('format')}
-              className="px-4 py-1.5 rounded-md text-sm font-semibold transition-all"
-              style={{
-                background: tab === 'format' ? '#1e1b4b' : 'transparent',
-                color: tab === 'format' ? '#fff' : '#6b7280',
-              }}
-            >
-              Exam Format & Timing
-            </button>
-          </div>
-
-          {/* Right: close */}
+        {/* Center: tabs */}
+        <div className="flex items-center gap-1 rounded-lg p-1" style={{ background: '#f3f4f6' }}>
           <button
             type="button"
-            onClick={onClose}
-            className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-800 transition-colors px-2 py-1 rounded hover:bg-gray-100"
+            onClick={() => setTab('practice')}
+            className="px-4 py-1.5 rounded-md text-sm font-semibold transition-all"
+            style={{
+              background: tab === 'practice' ? '#1e1b4b' : 'transparent',
+              color: tab === 'practice' ? '#fff' : '#6b7280',
+            }}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-            </svg>
-            Close
+            Practice Questions
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab('format')}
+            className="px-4 py-1.5 rounded-md text-sm font-semibold transition-all"
+            style={{
+              background: tab === 'format' ? '#1e1b4b' : 'transparent',
+              color: tab === 'format' ? '#fff' : '#6b7280',
+            }}
+          >
+            Exam Format & Timing
+          </button>
+          <button
+            type="button"
+            onClick={() => setTab('resources')}
+            className="px-4 py-1.5 rounded-md text-sm font-semibold transition-all"
+            style={{
+              background: tab === 'resources' ? '#1e1b4b' : 'transparent',
+              color: tab === 'resources' ? '#fff' : '#6b7280',
+            }}
+          >
+            Resources & Coverage
           </button>
         </div>
 
-        {/* Body */}
-        <div className="flex-1 min-h-0 overflow-hidden">
-          {tab === 'format' ? (
-            <ExamFormatTab courseShort={courseShort} />
-          ) : (
-            <PracticeTab courseShort={courseShort} />
-          )}
-        </div>
+        <Link
+          href={selectedMeta.path}
+          className="px-3 py-2 text-[11px] font-mono uppercase tracking-wider border transition-colors"
+          style={{ color: '#4f46e5', borderColor: '#e5e7eb', background: '#f8fafc' }}
+        >
+          back to {selectedMeta.key}
+        </Link>
+      </div>
+
+      {/* Body */}
+      <div className="flex-1 min-h-0 overflow-hidden">
+        {tab === 'format' && <ExamFormatTab courseShort={selectedCourse} />}
+        {tab === 'practice' && <PracticeTab courseShort={selectedCourse} />}
+        {tab === 'resources' && <ResourcesTab courseShort={selectedCourse} />}
       </div>
     </div>
   )

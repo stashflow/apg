@@ -155,7 +155,7 @@ export default function LangPage() {
         accent: '#a855f7',
         accentLight: '#ec4899',
         bgClass: 'bg-lang-purple',
-        examDate: 'May 13, 2025 — morning session (8:00 AM ET)',
+        examDate: 'May 13, 2026 — morning session (8:00 AM local)',
         units,
       }}
       basePath="/lang"
