@@ -7,7 +7,7 @@ export const langConfig = {
   accent: '#a855f7',
   accentLight: '#ec4899',
   bgClass: 'bg-navy',
-  examDate: 'May 2026 (TBD)',
+  examDate: 'May 13, 2026 — morning session (8:00 AM local)',
   units: [
     {
       number: 1,

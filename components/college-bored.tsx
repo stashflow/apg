@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import type { Question } from '@/lib/college-bored-data'
@@ -8,6 +8,26 @@ import { examFormats, getCoverageReport, getFullExamRun, getQuestionQualityRepor
 
 interface CollegeBoredProps {
   courseShort: string  // e.g. "apes"
+}
+
+function shuffleMcqOptions(q: Question): Question {
+  if (q.type !== 'mcq' || !q.options || q.options.length === 0) return q
+  const correctOption = q.options.find((opt) => opt.letter === q.correctAnswer)
+  if (!correctOption) return q
+
+  const shuffled = [...q.options].sort(() => Math.random() - 0.5)
+  const relabel = ['A', 'B', 'C', 'D']
+  const remapped = shuffled.map((opt, idx) => ({
+    ...opt,
+    letter: relabel[idx] ?? opt.letter,
+  }))
+  const newCorrect = remapped.find((opt) => opt.text === correctOption.text)?.letter ?? q.correctAnswer
+
+  return {
+    ...q,
+    options: remapped,
+    correctAnswer: newCorrect,
+  }
 }
 
 const COURSE_OPTIONS = [
@@ -40,29 +60,11 @@ function useTimer(initialSeconds: number, running: boolean) {
 function ExamFormatTab({ courseShort }: { courseShort: string }) {
   const normalizedCourse = normalizeCourseKey(courseShort)
   const fallbackCourse = Object.keys(examFormats)[0]
-  const [selected, setSelected] = useState(examFormats[normalizedCourse] ? normalizedCourse : fallbackCourse)
+  const selected = examFormats[normalizedCourse] ? normalizedCourse : fallbackCourse
   const info = examFormats[selected]
-
-  useEffect(() => {
-    setSelected(examFormats[normalizedCourse] ? normalizedCourse : fallbackCourse)
-  }, [fallbackCourse, normalizedCourse])
 
   return (
     <div className="flex flex-col h-full overflow-auto p-8" style={{ color: '#1a1a2e' }}>
-      {/* Course selector */}
-      <div className="flex items-center gap-3 mb-6">
-        <label className="text-sm font-semibold text-gray-600">Course:</label>
-        <select
-          value={selected}
-          onChange={e => setSelected(e.target.value)}
-          className="border border-gray-300 rounded px-3 py-1.5 text-sm font-medium bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          {Object.keys(examFormats).map(k => (
-            <option key={k} value={k}>{examFormats[k].courseShort} — {examFormats[k].courseLabel}</option>
-          ))}
-        </select>
-      </div>
-
       {info && (
         <>
           <div className="mb-6 p-4 rounded-lg" style={{ background: '#f0f4ff', border: '1px solid #c7d2fe' }}>
@@ -347,11 +349,10 @@ function FRQPanel({ q, revealed }: { q: Question; revealed: boolean }) {
 // ─── PRACTICE TAB ─────────────────────────────────────────────────────────────
 function PracticeTab({ courseShort }: { courseShort: string }) {
   const allQs = getQuestionsForCourse(courseShort)
-  const [mode, setMode] = useState<'browse' | 'exam'>('browse')
+  const [mode, setMode] = useState<'browse' | 'exam' | 'review'>('browse')
   const [examQs, setExamQs] = useState<Question[]>([])
   const [qIndex, setQIndex] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
-  const [revealed, setRevealed] = useState<Record<string, boolean>>({})
   const [markedReview, setMarkedReview] = useState<Set<string>>(new Set())
   const [timerRunning, setTimerRunning] = useState(false)
   // 90 minutes default for practice
@@ -374,15 +375,81 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
   }
 
   const startExam = (qs: Question[], timeSeconds: number) => {
-    setExamQs(qs)
+    setExamQs(qs.map(shuffleMcqOptions))
     setQIndex(0)
     setAnswers({})
-    setRevealed({})
     setMarkedReview(new Set())
     reset(timeSeconds)
     setTimerRunning(true)
     setMode('exam')
   }
+
+  const submitExam = () => {
+    setTimerRunning(false)
+    setMode('review')
+  }
+
+  const reviewData = useMemo(() => {
+    const mcqs = examQs.filter((q) => q.type === 'mcq')
+    const total = mcqs.length
+    const correct = mcqs.filter((q) => answers[q.id] && answers[q.id] === q.correctAnswer).length
+    const attempted = mcqs.filter((q) => !!answers[q.id]).length
+
+    const unitPerf = new Map<number, { attempted: number; correct: number; total: number }>()
+    const topicPerf = new Map<string, { attempted: number; correct: number; total: number }>()
+
+    mcqs.forEach((q) => {
+      const unit = unitPerf.get(q.unit) ?? { attempted: 0, correct: 0, total: 0 }
+      unit.total += 1
+      if (answers[q.id]) {
+        unit.attempted += 1
+        if (answers[q.id] === q.correctAnswer) unit.correct += 1
+      }
+      unitPerf.set(q.unit, unit)
+
+      const topicKey = q.topic?.trim() || `Unit ${q.unit}`
+      const topic = topicPerf.get(topicKey) ?? { attempted: 0, correct: 0, total: 0 }
+      topic.total += 1
+      if (answers[q.id]) {
+        topic.attempted += 1
+        if (answers[q.id] === q.correctAnswer) topic.correct += 1
+      }
+      topicPerf.set(topicKey, topic)
+    })
+
+    const unitRows = Array.from(unitPerf.entries())
+      .map(([unit, stats]) => ({
+        label: `Unit ${unit}`,
+        ...stats,
+        accuracy: stats.attempted > 0 ? stats.correct / stats.attempted : 0,
+      }))
+      .sort((a, b) => b.accuracy - a.accuracy)
+
+    const topicRows = Array.from(topicPerf.entries())
+      .map(([label, stats]) => ({
+        label,
+        ...stats,
+        accuracy: stats.attempted > 0 ? stats.correct / stats.attempted : 0,
+      }))
+      .sort((a, b) => b.accuracy - a.accuracy)
+
+    const strengths = topicRows.filter((x) => x.attempted >= 1 && x.accuracy >= 0.75).slice(0, 5)
+    const needsHelp = topicRows.filter((x) => x.attempted >= 1 && x.accuracy < 0.6).slice(0, 6)
+    const missed = mcqs.filter((q) => !!answers[q.id] && answers[q.id] !== q.correctAnswer)
+    const skipped = mcqs.filter((q) => !answers[q.id])
+
+    return {
+      total,
+      correct,
+      attempted,
+      scorePct: total > 0 ? (correct / total) * 100 : 0,
+      unitRows,
+      strengths,
+      needsHelp,
+      missed,
+      skipped,
+    }
+  }, [examQs, answers])
 
   const currentQ = examQs[qIndex]
   const timeWarn = seconds < 300 // < 5 min warning
@@ -538,7 +605,6 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
 
   // ── Exam mode ────────────────────────────────────────────────────────────
   if (!currentQ) return null
-  const isRevealed = revealed[currentQ.id] || false
   const isMarked = markedReview.has(currentQ.id)
 
   const toggleMark = () => {
@@ -549,9 +615,99 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
     })
   }
 
-  const handleReveal = () => {
-    setTimerRunning(false)
-    setRevealed(prev => ({ ...prev, [currentQ.id]: true }))
+  if (mode === 'review') {
+    return (
+      <div className="h-full overflow-auto p-8 bg-white">
+        <div className="mb-6 p-5 rounded-lg border border-indigo-200" style={{ background: '#eef2ff' }}>
+          <h3 className="text-xl font-black text-slate-900 mb-1">Performance Review</h3>
+          <p className="text-sm text-slate-700">
+            Score: <span className="font-bold">{reviewData.correct}/{reviewData.total}</span> ({reviewData.scorePct.toFixed(1)}%) · Attempted {reviewData.attempted}/{reviewData.total}
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          <div className="rounded-lg border border-emerald-200 p-4" style={{ background: '#f0fdf4' }}>
+            <p className="text-sm font-bold text-emerald-900 mb-2">You Are Strong In</p>
+            {reviewData.strengths.length === 0 ? (
+              <p className="text-xs text-emerald-800">No strong areas yet. Keep building reps.</p>
+            ) : (
+              <div className="space-y-1">
+                {reviewData.strengths.map((s) => (
+                  <p key={s.label} className="text-xs text-emerald-900">
+                    {s.label} · {(s.accuracy * 100).toFixed(0)}% ({s.correct}/{s.attempted})
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="rounded-lg border border-rose-200 p-4" style={{ background: '#fff1f2' }}>
+            <p className="text-sm font-bold text-rose-900 mb-2">Needs More Work</p>
+            {reviewData.needsHelp.length === 0 ? (
+              <p className="text-xs text-rose-800">No weak areas flagged in this run.</p>
+            ) : (
+              <div className="space-y-1">
+                {reviewData.needsHelp.map((w) => (
+                  <p key={w.label} className="text-xs text-rose-900">
+                    {w.label} · {(w.accuracy * 100).toFixed(0)}% ({w.correct}/{w.attempted})
+                  </p>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="mb-6 rounded-lg border border-slate-200 overflow-hidden">
+          <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
+            <p className="text-sm font-bold text-slate-900">Unit Accuracy Breakdown</p>
+          </div>
+          <div className="divide-y divide-slate-200">
+            {reviewData.unitRows.map((u) => (
+              <div key={u.label} className="px-4 py-3 text-xs text-slate-700 flex items-center gap-2">
+                <span className="font-semibold text-slate-900 min-w-16">{u.label}</span>
+                <div className="flex-1 h-2 rounded bg-slate-200 overflow-hidden">
+                  <div className="h-full" style={{ width: `${Math.max(2, u.accuracy * 100)}%`, background: '#1e1b4b' }} />
+                </div>
+                <span>{(u.accuracy * 100).toFixed(0)}%</span>
+                <span className="text-slate-500">({u.correct}/{u.attempted})</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-slate-200 overflow-hidden">
+          <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
+            <p className="text-sm font-bold text-slate-900">Missed Question Review</p>
+          </div>
+          <div className="divide-y divide-slate-200">
+            {reviewData.missed.length === 0 && reviewData.skipped.length === 0 ? (
+              <p className="p-4 text-sm text-slate-600">No missed MCQs in this run.</p>
+            ) : (
+              [...reviewData.missed, ...reviewData.skipped].map((q) => (
+                <div key={q.id} className="p-4">
+                  <p className="text-xs text-slate-500 mb-1">Unit {q.unit}{q.topic ? ` · ${q.topic}` : ''}</p>
+                  <p className="text-sm font-semibold text-slate-900 mb-2">{q.question}</p>
+                  <p className="text-xs text-slate-700 mb-1">Your answer: {answers[q.id] || 'No response'}</p>
+                  <p className="text-xs text-emerald-800 mb-2">Correct answer: {q.correctAnswer}</p>
+                  <p className="text-xs text-slate-700 leading-relaxed">{q.explanation}</p>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <button
+            type="button"
+            onClick={() => { setMode('browse'); setTimerRunning(false) }}
+            className="px-4 py-2 rounded text-sm font-bold text-white"
+            style={{ background: '#1e1b4b' }}
+          >
+            Back to Question Bank
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -583,14 +739,8 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
               Mark for Review
             </button>
           </div>
-          <span
-            className="text-xs px-2 py-0.5 rounded font-medium"
-            style={{
-              background: currentQ.source === 'Released' ? '#dcfce7' : '#fef9c3',
-              color: currentQ.source === 'Released' ? '#166534' : '#854d0e',
-            }}
-          >
-            {currentQ.source} — {currentQ.sourceDetail}
+          <span className="text-xs px-2 py-0.5 rounded font-medium bg-slate-100 text-slate-700">
+            exam mode
           </span>
         </div>
 
@@ -627,10 +777,10 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
             q={currentQ}
             selected={answers[currentQ.id] || null}
             onSelect={l => setAnswers(a => ({ ...a, [currentQ.id]: l }))}
-            revealed={isRevealed}
+            revealed={false}
           />
         ) : (
-          <FRQPanel q={currentQ} revealed={isRevealed} />
+          <FRQPanel q={currentQ} revealed={false} />
         )}
       </div>
 
@@ -657,16 +807,6 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
 
         {/* Right: Actions */}
         <div className="flex items-center gap-2">
-          {!isRevealed ? (
-            <button
-              type="button"
-              onClick={handleReveal}
-              className="px-4 py-1.5 rounded text-sm font-bold text-white transition-all"
-              style={{ background: '#1e1b4b' }}
-            >
-              Check Answer
-            </button>
-          ) : null}
           {qIndex > 0 && (
             <button
               type="button"
@@ -688,11 +828,11 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
           ) : (
             <button
               type="button"
-              onClick={() => { setMode('browse'); setTimerRunning(false) }}
+              onClick={submitExam}
               className="px-4 py-1.5 rounded text-sm font-bold text-white"
               style={{ background: '#4338ca' }}
             >
-              Done
+              Submit & Review
             </button>
           )}
         </div>
@@ -706,41 +846,63 @@ export function CollegeBored({ courseShort }: CollegeBoredProps) {
   const [tab, setTab] = useState<'format' | 'practice' | 'resources'>('practice')
   const router = useRouter()
   const pathname = usePathname()
-  const selectedCourse = normalizeCourseKey(courseShort)
-  const selectedMeta = COURSE_OPTIONS.find((course) => course.key === selectedCourse) ?? COURSE_OPTIONS[0]
+  const normalizedPropCourse = normalizeCourseKey(courseShort)
+  const [activeCourse, setActiveCourse] = useState(normalizedPropCourse)
+
+  useEffect(() => {
+    setActiveCourse(normalizedPropCourse)
+  }, [normalizedPropCourse])
+
+  const selectedMeta = useMemo(
+    () => COURSE_OPTIONS.find((course) => course.key === activeCourse) ?? COURSE_OPTIONS[0],
+    [activeCourse]
+  )
+
+  const tabButtonStyle = (key: 'practice' | 'format' | 'resources') => ({
+    background: tab === key ? 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)' : 'transparent',
+    color: tab === key ? '#fff' : '#334155',
+    boxShadow: tab === key ? '0 10px 24px rgba(49,46,129,0.28)' : 'none',
+    transform: tab === key ? 'translateY(-1px)' : 'translateY(0)',
+  })
 
   return (
     <div
-      className="relative flex flex-col w-full h-full min-h-[calc(100vh-64px)] overflow-hidden"
-      style={{ background: '#fff' }}
+      className="relative flex flex-col w-full h-full min-h-[calc(100vh-64px)] overflow-hidden animate-fade-in"
+      style={{ background: 'linear-gradient(180deg, #f8fbff 0%, #ffffff 40%, #f8fbff 100%)' }}
     >
+      <div
+        className="absolute inset-x-0 top-0 h-24 pointer-events-none"
+        style={{ background: 'linear-gradient(180deg, rgba(59,130,246,0.16), rgba(59,130,246,0))' }}
+      />
+
       {/* Header — CollegeBoard style */}
       <div
-        className="shrink-0 flex items-center justify-between px-6 py-3 border-b border-gray-200 gap-3 flex-wrap"
-        style={{ background: '#fff' }}
+        className="relative z-10 shrink-0 flex items-center justify-between px-6 py-3 border-b border-indigo-100 gap-3 flex-wrap"
+        style={{ background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)' }}
       >
         {/* Left: logo + name */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <div
-            className="flex items-center gap-2 px-3 py-1.5 rounded font-bold text-white text-sm"
-            style={{ background: '#1e1b4b' }}
+            className="flex items-center gap-2 px-3 py-1.5 rounded font-bold text-white text-sm transition-all duration-300"
+            style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 100%)' }}
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
             </svg>
             CollegeBored
           </div>
-          <span className="text-xs font-mono text-gray-400 border-l border-gray-200 pl-3">
-            {selectedCourse.toUpperCase()} Practice
+          <span className="text-xs font-mono text-indigo-600 border-l border-indigo-200 pl-3">
+            {activeCourse.toUpperCase()} Practice
           </span>
           <select
             aria-label="Select course"
-            value={selectedCourse}
+            value={activeCourse}
             onChange={(e) => {
               const next = normalizeCourseKey(e.target.value)
-              router.push(`${pathname}?course=${encodeURIComponent(next)}`)
+              setActiveCourse(next)
+              router.replace(`${pathname}?course=${encodeURIComponent(next)}`, { scroll: false })
             }}
-            className="border border-gray-300 rounded px-2.5 py-1.5 text-xs font-semibold bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            className="border border-indigo-200 rounded px-2.5 py-1.5 text-xs font-semibold bg-white text-slate-800 shadow-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 hover:border-indigo-400"
           >
             {COURSE_OPTIONS.map((course) => (
               <option key={course.key} value={course.key}>
@@ -751,37 +913,28 @@ export function CollegeBored({ courseShort }: CollegeBoredProps) {
         </div>
 
         {/* Center: tabs */}
-        <div className="flex items-center gap-1 rounded-lg p-1" style={{ background: '#f3f4f6' }}>
+        <div className="flex items-center gap-1 rounded-xl p-1 border border-indigo-100" style={{ background: '#f8fafc' }}>
           <button
             type="button"
             onClick={() => setTab('practice')}
-            className="px-4 py-1.5 rounded-md text-sm font-semibold transition-all"
-            style={{
-              background: tab === 'practice' ? '#1e1b4b' : 'transparent',
-              color: tab === 'practice' ? '#fff' : '#6b7280',
-            }}
+            className="px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-300"
+            style={tabButtonStyle('practice')}
           >
             Practice Questions
           </button>
           <button
             type="button"
             onClick={() => setTab('format')}
-            className="px-4 py-1.5 rounded-md text-sm font-semibold transition-all"
-            style={{
-              background: tab === 'format' ? '#1e1b4b' : 'transparent',
-              color: tab === 'format' ? '#fff' : '#6b7280',
-            }}
+            className="px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-300"
+            style={tabButtonStyle('format')}
           >
             Exam Format & Timing
           </button>
           <button
             type="button"
             onClick={() => setTab('resources')}
-            className="px-4 py-1.5 rounded-md text-sm font-semibold transition-all"
-            style={{
-              background: tab === 'resources' ? '#1e1b4b' : 'transparent',
-              color: tab === 'resources' ? '#fff' : '#6b7280',
-            }}
+            className="px-4 py-1.5 rounded-lg text-sm font-semibold transition-all duration-300"
+            style={tabButtonStyle('resources')}
           >
             Resources & Coverage
           </button>
@@ -789,18 +942,18 @@ export function CollegeBored({ courseShort }: CollegeBoredProps) {
 
         <Link
           href={selectedMeta.path}
-          className="px-3 py-2 text-[11px] font-mono uppercase tracking-wider border transition-colors"
-          style={{ color: '#4f46e5', borderColor: '#e5e7eb', background: '#f8fafc' }}
+          className="px-3 py-2 text-[11px] font-mono uppercase tracking-wider border transition-all duration-300 hover:-translate-y-0.5"
+          style={{ color: '#4338ca', borderColor: '#c7d2fe', background: '#eef2ff' }}
         >
           back to {selectedMeta.key}
         </Link>
       </div>
 
       {/* Body */}
-      <div className="flex-1 min-h-0 overflow-hidden">
-        {tab === 'format' && <ExamFormatTab courseShort={selectedCourse} />}
-        {tab === 'practice' && <PracticeTab courseShort={selectedCourse} />}
-        {tab === 'resources' && <ResourcesTab courseShort={selectedCourse} />}
+      <div key={`${activeCourse}-${tab}`} className="flex-1 min-h-0 overflow-hidden animate-fade-up">
+        {tab === 'format' && <ExamFormatTab courseShort={activeCourse} />}
+        {tab === 'practice' && <PracticeTab courseShort={activeCourse} />}
+        {tab === 'resources' && <ResourcesTab courseShort={activeCourse} />}
       </div>
     </div>
   )

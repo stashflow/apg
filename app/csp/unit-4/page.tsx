@@ -25,7 +25,7 @@ export default function CSPUnit4Page() {
       basePath="/csp/unit-4"
       courseHref="/csp"
       videoId="4O_LEV3aHcU"
-      examDate={{ date: 'Thursday, May 15, 2025', time: '12:00 PM' }}
+      examDate={{ date: 'Thursday, May 14, 2026', time: '12:00 PM' }}
     />
   )
 }

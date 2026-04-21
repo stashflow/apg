@@ -7,7 +7,7 @@ export const apesConfig = {
   accent: '#22c55e',
   accentLight: '#86efac',
   bgClass: 'bg-navy',
-  examDate: 'May 2026 (TBD)',
+  examDate: 'May 15, 2026 — morning session (8:00 AM local)',
   units: [
     {
       number: 1,

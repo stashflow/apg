@@ -27,7 +27,7 @@ export default function APESUnit5Page() {
       basePath="/apes/unit-5"
       courseHref="/apes"
       videoId="i79vSrnpV9c"
-      examDate={{ date: 'Tuesday, May 6, 2025', time: '8:00 AM' }}
+      examDate={{ date: 'Friday, May 15, 2026', time: '8:00 AM' }}
     />
   )
 }

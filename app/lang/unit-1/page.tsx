@@ -22,7 +22,7 @@ export default function LangUnit1Page() {
       basePath="/lang/unit-1"
       courseHref="/lang"
 
-      examDate={{ date: 'Friday, May 16, 2025', time: '12:00 PM' }}
+      examDate={{ date: 'Wednesday, May 13, 2026', time: '8:00 AM' }}
     />
   )
 }

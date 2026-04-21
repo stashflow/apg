@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 const topics = [
   { number: 1, title: 'native american societies', description: 'diverse pre-contact civilizations — Aztec, Inca, Pueblo, Iroquois, and Great Plains cultures before 1492.', videoId: 'fTv4S1q7p_c' },
   { number: 2, title: 'columbian exchange', description: 'transfer of plants, animals, diseases, and people between hemispheres — and its catastrophic demographic effects.', videoId: 'fTv4S1q7p_c' },
-  { number: 3, title: 'the columbian exchange', description: 'in-depth effects: new world crops, old world diseases, forced migrations, and long-term demographic collapse.', videoId: 'fTv4S1q7p_c' },
+  { number: 3, title: 'columbian exchange impacts', description: 'in-depth effects: new world crops, old world diseases, forced migrations, and long-term demographic collapse.', videoId: 'fTv4S1q7p_c' },
   { number: 4, title: 'encomienda system', description: 'Spanish labor exploitation, first contact violence, and the casta racial hierarchy in New Spain.' },
   { number: 5, title: 'columbian triangle trade beginnings', description: 'origins of the transatlantic slave trade, mercantilism, and the Atlantic commercial world.' },
 ]
@@ -19,7 +19,7 @@ export default function APUSHUnit1Page() {
       basePath="/apush/unit-1"
       courseHref="/apush"
       videoId="fTv4S1q7p_c"
-      examDate={{ date: 'Friday, May 9, 2025', time: '8:00 AM' }}
+      examDate={{ date: 'Friday, May 8, 2026', time: '8:00 AM' }}
     />
   )
 }

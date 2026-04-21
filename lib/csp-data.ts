@@ -7,7 +7,7 @@ export const cspConfig = {
   accent: '#14b8a6',
   accentLight: '#f97316',
   bgClass: 'bg-navy',
-  examDate: 'May 2026 (TBD)',
+  examDate: 'May 14, 2026 — afternoon session (12:00 PM local)',
   units: [
     {
       number: 1,

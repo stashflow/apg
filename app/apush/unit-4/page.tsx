@@ -22,7 +22,7 @@ export default function APUSHUnit4Page() {
       basePath="/apush/unit-4"
       courseHref="/apush"
       videoId="FOQ0M-UZ_II"
-      examDate={{ date: 'Friday, May 9, 2025', time: '8:00 AM' }}
+      examDate={{ date: 'Friday, May 8, 2026', time: '8:00 AM' }}
     />
   )
 }

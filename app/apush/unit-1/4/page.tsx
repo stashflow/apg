@@ -99,7 +99,7 @@ export default function APUSHU1T4() {
         keyTerms: ['encomienda', 'Las Casas', 'mita', 'Valladolid Debate', 'sistema de castas', 'mestizo', 'peninsulares', 'criollo', 'New Laws of 1542', 'Potosí'],
       }}
       sections={sections}
-      prev={{ href: '/apush/unit-1/3', title: 'the columbian exchange' }}
+      prev={{ href: '/apush/unit-1/3', title: 'columbian exchange impacts' }}
       next={{ href: '/apush/unit-1/5', title: 'triangle trade beginnings' }}
       courseHref="/apush"
       unitHref="/apush/unit-1"

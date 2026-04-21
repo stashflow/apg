@@ -9,7 +9,7 @@ const units: Unit[] = [
     topics: [
       'native american societies',
       'columbian exchange',
-      'the columbian exchange',
+      'columbian exchange impacts',
       'encomienda system',
       'columbian triangle trade beginnings',
     ],
