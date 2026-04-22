@@ -149,6 +149,13 @@ function sectionText(section: NotesSection): string {
   return parts.join(' ')
 }
 
+function trimToSentences(text: string, maxSentences: number): string {
+  if (!text) return text
+  const parts = text.match(/[^.!?]+[.!?]+(?:\s+|$)|[^.!?]+$/g) ?? [text]
+  if (parts.length <= maxSentences) return text
+  return `${parts.slice(0, maxSentences).join('').trim()} ...`
+}
+
 function getSectionMentionedTerms(section: NotesSection, keyTerms: string[]): string[] {
   const text = sectionText(section)
   const normalized = normalizeForCompare(text)
@@ -255,6 +262,7 @@ export function NotesPage({
   const [htrOpen, setHtrOpen] = useState(false)
   const [htrTerms, setHtrTerms] = useState<string[]>([])
   const [htrContext, setHtrContext] = useState('')
+  const [examFocusMode, setExamFocusMode] = useState(isApush)
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 80)
@@ -270,6 +278,10 @@ export function NotesPage({
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  useEffect(() => {
+    setExamFocusMode(isApush)
+  }, [isApush])
 
   const openHtr = (terms: string[], context: string) => {
     setHtrTerms(terms)
@@ -301,30 +313,44 @@ export function NotesPage({
           </h3>
         )
       case 'body':
+        {
+          const bodyContent = isApush && examFocusMode ? trimToSentences(s.content, 2) : s.content
         return (
           <p key={i} className="text-base leading-relaxed mb-4" style={{ color: '#b8d0ee', lineHeight: '1.75' }}>
-            {highlightTerms(s.content, termRegex, course.accentLight)}
+            {highlightTerms(bodyContent, termRegex, course.accentLight)}
           </p>
         )
+        }
       case 'bullets':
+        {
+          const bulletItems = isApush && examFocusMode ? (s.bullets || []).slice(0, 5) : (s.bullets || [])
+          const hiddenBulletCount = Math.max(0, (s.bullets || []).length - bulletItems.length)
         return (
-          <ul key={i} className="mb-5 space-y-2">
-            {(s.bullets || []).map((b, bi) => (
-              <li key={bi} className="flex items-start gap-3">
-                <span
-                  className="shrink-0 mt-1 w-1.5 h-1.5"
-                  style={{ background: course.accent, marginTop: '8px' }}
-                />
-                <span
-                  className="text-base leading-relaxed"
-                  style={{ color: '#b8d0ee' }}
-                >
-                  {renderMarkdownWithHighlights(b, termRegex, course.accentLight)}
-                </span>
-              </li>
-            ))}
-          </ul>
+          <div key={i} className="mb-5">
+            <ul className="space-y-2">
+              {bulletItems.map((b, bi) => (
+                <li key={bi} className="flex items-start gap-3">
+                  <span
+                    className="shrink-0 mt-1 w-1.5 h-1.5"
+                    style={{ background: course.accent, marginTop: '8px' }}
+                  />
+                  <span
+                    className="text-base leading-relaxed"
+                    style={{ color: '#b8d0ee' }}
+                  >
+                    {renderMarkdownWithHighlights(b, termRegex, course.accentLight)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+            {hiddenBulletCount > 0 && (
+              <p className="mt-2 text-xs font-mono uppercase tracking-wider" style={{ color: '#6b8aa8' }}>
+                +{hiddenBulletCount} more points in full context view
+              </p>
+            )}
+          </div>
         )
+        }
       case 'callout':
         return (
           <div
@@ -370,6 +396,9 @@ export function NotesPage({
           </div>
         )
       case 'table':
+        {
+          const tableRows = isApush && examFocusMode ? (s.tableRows || []).slice(0, 5) : (s.tableRows || [])
+          const hiddenRowCount = Math.max(0, (s.tableRows || []).length - tableRows.length)
         return (
           <div key={i} className="my-6 overflow-x-auto">
             <table className="w-full text-sm border-collapse">
@@ -391,7 +420,7 @@ export function NotesPage({
                 </tr>
               </thead>
               <tbody>
-                {(s.tableRows || []).map((row, ri) => (
+                {tableRows.map((row, ri) => (
                   <tr key={ri}>
                     {row.map((cell, ci) => (
                       <td
@@ -410,8 +439,14 @@ export function NotesPage({
                 ))}
               </tbody>
             </table>
+            {hiddenRowCount > 0 && (
+              <p className="mt-2 text-xs font-mono uppercase tracking-wider" style={{ color: '#6b8aa8' }}>
+                +{hiddenRowCount} more rows in full context view
+              </p>
+            )}
           </div>
         )
+        }
       default:
         return null
     }
@@ -467,8 +502,8 @@ export function NotesPage({
 
           {/* Key terms + Buttons */}
           <div className="flex flex-col gap-3">
-            {topic.keyTerms && topic.keyTerms.length > 0 && (
-              <div className="flex flex-wrap gap-2">
+	            {topic.keyTerms && topic.keyTerms.length > 0 && (
+	              <div className="flex flex-wrap gap-2">
                 {topic.keyTerms.map((term, i) => (
                   <span
                     key={i}
@@ -483,11 +518,48 @@ export function NotesPage({
                     {term}
                   </span>
                 ))}
+	              </div>
+	            )}
+
+            {isApush && (
+              <div
+                className="inline-flex items-center gap-2 w-fit px-3 py-1.5 text-xs font-mono uppercase tracking-wider"
+                style={{ border: '1px solid rgba(239,68,68,0.3)', background: 'rgba(239,68,68,0.08)', color: '#fca5a5' }}
+              >
+                <span>view</span>
+                <button
+                  type="button"
+                  onClick={() => setExamFocusMode(true)}
+                  className="px-2 py-0.5 transition-opacity"
+                  style={{
+                    border: '1px solid rgba(252,165,165,0.4)',
+                    background: examFocusMode ? 'rgba(239,68,68,0.25)' : 'transparent',
+                    color: examFocusMode ? '#ffe4e6' : '#fca5a5',
+                    opacity: examFocusMode ? 1 : 0.8,
+                  }}
+                  title="Show APUSH exam-essential summary first"
+                >
+                  exam focus
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setExamFocusMode(false)}
+                  className="px-2 py-0.5 transition-opacity"
+                  style={{
+                    border: '1px solid rgba(252,165,165,0.4)',
+                    background: !examFocusMode ? 'rgba(239,68,68,0.25)' : 'transparent',
+                    color: !examFocusMode ? '#ffe4e6' : '#fca5a5',
+                    opacity: !examFocusMode ? 1 : 0.8,
+                  }}
+                  title="Show full APUSH context and all supporting details"
+                >
+                  full context
+                </button>
               </div>
             )}
-            
-            {/* Study buttons */}
-            <div className="flex flex-wrap gap-2">
+
+	            {/* Study buttons */}
+	            <div className="flex flex-wrap gap-2">
               <button
                 type="button"
                 onClick={() => window.open(quizletHref, '_blank', 'noopener,noreferrer')}
@@ -565,6 +637,14 @@ export function NotesPage({
             transition: 'opacity 0.6s ease 0.1s',
           }}
         >
+          {isApush && examFocusMode && (
+            <div
+              className="mb-5 px-3 py-2 text-xs leading-relaxed"
+              style={{ borderLeft: '3px solid #ef4444', background: 'rgba(239,68,68,0.1)', color: '#fecaca' }}
+            >
+              Exam Focus is on: this keeps high-yield APUSH essentials front and center. Switch to <strong>full context</strong> anytime to see all supporting detail.
+            </div>
+          )}
           {sections.map((s, i) => {
             const mentions = isApush ? getSectionMentionedTerms(s, keyTerms) : []
             const context = sectionText(s)
@@ -572,25 +652,27 @@ export function NotesPage({
               <div key={`section-wrap-${i}`} className="relative md:pr-24">
                 {renderSection(s, i)}
                 {isApush && mentions.length > 0 && (
-                  <div className="hidden md:flex absolute right-0 top-0 h-full items-center gap-2">
-                    <div className="relative h-[calc(100%-6px)] min-h-8 w-4">
-                      <div className="absolute top-0 right-0 w-3 border-t-2 border-r-2 rounded-tr-sm" style={{ borderColor: course.accentLight }} />
-                      <div className="absolute bottom-0 right-0 w-3 border-b-2 border-r-2 rounded-br-sm" style={{ borderColor: course.accentLight }} />
-                      <div className="absolute top-0 bottom-0 right-0 border-r-2" style={{ borderColor: course.accentLight }} />
+                  <div className="hidden md:flex absolute right-0 top-0 h-full items-center">
+                    <div className="group relative h-full flex items-center pr-1 pl-3">
+                      <div className="relative h-[calc(100%-10px)] min-h-7 w-4 opacity-60 transition-opacity duration-200 group-hover:opacity-90">
+                        <div className="absolute top-0 right-0 w-2.5 border-t border-r rounded-tr-sm" style={{ borderColor: `${course.accentLight}aa` }} />
+                        <div className="absolute bottom-0 right-0 w-2.5 border-b border-r rounded-br-sm" style={{ borderColor: `${course.accentLight}aa` }} />
+                        <div className="absolute top-0 bottom-0 right-0 border-r" style={{ borderColor: `${course.accentLight}aa` }} />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => openHtr(mentions, context)}
+                        className="ml-1 px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-widest transition-all duration-200 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
+                        style={{
+                          background: `${course.accentLight}14`,
+                          color: `${course.accentLight}dd`,
+                          border: `1px solid ${course.accentLight}44`,
+                        }}
+                        title={`How to remember: ${mentions.join(', ')}`}
+                      >
+                        HTR
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() => openHtr(mentions, context)}
-                      className="px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-widest transition-all"
-                      style={{
-                        background: `${course.accentLight}20`,
-                        color: course.accentLight,
-                        border: `1px solid ${course.accentLight}66`,
-                      }}
-                      title={`How to remember: ${mentions.join(', ')}`}
-                    >
-                      HTR
-                    </button>
                   </div>
                 )}
               </div>
