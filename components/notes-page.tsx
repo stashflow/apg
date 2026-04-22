@@ -156,6 +156,83 @@ function trimToSentences(text: string, maxSentences: number): string {
   return `${parts.slice(0, maxSentences).join('').trim()} ...`
 }
 
+function renderInlineMarkdown(text: string): Array<string | JSX.Element> {
+  const nodes: Array<string | JSX.Element> = []
+  const tokenRegex = /(\*\*[^*]+\*\*|`[^`]+`)/g
+  let last = 0
+  let match: RegExpExecArray | null
+  let idx = 0
+  while ((match = tokenRegex.exec(text)) !== null) {
+    if (match.index > last) nodes.push(text.slice(last, match.index))
+    const token = match[0]
+    if (token.startsWith('**') && token.endsWith('**')) {
+      nodes.push(<strong key={`md-strong-${idx++}`}>{token.slice(2, -2)}</strong>)
+    } else if (token.startsWith('`') && token.endsWith('`')) {
+      nodes.push(
+        <code key={`md-code-${idx++}`} className="px-1 py-0.5 text-[11px]" style={{ background: 'rgba(159,179,200,0.12)', color: '#cfe2f7' }}>
+          {token.slice(1, -1)}
+        </code>,
+      )
+    } else {
+      nodes.push(token)
+    }
+    last = match.index + token.length
+  }
+  if (last < text.length) nodes.push(text.slice(last))
+  return nodes
+}
+
+function renderMarkdownBlock(markdown: string) {
+  const lines = markdown.split('\n')
+  const blocks: JSX.Element[] = []
+  let bulletBuffer: string[] = []
+  let paragraphBuffer: string[] = []
+
+  const flushBullets = () => {
+    if (bulletBuffer.length === 0) return
+    blocks.push(
+      <ul key={`md-ul-${blocks.length}`} className="list-disc pl-5 space-y-1">
+        {bulletBuffer.map((line, i) => (
+          <li key={`md-li-${i}`} className="text-sm leading-relaxed" style={{ color: '#d0e0f2' }}>
+            {renderInlineMarkdown(line)}
+          </li>
+        ))}
+      </ul>,
+    )
+    bulletBuffer = []
+  }
+
+  const flushParagraph = () => {
+    if (paragraphBuffer.length === 0) return
+    blocks.push(
+      <p key={`md-p-${blocks.length}`} className="text-sm leading-relaxed" style={{ color: '#d0e0f2' }}>
+        {renderInlineMarkdown(paragraphBuffer.join(' '))}
+      </p>,
+    )
+    paragraphBuffer = []
+  }
+
+  for (const rawLine of lines) {
+    const line = rawLine.trim()
+    if (!line) {
+      flushParagraph()
+      flushBullets()
+      continue
+    }
+    if (line.startsWith('- ')) {
+      flushParagraph()
+      bulletBuffer.push(line.slice(2))
+      continue
+    }
+    flushBullets()
+    paragraphBuffer.push(line)
+  }
+  flushParagraph()
+  flushBullets()
+
+  return <div className="space-y-2">{blocks}</div>
+}
+
 function getSectionMentionedTerms(section: NotesSection, keyTerms: string[]): string[] {
   const text = sectionText(section)
   const normalized = normalizeForCompare(text)
@@ -213,8 +290,8 @@ function getHtrMemoryHook(term: string, context: string, topicTitle: string): { 
 
   return {
     anchor,
-    memory: `Make the term concrete: if this were happening today, what headline, social group, or policy debate would it map to?`,
-    courseLink: `Lock it by pairing it with one earlier APUSH example and one later APUSH consequence.`,
+    memory: `- **Cue phrase:** "${term} = ${firstSentence}"\n- **Dual-code image:** picture one scene that captures the cue phrase.\n- **20-second retrieval:** close notes and explain the term + one consequence out loud.\n- **Spacing:** retry in 10 minutes and again tomorrow.`,
+    courseLink: `Bridge it to one earlier and one later APUSH event for stronger recall.`,
   }
 }
 
@@ -235,7 +312,7 @@ function getHtrMemoryHookForCourse(
     if (apushHook) {
       return {
         anchor: apushHook.anchor || `${term} = ${topicTitle}`,
-        memory: apushHook.memory,
+        memory: `- **Cue phrase:** ${apushHook.anchor || `${term} = ${topicTitle}`}\n- **Memory hook:** ${apushHook.memory}\n- **Retrieval drill (20s):** explain this term without notes, then check accuracy.\n- **Interleave:** compare it to one related term from another unit.`,
         courseLink: apushHook.courseLink,
       }
     }
@@ -757,9 +834,10 @@ export function NotesPage({
                 return (
                   <div key={term} className="p-3 border" style={{ borderColor: '#1f3652', background: '#0a192b' }}>
                     <p className="text-sm font-black mb-1" style={{ color: course.accentLight }}>{term}</p>
-                    <p className="text-sm mb-1" style={{ color: '#d0e0f2' }}><span style={{ color: '#7fb2e6' }}>anchor: </span>{hook.anchor}</p>
-                    <p className="text-sm mb-1" style={{ color: '#d0e0f2' }}><span style={{ color: '#7fb2e6' }}>remember it: </span>{hook.memory}</p>
-                    <p className="text-sm" style={{ color: '#d0e0f2' }}><span style={{ color: '#7fb2e6' }}>course connection: </span>{hook.courseLink}</p>
+                    {renderMarkdownBlock(hook.memory)}
+                    <p className="text-xs mt-2" style={{ color: '#96b4d4' }}>
+                      {renderInlineMarkdown(`**APUSH link:** ${hook.courseLink}`)}
+                    </p>
                   </div>
                 )
               })}
