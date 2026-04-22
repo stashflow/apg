@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { SiteNav } from './site-nav'
-import { VideoDropdown } from './video-dropdown'
 
 interface Topic {
   title: string
@@ -109,19 +108,6 @@ export function UnitOverview({ course, unit, courseHref, basePath, videoId }: Un
 
       {/* Main content */}
       <div className="px-6 md:px-12 py-12 max-w-6xl mx-auto">
-        {/* Video dropdown */}
-        {videoId && (
-          <div style={{ opacity: loaded ? 1 : 0, transition: 'opacity 0.6s ease 0.1s' }} className="mb-12">
-            <VideoDropdown
-              courseId={course.short}
-              videoId={videoId}
-              title="Unit Overview"
-              accent={course.accent}
-              accentLight={course.accentLight}
-            />
-          </div>
-        )}
-
         {/* Topics section */}
         <div>
           <div className="flex items-center gap-4 mb-8">

@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { SiteNav } from './site-nav'
-import { VideoDropdown } from './video-dropdown'
 
 export interface NotesSection {
   type: 'heading' | 'subheading' | 'body' | 'bullets' | 'callout' | 'examtip' | 'frqtip' | 'table'
@@ -80,10 +79,7 @@ export function NotesPage({
   const topicSearchQuery = `${course.short.toUpperCase()} ${topic.title}`
   const quizletHref =
     quizletUrl ?? `https://quizlet.com/search?query=${encodeURIComponent(topicSearchQuery)}&type=sets`
-  const youtubeHref =
-    videoId
-      ? `https://www.youtube.com/watch?v=${videoId}`
-      : `https://www.youtube.com/results?search_query=${encodeURIComponent(topicSearchQuery)}`
+  const youtubeHref = `https://www.youtube.com/results?search_query=${encodeURIComponent(topicSearchQuery)}`
   const [loaded, setLoaded] = useState(false)
   const [readPct, setReadPct] = useState(0)
 
@@ -351,7 +347,7 @@ export function NotesPage({
                   border: '1px solid #ff000055',
                   boxShadow: '0 0 0 rgba(255,0,0,0)',
                 }}
-                title={videoId ? 'Watch topic video' : 'Search YouTube for this topic'}
+                title="Search YouTube for this topic"
                 onMouseEnter={(e) => {
                   const el = e.currentTarget
                   el.style.background = '#ff000036'
@@ -381,19 +377,6 @@ export function NotesPage({
           className="w-full h-px mb-8"
           style={{ background: `linear-gradient(90deg, ${course.accent}, transparent)` }}
         />
-
-        {/* Video dropdown */}
-        {videoId && (
-          <div style={{ opacity: loaded ? 1 : 0, transition: 'opacity 0.6s ease 0.1s' }}>
-            <VideoDropdown
-              courseId={course.short}
-              videoId={videoId}
-              title={videoTitle || 'Watch Overview'}
-              accent={course.accent}
-              accentLight={course.accentLight}
-            />
-          </div>
-        )}
 
         {/* Notes content */}
         <div

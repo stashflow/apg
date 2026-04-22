@@ -328,7 +328,6 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
                     {topicRows.map(({ topic, index: topicIndex }) => {
                       const topicLink = unit.topicLinks?.[topicIndex]
                       const hasQuizlet = !!topicLink?.quizletUrl
-                      const hasVideo = !!topicLink?.videoId
                       const searchQuery = `${course.short.toUpperCase()} - ${topic}`
                       
                       return (
@@ -377,14 +376,12 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
                           
                           {/* YouTube button */}
                           <a
-                            href={hasVideo ? `https://www.youtube.com/watch?v=${topicLink.videoId}` : `https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`}
+                            href={`https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery)}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="shrink-0 w-5 h-5 flex items-center justify-center opacity-40 hover:opacity-100 transition-opacity"
-                            style={{ 
-                              color: hasVideo ? '#ff4444' : '#6b7280',
-                            }}
-                            title={hasVideo ? 'Watch Video' : 'Search YouTube'}
+                            style={{ color: '#ff4444' }}
+                            title="Search YouTube"
                             onClick={(e) => e.stopPropagation()}
                           >
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">

@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { SiteNav } from './site-nav'
-import { VideoDropdown } from './video-dropdown'
 
 interface Topic {
   number: number
@@ -37,7 +36,7 @@ interface UnitPageProps {
   }
 }
 
-export function UnitPage({ course, unit, topics, basePath, courseHref, videoId, quizletUrl, examDate }: UnitPageProps) {
+export function UnitPage({ course, unit, topics, basePath, courseHref, videoId: _videoId, quizletUrl, examDate }: UnitPageProps) {
   const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
@@ -119,28 +118,28 @@ export function UnitPage({ course, unit, topics, basePath, courseHref, videoId, 
             </a>
             
             <a
-              href={videoId ? `https://www.youtube.com/watch?v=${videoId}` : `https://www.youtube.com/results?search_query=${encodeURIComponent(`${course.short.toUpperCase()} - UNIT ${unit.number}`)}`}
+              href={`https://www.youtube.com/results?search_query=${encodeURIComponent(`${course.short.toUpperCase()} - UNIT ${unit.number}`)}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 px-2.5 py-1 font-mono text-xs font-bold transition-all"
               style={{
-                background: videoId ? '#ff000022' : '#ff000012',
-                color: videoId ? '#ff4444' : '#b06b6b',
-                border: `1px solid ${videoId ? '#ff000044' : '#ff000022'}`,
+                background: '#ff000012',
+                color: '#b06b6b',
+                border: '1px solid #ff000022',
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.background = '#ff000033'
                 e.currentTarget.style.borderColor = '#ff000066'
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.background = videoId ? '#ff000022' : '#ff000012'
-                e.currentTarget.style.borderColor = videoId ? '#ff000044' : '#ff000022'
+                e.currentTarget.style.background = '#ff000012'
+                e.currentTarget.style.borderColor = '#ff000022'
               }}
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
               </svg>
-              <span>{videoId ? 'unit overview' : 'search youtube'}</span>
+              <span>search youtube</span>
             </a>
             
             <p className="text-sm leading-relaxed max-w-2xl" style={{ color: '#b8d0ee' }}>
@@ -152,19 +151,6 @@ export function UnitPage({ course, unit, topics, basePath, courseHref, videoId, 
 
       {/* Main content */}
       <div className="px-6 md:px-12 py-10 max-w-5xl">
-        {/* Video dropdown */}
-        {videoId && (
-          <div style={{ opacity: loaded ? 1 : 0, transition: 'opacity 0.6s ease 0.1s' }} className="mb-10">
-            <VideoDropdown
-              courseId={course.short}
-              videoId={videoId}
-              title="Unit Overview"
-              accent={course.accent}
-              accentLight={course.accentLight}
-            />
-          </div>
-        )}
-
         {/* Topics section */}
         <div>
           <div className="flex items-center gap-4 mb-6">
@@ -270,16 +256,14 @@ export function UnitPage({ course, unit, topics, basePath, courseHref, videoId, 
                     onClick={(e) => {
                       e.preventDefault()
                       e.stopPropagation()
-                      const url = topic.videoId 
-                        ? `https://www.youtube.com/watch?v=${topic.videoId}` 
-                        : `https://www.youtube.com/results?search_query=${encodeURIComponent(`${course.short.toUpperCase()} - ${topic.title}`)}`
+                      const url = `https://www.youtube.com/results?search_query=${encodeURIComponent(`${course.short.toUpperCase()} - ${topic.title}`)}`
                       window.open(url, '_blank', 'noopener,noreferrer')
                     }}
                     className="shrink-0 self-center flex items-center gap-1.5 px-2.5 py-1.5 font-mono text-xs font-bold transition-all cursor-pointer"
                     style={{
-                      background: topic.videoId ? '#ff000018' : '#ff000010',
-                      color: topic.videoId ? '#ff4444' : '#b06b6b',
-                      border: `1px solid ${topic.videoId ? '#ff000033' : '#ff000022'}`,
+                      background: '#ff000010',
+                      color: '#b06b6b',
+                      border: '1px solid #ff000022',
                     }}
                     onMouseEnter={(e) => {
                       const el = e.currentTarget
@@ -288,10 +272,10 @@ export function UnitPage({ course, unit, topics, basePath, courseHref, videoId, 
                     }}
                     onMouseLeave={(e) => {
                       const el = e.currentTarget
-                      el.style.background = topic.videoId ? '#ff000018' : '#ff000010'
-                      el.style.borderColor = topic.videoId ? '#ff000033' : '#ff000022'
+                      el.style.background = '#ff000010'
+                      el.style.borderColor = '#ff000022'
                     }}
-                    title={topic.videoId ? 'Watch Video' : 'Search YouTube'}
+                    title="Search YouTube"
                   >
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
