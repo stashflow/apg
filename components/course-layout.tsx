@@ -188,16 +188,16 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
 
       {/* Units grid */}
       <div className="px-6 md:px-14 py-12 max-w-7xl mx-auto">
-        <div className="flex items-center justify-between gap-4 mb-8 flex-wrap">
-          <div className="flex items-center gap-4 min-w-0 flex-1">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-8">
+          <div className="flex items-center gap-4 min-w-0">
             <h2 className="text-xl font-black lowercase tracking-tight shrink-0" style={{ color: '#f0f6ff' }}>
               {collectionLabel}
             </h2>
-            <div className="flex-1 h-px" style={{ background: 'rgba(26,108,245,0.2)' }} />
+            <div className="flex-1 h-px hidden sm:block" style={{ background: 'rgba(26,108,245,0.2)' }} />
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-full sm:w-auto">
             <div
-              className="h-8 px-2 font-mono text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 animate-glow-pulse"
+              className="h-9 sm:h-8 px-2 font-mono text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 animate-glow-pulse shrink-0"
               style={{
                 background: '#12233b',
                 color: '#7dd3fc',
@@ -212,9 +212,9 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={`search ${collectionLabel} or topics...`}
+              placeholder={`search ${collectionLabel}...`}
               aria-label={`Search ${collectionLabel} and topics`}
-              className="h-8 w-64 md:w-72 px-3 text-xs font-mono"
+              className="h-9 sm:h-8 flex-1 sm:flex-none sm:w-56 md:w-72 px-3 text-sm sm:text-xs font-mono rounded-none"
               style={{
                 background: '#0b1a2c',
                 color: '#dbeafe',
@@ -237,7 +237,7 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="h-8 px-2 font-mono text-[10px] uppercase tracking-wider"
+                className="h-9 sm:h-8 px-3 sm:px-2 font-mono text-xs sm:text-[10px] uppercase tracking-wider shrink-0"
                 style={{
                   background: '#13253b',
                   color: '#93c5fd',
