@@ -9,6 +9,8 @@ import { langConfig } from './lang-data'
 
 export type QuestionType = 'mcq' | 'frq'
 export type QuestionSource = 'Released' | 'Predicted'
+export type QuestionDifficulty = 'easy' | 'medium' | 'hard'
+export type DiagnosticMatch = 'exact' | 'related' | 'unit-proxy'
 
 export interface MCQOption {
   letter: string
@@ -32,6 +34,9 @@ export interface Question {
   // FRQ-specific
   frqParts?: { part: string; prompt: string; points: number }[]
   totalPoints?: number
+  difficulty?: QuestionDifficulty
+  diagnosticTopic?: string
+  diagnosticMatch?: DiagnosticMatch
 }
 
 export interface ExamFormat {
@@ -97,6 +102,20 @@ export interface QuestionQualityReport {
   mcqOptionCountIssues: number
   frqStructureIssues: number
   topicTagIssues: number
+}
+
+export interface DiagnosticBlueprintUnit {
+  unit: number
+  title: string
+  topics: string[]
+}
+
+export interface DiagnosticSet {
+  questions: Question[]
+  totalTopics: number
+  uniqueTopicsRepresented: number
+  exactTopicHits: number
+  proxyTopicHits: number
 }
 
 export function normalizeCourseKey(courseShort: string): string {
@@ -1614,25 +1633,57 @@ function uniqueQuestions(pool: Question[]): Question[] {
   return uniq
 }
 
-function applyUnitTopicFallback(courseKey: string, pool: Question[]): Question[] {
-  const config = courseConfigMap[courseKey as keyof typeof courseConfigMap]
-  if (!config) return pool
+function normalizeText(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, '')
+}
 
-  const topicsByUnit = new Map<number, string[]>(
-    config.units.map((unit) => [unit.number, unit.topics]),
-  )
-
-  return pool.map((q) => {
-    const existingTags = q.topicTags ?? []
-    if (existingTags.length > 0) return q
-    const unitTopics = topicsByUnit.get(q.unit)
-    if (!unitTopics || unitTopics.length === 0) return q
-    return { ...q, topicTags: unitTopics }
+function matchesTopic(question: Question, topic: string): boolean {
+  const topicKey = normalizeText(topic)
+  const direct = normalizeText(question.topic ?? '')
+  if (direct && (direct === topicKey || direct.includes(topicKey) || topicKey.includes(direct))) {
+    return true
+  }
+  const tags = question.topicTags ?? []
+  return tags.some((tag) => {
+    const key = normalizeText(tag)
+    return key === topicKey || key.includes(topicKey) || topicKey.includes(key)
   })
 }
 
-function normalizeText(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9]/g, '')
+function shuffle<T>(values: T[]): T[] {
+  return [...values].sort(() => Math.random() - 0.5)
+}
+
+export function getQuestionDifficulty(question: Question): QuestionDifficulty {
+  if (question.difficulty) return question.difficulty
+
+  let score = 0
+  if (question.source === 'Released') score += 2
+  if ((question.stimulus?.length ?? 0) >= 180) score += 1
+  if ((question.explanation?.length ?? 0) >= 160) score += 1
+  if (question.type === 'frq' && (question.frqParts?.length ?? 0) >= 3) score += 1
+  if (/(most likely|best explains|evaluate|extent|justify|tradeoff|except|NOT)/i.test(question.question)) score += 1
+  if (/\d/.test(question.question)) score += 1
+
+  if (score >= 4) return 'hard'
+  if (score >= 2) return 'medium'
+  return 'easy'
+}
+
+function difficultyRank(question: Question): number {
+  const difficulty = getQuestionDifficulty(question)
+  if (difficulty === 'hard') return 3
+  if (difficulty === 'medium') return 2
+  return 1
+}
+
+function selectMostChallenging(pool: Question[]): Question[] {
+  return [...pool].sort((a, b) => {
+    const diff = difficultyRank(b) - difficultyRank(a)
+    if (diff !== 0) return diff
+    if (a.source !== b.source) return a.source === 'Released' ? -1 : 1
+    return a.id.localeCompare(b.id)
+  })
 }
 
 export function getResourcesForCourse(courseShort: string): CourseResources {
@@ -1640,6 +1691,91 @@ export function getResourcesForCourse(courseShort: string): CourseResources {
   return courseResourcesMap[key] ?? {
     courseKey: key,
     links: [],
+  }
+}
+
+export function getCourseTopicBlueprint(courseShort: string): DiagnosticBlueprintUnit[] {
+  const courseKey = normalizeCourseKey(courseShort)
+  const config = courseConfigMap[courseKey as keyof typeof courseConfigMap]
+  if (!config) return []
+  return config.units.map((unit) => ({
+    unit: unit.number,
+    title: unit.title,
+    topics: [...unit.topics],
+  }))
+}
+
+export function getDiagnosticExamSet(
+  courseShort: string,
+  targetQuestions = TARGET_QUESTIONS_PER_COURSE,
+): DiagnosticSet {
+  const courseKey = normalizeCourseKey(courseShort)
+  const blueprint = getCourseTopicBlueprint(courseKey)
+  const totalTopics = blueprint.reduce((sum, unit) => sum + unit.topics.length, 0)
+  const pool = getQuestionsForCourse(courseKey)
+  const mcqs = pool.filter((q) => q.type === 'mcq')
+
+  const selected: Question[] = []
+  const usedQuestionIds = new Set<string>()
+  let exactTopicHits = 0
+  let proxyTopicHits = 0
+
+  for (const unit of blueprint) {
+    for (const topic of unit.topics) {
+      if (selected.length >= targetQuestions) break
+      const exactCandidates = selectMostChallenging(
+        mcqs.filter((q) => !usedQuestionIds.has(q.id) && q.unit === unit.unit && matchesTopic(q, topic)),
+      )
+      if (exactCandidates.length > 0) {
+        const chosen = exactCandidates[0]
+        selected.push({ ...chosen, diagnosticTopic: topic, diagnosticMatch: 'exact' })
+        usedQuestionIds.add(chosen.id)
+        exactTopicHits++
+        continue
+      }
+
+      const relatedCandidates = selectMostChallenging(
+        mcqs.filter((q) => !usedQuestionIds.has(q.id) && matchesTopic(q, topic)),
+      )
+      if (relatedCandidates.length > 0) {
+        const chosen = relatedCandidates[0]
+        selected.push({ ...chosen, diagnosticTopic: topic, diagnosticMatch: 'related' })
+        usedQuestionIds.add(chosen.id)
+        proxyTopicHits++
+        continue
+      }
+
+      const unitProxyCandidates = selectMostChallenging(
+        mcqs.filter((q) => !usedQuestionIds.has(q.id) && q.unit === unit.unit),
+      )
+      if (unitProxyCandidates.length > 0) {
+        const chosen = unitProxyCandidates[0]
+        selected.push({ ...chosen, diagnosticTopic: topic, diagnosticMatch: 'unit-proxy' })
+        usedQuestionIds.add(chosen.id)
+        proxyTopicHits++
+      }
+    }
+    if (selected.length >= targetQuestions) break
+  }
+
+  if (selected.length < targetQuestions) {
+    const remainder = selectMostChallenging(
+      mcqs.filter((q) => !usedQuestionIds.has(q.id)),
+    )
+    for (const q of remainder) {
+      if (selected.length >= targetQuestions) break
+      selected.push({ ...q, diagnosticTopic: q.topic ?? `Unit ${q.unit}`, diagnosticMatch: 'related' })
+      usedQuestionIds.add(q.id)
+      proxyTopicHits++
+    }
+  }
+
+  return {
+    questions: selected,
+    totalTopics,
+    uniqueTopicsRepresented: new Set(selected.map((q) => q.diagnosticTopic || q.topic || `Unit ${q.unit}`)).size,
+    exactTopicHits,
+    proxyTopicHits,
   }
 }
 
@@ -1678,10 +1814,7 @@ export function getCoverageReport(courseShort: string): CoverageReport {
       })
       return {
         topic,
-        // Unit-level synthesis questions often assess multiple topics in the same unit.
-        // If a unit has question coverage but a specific topic tag is not explicit, count it
-        // as covered for progress reporting.
-        covered: hits.length > 0 || unitQs.length > 0,
+        covered: hits.length > 0,
         questionCount: hits.length,
       }
     })
@@ -1766,7 +1899,7 @@ export function getQuestionQualityReport(courseShort: string): QuestionQualityRe
 // Helper: get questions for a specific course
 export function getQuestionsForCourse(courseShort: string): Question[] {
   const courseKey = normalizeCourseKey(courseShort)
-  return applyUnitTopicFallback(courseKey, uniqueQuestions(getBaseQuestionsForCourse(courseKey)))
+  return uniqueQuestions(getBaseQuestionsForCourse(courseKey))
 }
 
 // Helper: get questions for a specific course unit
@@ -1779,12 +1912,12 @@ export function getRandomExamSet(courseShort: string): Question[] {
   const pool = getQuestionsForCourse(courseShort)
   const mcqs = pool.filter(q => q.type === 'mcq')
   const frqs = pool.filter(q => q.type === 'frq')
-  const shuffled = [...mcqs].sort(() => Math.random() - 0.5)
-  const shuffledFrq = [...frqs].sort(() => Math.random() - 0.5)
+  const shuffled = shuffle(selectMostChallenging(mcqs))
+  const shuffledFrq = shuffle(selectMostChallenging(frqs))
   return [...shuffled.slice(0, Math.min(24, shuffled.length)), ...shuffledFrq.slice(0, Math.min(6, shuffledFrq.length))]
 }
 
 export function getFullExamRun(courseShort: string): Question[] {
-  const pool = getQuestionsForCourse(courseShort)
+  const pool = selectMostChallenging(getQuestionsForCourse(courseShort))
   return pool.slice(0, Math.min(TARGET_QUESTIONS_PER_COURSE, pool.length))
 }

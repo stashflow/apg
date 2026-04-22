@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useMemo, useState } from 'react'
 import { SiteNav } from './site-nav'
+import { getApushMemoryHook } from '@/lib/apush-memory-hooks'
 
 export interface NotesSection {
   type: 'heading' | 'subheading' | 'body' | 'bullets' | 'callout' | 'examtip' | 'frqtip' | 'table'
@@ -69,10 +70,179 @@ interface NotesPageProps {
   quizletUrl?: string
 }
 
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function normalizeForCompare(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, '')
+}
+
+function buildTermRegex(keyTerms: string[]): RegExp | null {
+  if (!keyTerms || keyTerms.length === 0) return null
+  const parts = [...keyTerms]
+    .map((term) => term.trim())
+    .filter(Boolean)
+    .sort((a, b) => b.length - a.length)
+    .map((term) => escapeRegex(term))
+  if (parts.length === 0) return null
+  return new RegExp(`(?<![A-Za-z0-9])(${parts.join('|')})(?![A-Za-z0-9])`, 'gi')
+}
+
+function highlightTerms(text: string, termRegex: RegExp | null, accentLight: string) {
+  if (!termRegex || !text) return text
+  const matches = Array.from(text.matchAll(termRegex))
+  if (matches.length === 0) return text
+
+  const nodes: Array<string | JSX.Element> = []
+  let cursor = 0
+
+  matches.forEach((match, idx) => {
+    const full = match[0]
+    const start = match.index ?? -1
+    if (start < 0) return
+    const end = start + full.length
+    if (start > cursor) nodes.push(text.slice(cursor, start))
+    nodes.push(
+      <span
+        key={`term-${idx}-${start}`}
+        style={{
+          textDecoration: 'underline',
+          textDecorationColor: accentLight,
+          textUnderlineOffset: '3px',
+          textDecorationThickness: '2px',
+          color: '#e5eefb',
+          fontWeight: 700,
+        }}
+      >
+        {full}
+      </span>,
+    )
+    cursor = end
+  })
+
+  if (cursor < text.length) nodes.push(text.slice(cursor))
+  return nodes
+}
+
+function renderMarkdownWithHighlights(text: string, termRegex: RegExp | null, accentLight: string) {
+  const strongSplit = text.split(/(\*\*[^*]+\*\*)/g).filter(Boolean)
+  return strongSplit.map((chunk, idx) => {
+    const isStrong = chunk.startsWith('**') && chunk.endsWith('**')
+    const clean = isStrong ? chunk.slice(2, -2) : chunk
+    const highlighted = highlightTerms(clean, termRegex, accentLight)
+    if (!isStrong) return <Fragment key={`chunk-${idx}`}>{highlighted}</Fragment>
+    return (
+      <strong key={`chunk-${idx}`} style={{ color: accentLight }}>
+        {highlighted}
+      </strong>
+    )
+  })
+}
+
+function sectionText(section: NotesSection): string {
+  const parts: string[] = []
+  if (section.content) parts.push(section.content)
+  if (section.bullets) parts.push(...section.bullets)
+  if (section.tableHeaders) parts.push(...section.tableHeaders)
+  if (section.tableRows) parts.push(...section.tableRows.flat())
+  return parts.join(' ')
+}
+
+function getSectionMentionedTerms(section: NotesSection, keyTerms: string[]): string[] {
+  const text = sectionText(section)
+  const normalized = normalizeForCompare(text)
+  if (!normalized) return []
+  return keyTerms.filter((term) => normalized.includes(normalizeForCompare(term)))
+}
+
+function getHtrMemoryHook(term: string, context: string, topicTitle: string): { anchor: string; memory: string; courseLink: string } {
+  const firstSentence = context.split(/[.!?]/).map((s) => s.trim()).find(Boolean) || `This section is teaching ${term} in ${topicTitle}.`
+  const lower = term.toLowerCase()
+  const anchor = `${term} = ${firstSentence}.`
+
+  if (lower.includes('act')) {
+    return {
+      anchor,
+      memory: `Treat "${term}" like a policy switch Congress flipped. Ask: what behavior did this law force, protect, or restrict?`,
+      courseLink: `Connect it to cause-and-effect chains: law passes -> groups react -> later unit consequences in ${topicTitle}.`,
+    }
+  }
+  if (lower.includes('compromise')) {
+    return {
+      anchor,
+      memory: `Think "political trade": each side gives something up to delay a bigger conflict.`,
+      courseLink: `In APUSH, compromises often postpone sectional tension, then it reappears harder in later periods.`,
+    }
+  }
+  if (lower.includes('doctrine') || lower.includes('corollary')) {
+    return {
+      anchor,
+      memory: `Treat "${term}" like a standing rule for U.S. foreign behavior. Remember it as "the house rule for the hemisphere/world."`,
+      courseLink: `Link doctrine -> intervention pattern -> Cold War or modern policy parallels later in the course.`,
+    }
+  }
+  if (lower.includes('war') || lower.includes('battle')) {
+    return {
+      anchor,
+      memory: `Use a 3-step frame: trigger -> turning point -> long-term consequence.`,
+      courseLink: `Most APUSH war prompts reward connecting one conflict to broader political/economic change across units.`,
+    }
+  }
+  if (lower.includes('amendment')) {
+    return {
+      anchor,
+      memory: `Think of "${term}" as a permanent rule patch to the Constitution.`,
+      courseLink: `Track who gained power/rights immediately, and where enforcement lagged in later periods.`,
+    }
+  }
+  if (lower.includes('party')) {
+    return {
+      anchor,
+      memory: `Map it like teams in a season: platform, voter base, and what crisis they formed around.`,
+      courseLink: `Connect party shifts to realignment moments and policy outcomes in later units.`,
+    }
+  }
+
+  return {
+    anchor,
+    memory: `Make the term concrete: if this were happening today, what headline, social group, or policy debate would it map to?`,
+    courseLink: `Lock it by pairing it with one earlier APUSH example and one later APUSH consequence.`,
+  }
+}
+
+function getHtrMemoryHookForCourse(
+  courseShort: string,
+  term: string,
+  context: string,
+  topicTitle: string,
+  unitNumber: number,
+) {
+  const isApushCourse = courseShort.toLowerCase().includes('apush')
+  if (isApushCourse) {
+    const apushHook = getApushMemoryHook(term, {
+      unitNumber,
+      topicTitle,
+      sectionContext: context,
+    })
+    if (apushHook) {
+      return {
+        anchor: apushHook.anchor || `${term} = ${topicTitle}`,
+        memory: apushHook.memory,
+        courseLink: apushHook.courseLink,
+      }
+    }
+  }
+  return getHtrMemoryHook(term, context, topicTitle)
+}
+
 export function NotesPage({
   course, unit, topic, sections: sectionsProp, content, prev, next, courseHref: courseHrefProp, unitHref: unitHrefProp, videoId, videoTitle, quizletUrl
 }: NotesPageProps) {
   const sections: NotesSection[] = sectionsProp ?? (content ? parseContent(content) : [])
+  const keyTerms = topic.keyTerms ?? []
+  const isApush = course.short.toLowerCase().includes('apush')
+  const termRegex = useMemo(() => buildTermRegex(keyTerms), [keyTerms])
   const courseSlug = course.short.replace(/\s+/g, '-').replace('ap-', '')
   const courseHref = courseHrefProp ?? `/${courseSlug}`
   const unitHref = unitHrefProp ?? `/${courseSlug}/unit-${unit.number}`
@@ -82,6 +252,9 @@ export function NotesPage({
   const youtubeHref = `https://www.youtube.com/results?search_query=${encodeURIComponent(topicSearchQuery)}`
   const [loaded, setLoaded] = useState(false)
   const [readPct, setReadPct] = useState(0)
+  const [htrOpen, setHtrOpen] = useState(false)
+  const [htrTerms, setHtrTerms] = useState<string[]>([])
+  const [htrContext, setHtrContext] = useState('')
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 80)
@@ -97,6 +270,12 @@ export function NotesPage({
     window.addEventListener('scroll', onScroll)
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  const openHtr = (terms: string[], context: string) => {
+    setHtrTerms(terms)
+    setHtrContext(context)
+    setHtrOpen(true)
+  }
 
   const renderSection = (s: NotesSection, i: number) => {
     switch (s.type) {
@@ -124,7 +303,7 @@ export function NotesPage({
       case 'body':
         return (
           <p key={i} className="text-base leading-relaxed mb-4" style={{ color: '#b8d0ee', lineHeight: '1.75' }}>
-            {s.content}
+            {highlightTerms(s.content, termRegex, course.accentLight)}
           </p>
         )
       case 'bullets':
@@ -139,8 +318,9 @@ export function NotesPage({
                 <span
                   className="text-base leading-relaxed"
                   style={{ color: '#b8d0ee' }}
-                  dangerouslySetInnerHTML={{ __html: b.replace(/\*\*(.*?)\*\*/g, `<strong style="color:${course.accentLight}">$1</strong>`) }}
-                />
+                >
+                  {renderMarkdownWithHighlights(b, termRegex, course.accentLight)}
+                </span>
               </li>
             ))}
           </ul>
@@ -156,7 +336,7 @@ export function NotesPage({
               color: '#b8d0ee',
             }}
           >
-            {s.content}
+            {highlightTerms(s.content, termRegex, course.accentLight)}
           </div>
         )
       case 'examtip':
@@ -171,7 +351,7 @@ export function NotesPage({
             }}
           >
             <span style={{ color: '#22c55e', fontWeight: 800 }}>exam tip: </span>
-            {s.content}
+            {highlightTerms(s.content, termRegex, course.accentLight)}
           </div>
         )
       case 'frqtip':
@@ -186,7 +366,7 @@ export function NotesPage({
             }}
           >
             <span style={{ color: '#f59e0b', fontWeight: 800 }}>frq / essay tip: </span>
-            {s.content}
+            {highlightTerms(s.content, termRegex, course.accentLight)}
           </div>
         )
       case 'table':
@@ -223,7 +403,7 @@ export function NotesPage({
                           background: ri % 2 === 0 ? '#0a1929' : '#0d2035',
                         }}
                       >
-                        {cell}
+                        {highlightTerms(cell, termRegex, course.accentLight)}
                       </td>
                     ))}
                   </tr>
@@ -385,7 +565,37 @@ export function NotesPage({
             transition: 'opacity 0.6s ease 0.1s',
           }}
         >
-          {sections.map((s, i) => renderSection(s, i))}
+          {sections.map((s, i) => {
+            const mentions = isApush ? getSectionMentionedTerms(s, keyTerms) : []
+            const context = sectionText(s)
+            return (
+              <div key={`section-wrap-${i}`} className="relative md:pr-24">
+                {renderSection(s, i)}
+                {isApush && mentions.length > 0 && (
+                  <div className="hidden md:flex absolute right-0 top-0 h-full items-center gap-2">
+                    <div className="relative h-[calc(100%-6px)] min-h-8 w-4">
+                      <div className="absolute top-0 right-0 w-3 border-t-2 border-r-2 rounded-tr-sm" style={{ borderColor: course.accentLight }} />
+                      <div className="absolute bottom-0 right-0 w-3 border-b-2 border-r-2 rounded-br-sm" style={{ borderColor: course.accentLight }} />
+                      <div className="absolute top-0 bottom-0 right-0 border-r-2" style={{ borderColor: course.accentLight }} />
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => openHtr(mentions, context)}
+                      className="px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-widest transition-all"
+                      style={{
+                        background: `${course.accentLight}20`,
+                        color: course.accentLight,
+                        border: `1px solid ${course.accentLight}66`,
+                      }}
+                      title={`How to remember: ${mentions.join(', ')}`}
+                    >
+                      HTR
+                    </button>
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
 
         {/* Bottom nav */}
@@ -428,6 +638,53 @@ export function NotesPage({
           ) : <div />}
         </div>
       </div>
+
+      {htrOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: 'rgba(5, 13, 26, 0.7)' }}
+          onClick={() => setHtrOpen(false)}
+        >
+          <div
+            className="w-full max-w-2xl p-5 md:p-6 max-h-[82vh] overflow-y-auto"
+            style={{ background: '#081526', border: `1px solid ${course.accent}55` }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div>
+                <p className="font-mono text-[11px] uppercase tracking-widest mb-1" style={{ color: course.accentLight }}>
+                  how to remember
+                </p>
+                <h3 className="text-xl font-black lowercase" style={{ color: '#f0f6ff' }}>
+                  vocab memory hooks
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setHtrOpen(false)}
+                className="px-2 py-1 text-xs font-mono uppercase"
+                style={{ color: '#9fb3c8', border: '1px solid #27415e' }}
+              >
+                close
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              {htrTerms.map((term) => {
+                const hook = getHtrMemoryHookForCourse(course.short, term, htrContext, topic.title, unit.number)
+                return (
+                  <div key={term} className="p-3 border" style={{ borderColor: '#1f3652', background: '#0a192b' }}>
+                    <p className="text-sm font-black mb-1" style={{ color: course.accentLight }}>{term}</p>
+                    <p className="text-sm mb-1" style={{ color: '#d0e0f2' }}><span style={{ color: '#7fb2e6' }}>anchor: </span>{hook.anchor}</p>
+                    <p className="text-sm mb-1" style={{ color: '#d0e0f2' }}><span style={{ color: '#7fb2e6' }}>remember it: </span>{hook.memory}</p>
+                    <p className="text-sm" style={{ color: '#d0e0f2' }}><span style={{ color: '#7fb2e6' }}>course connection: </span>{hook.courseLink}</p>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   )

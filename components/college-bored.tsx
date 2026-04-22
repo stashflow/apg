@@ -3,8 +3,19 @@
 import { useEffect, useMemo, useState } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import type { Question } from '@/lib/college-bored-data'
-import { examFormats, getCoverageReport, getFullExamRun, getQuestionQualityReport, getQuestionsForCourse, getRandomExamSet, getResourcesForCourse, normalizeCourseKey } from '@/lib/college-bored-data'
+import type { DiagnosticSet, Question } from '@/lib/college-bored-data'
+import {
+  examFormats,
+  getCoverageReport,
+  getDiagnosticExamSet,
+  getFullExamRun,
+  getQuestionDifficulty,
+  getQuestionQualityReport,
+  getQuestionsForCourse,
+  getRandomExamSet,
+  getResourcesForCourse,
+  normalizeCourseKey,
+} from '@/lib/college-bored-data'
 
 interface CollegeBoredProps {
   courseShort: string  // e.g. "apes"
@@ -36,6 +47,14 @@ const COURSE_OPTIONS = [
   { key: 'csp', label: 'AP Computer Science Principles', path: '/csp' },
   { key: 'lang', label: 'AP English Language & Composition', path: '/lang' },
 ]
+
+type RunMode = 'standard' | 'diagnostic'
+
+interface ActiveRunMeta {
+  runMode: RunMode
+  label: string
+  diagnostic?: DiagnosticSet
+}
 
 // ─── TIMER ───────────────────────────────────────────────────────────────────
 function useTimer(initialSeconds: number, running: boolean) {
@@ -351,6 +370,7 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
   const allQs = getQuestionsForCourse(courseShort)
   const [mode, setMode] = useState<'browse' | 'exam' | 'review'>('browse')
   const [examQs, setExamQs] = useState<Question[]>([])
+  const [runMeta, setRunMeta] = useState<ActiveRunMeta>({ runMode: 'standard', label: 'practice set' })
   const [qIndex, setQIndex] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [markedReview, setMarkedReview] = useState<Set<string>>(new Set())
@@ -359,7 +379,14 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
   const { seconds, fmt, reset } = useTimer(90 * 60, timerRunning)
 
   const buildMcqSet = (seed?: Question) => {
-    const mcqs = allQs.filter(q => q.type === 'mcq')
+    const mcqs = allQs
+      .filter((q) => q.type === 'mcq')
+      .sort((a, b) => {
+        const diff = (getQuestionDifficulty(b) === 'hard' ? 2 : getQuestionDifficulty(b) === 'medium' ? 1 : 0)
+          - (getQuestionDifficulty(a) === 'hard' ? 2 : getQuestionDifficulty(a) === 'medium' ? 1 : 0)
+        if (diff !== 0) return diff
+        return a.id.localeCompare(b.id)
+      })
     if (mcqs.length === 0) return []
 
     const targetCount = Math.min(10, mcqs.length)
@@ -374,11 +401,12 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
     return [seed, ...sameUnit, ...otherUnits].slice(0, targetCount)
   }
 
-  const startExam = (qs: Question[], timeSeconds: number) => {
+  const startExam = (qs: Question[], timeSeconds: number, nextMeta?: ActiveRunMeta) => {
     setExamQs(qs.map(shuffleMcqOptions))
     setQIndex(0)
     setAnswers({})
     setMarkedReview(new Set())
+    if (nextMeta) setRunMeta(nextMeta)
     reset(timeSeconds)
     setTimerRunning(true)
     setMode('exam')
@@ -407,7 +435,7 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
       }
       unitPerf.set(q.unit, unit)
 
-      const topicKey = q.topic?.trim() || `Unit ${q.unit}`
+      const topicKey = q.diagnosticTopic?.trim() || q.topic?.trim() || `Unit ${q.unit}`
       const topic = topicPerf.get(topicKey) ?? { attempted: 0, correct: 0, total: 0 }
       topic.total += 1
       if (answers[q.id]) {
@@ -434,9 +462,23 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
       .sort((a, b) => b.accuracy - a.accuracy)
 
     const strengths = topicRows.filter((x) => x.attempted >= 1 && x.accuracy >= 0.75).slice(0, 5)
-    const needsHelp = topicRows.filter((x) => x.attempted >= 1 && x.accuracy < 0.6).slice(0, 6)
+    const needsHelp = topicRows.filter((x) => x.attempted >= 1 && x.accuracy < 0.6).slice(0, 8)
     const missed = mcqs.filter((q) => !!answers[q.id] && answers[q.id] !== q.correctAnswer)
     const skipped = mcqs.filter((q) => !answers[q.id])
+
+    const diagnosticQuestions = mcqs.filter((q) => !!q.diagnosticTopic)
+    const exactMatches = diagnosticQuestions.filter((q) => q.diagnosticMatch === 'exact').length
+    const assessedTopics = new Set(
+      diagnosticQuestions
+        .filter((q) => !!answers[q.id])
+        .map((q) => q.diagnosticTopic as string),
+    ).size
+    const totalTopics = runMeta.diagnostic?.totalTopics ?? diagnosticQuestions.length
+    const coverageRatio = totalTopics > 0 ? assessedTopics / totalTopics : 0
+    const responseRatio = total > 0 ? attempted / total : 0
+    const exactRatio = diagnosticQuestions.length > 0 ? exactMatches / diagnosticQuestions.length : 0
+    const confidenceScore = Math.max(0, Math.min(1, coverageRatio * 0.5 + responseRatio * 0.25 + exactRatio * 0.25))
+    const confidenceBand = confidenceScore >= 0.8 ? 'High' : confidenceScore >= 0.6 ? 'Moderate' : 'Low'
 
     return {
       total,
@@ -446,10 +488,17 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
       unitRows,
       strengths,
       needsHelp,
+      topicRows,
       missed,
       skipped,
+      confidenceScore,
+      confidenceBand,
+      assessedTopics,
+      totalTopics,
+      exactMatches,
+      diagnosticCount: diagnosticQuestions.length,
     }
-  }, [examQs, answers])
+  }, [examQs, answers, runMeta])
 
   const currentQ = examQs[qIndex]
   const timeWarn = seconds < 300 // < 5 min warning
@@ -465,12 +514,28 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
           className="mb-8 p-5 rounded-lg animate-gradient-shift"
           style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 45%, #0f172a 100%)' }}
         >
-          <h3 className="text-white font-bold text-base mb-1">Random Practice Set</h3>
-          <p className="text-indigo-200 text-sm mb-3">Run a full 30-question sequence, mixed exam-style set, or targeted MCQ drill.</p>
+          <h3 className="text-white font-bold text-base mb-1">Diagnostic + Practice Sets</h3>
+          <p className="text-indigo-200 text-sm mb-3">Run a topic-balanced diagnostic for reliable placement, or launch standard mixed/exam-style drills.</p>
           <div className="flex flex-wrap gap-2">
             <button
               type="button"
-              onClick={() => startExam(getFullExamRun(courseShort), 90 * 60)}
+              onClick={() => {
+                const diagnostic = getDiagnosticExamSet(courseShort)
+                const timeSeconds = Math.max(20 * 60, diagnostic.questions.length * 85)
+                startExam(
+                  diagnostic.questions,
+                  timeSeconds,
+                  { runMode: 'diagnostic', label: 'topic-balanced diagnostic', diagnostic },
+                )
+              }}
+              className="flex items-center gap-2 px-4 py-2 rounded font-semibold text-sm transition-all hover:-translate-y-0.5"
+              style={{ background: '#16a34a', color: '#fff' }}
+            >
+              Start Diagnostic Run
+            </button>
+            <button
+              type="button"
+              onClick={() => startExam(getFullExamRun(courseShort), 90 * 60, { runMode: 'standard', label: 'full run' })}
               className="flex items-center gap-2 px-4 py-2 rounded font-semibold text-sm transition-all hover:-translate-y-0.5"
               style={{ background: '#0f172a', color: '#fff' }}
             >
@@ -478,7 +543,7 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
             </button>
             <button
               type="button"
-              onClick={() => startExam(getRandomExamSet(courseShort), 90 * 60)}
+              onClick={() => startExam(getRandomExamSet(courseShort), 90 * 60, { runMode: 'standard', label: 'mixed set' })}
               className="flex items-center gap-2 px-4 py-2 rounded font-semibold text-sm transition-all hover:-translate-y-0.5"
               style={{ background: '#fff', color: '#1e1b4b' }}
             >
@@ -492,7 +557,7 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
               onClick={() => {
                 const mcqSet = buildMcqSet()
                 const timeSeconds = Math.max(10 * 60, mcqSet.length * 75)
-                startExam(mcqSet, timeSeconds)
+                startExam(mcqSet, timeSeconds, { runMode: 'standard', label: 'mcq drill' })
               }}
               className="flex items-center gap-2 px-4 py-2 rounded font-semibold text-sm transition-all hover:-translate-y-0.5"
               style={{ background: '#312e81', color: '#fff' }}
@@ -517,7 +582,7 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
                   onClick={() => {
                     const mcqSet = buildMcqSet(q)
                     const timeSeconds = Math.max(10 * 60, mcqSet.length * 75)
-                    startExam(mcqSet, timeSeconds)
+                    startExam(mcqSet, timeSeconds, { runMode: 'standard', label: 'seeded mcq drill' })
                   }}
                   className="w-full flex items-start gap-3 p-4 rounded text-left transition-all hover:bg-gray-50 border border-gray-200 hover:border-indigo-300"
                 >
@@ -563,7 +628,7 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
                 <button
                   key={q.id}
                   type="button"
-                  onClick={() => startExam([q], 25 * 60)}
+                  onClick={() => startExam([q], 25 * 60, { runMode: 'standard', label: 'single frq' })}
                   className="w-full flex items-start gap-3 p-4 rounded text-left transition-all hover:bg-gray-50 border border-gray-200 hover:border-indigo-300"
                 >
                   <span
@@ -626,7 +691,52 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
           <p className="text-sm text-slate-700">
             Score: <span className="font-bold">{reviewData.correct}/{reviewData.total}</span> ({reviewData.scorePct.toFixed(1)}%) · Attempted {reviewData.attempted}/{reviewData.total}
           </p>
+          <p className="text-xs text-slate-600 mt-1">Run type: {runMeta.label}</p>
         </div>
+
+        {runMeta.runMode === 'diagnostic' && (
+          <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div className="rounded-lg border border-indigo-200 p-4 bg-indigo-50">
+              <p className="text-xs uppercase tracking-wide font-bold text-indigo-800">Diagnostic Confidence</p>
+              <p className="text-2xl font-black text-indigo-950 mt-1">{reviewData.confidenceBand}</p>
+              <p className="text-xs text-indigo-900 mt-1">{(reviewData.confidenceScore * 100).toFixed(0)}% reliability score</p>
+            </div>
+            <div className="rounded-lg border border-slate-200 p-4 bg-slate-50">
+              <p className="text-xs uppercase tracking-wide font-bold text-slate-700">Topics Assessed</p>
+              <p className="text-2xl font-black text-slate-900 mt-1">{reviewData.assessedTopics}/{reviewData.totalTopics}</p>
+              <p className="text-xs text-slate-600 mt-1">Based on answered questions</p>
+            </div>
+            <div className="rounded-lg border border-emerald-200 p-4 bg-emerald-50">
+              <p className="text-xs uppercase tracking-wide font-bold text-emerald-700">Exact Topic Matches</p>
+              <p className="text-2xl font-black text-emerald-900 mt-1">{reviewData.exactMatches}/{reviewData.diagnosticCount}</p>
+              <p className="text-xs text-emerald-700 mt-1">Higher is better diagnostic precision</p>
+            </div>
+          </div>
+        )}
+
+        {runMeta.runMode === 'diagnostic' && (
+          <div className="mb-6 rounded-lg border border-slate-200 overflow-hidden">
+            <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
+              <p className="text-sm font-bold text-slate-900">Topic Mastery Snapshot</p>
+            </div>
+            <div className="divide-y divide-slate-200">
+              {reviewData.topicRows.map((topic) => {
+                const masteryLabel = topic.accuracy >= 0.8 ? 'Strong' : topic.accuracy >= 0.6 ? 'Developing' : 'Needs work'
+                const masteryColor = topic.accuracy >= 0.8 ? '#166534' : topic.accuracy >= 0.6 ? '#92400e' : '#991b1b'
+                return (
+                  <div key={topic.label} className="px-4 py-3 text-xs text-slate-700 flex items-center gap-2">
+                    <span className="font-semibold text-slate-900 min-w-[180px] truncate">{topic.label}</span>
+                    <div className="flex-1 h-2 rounded bg-slate-200 overflow-hidden">
+                      <div className="h-full" style={{ width: `${Math.max(2, topic.accuracy * 100)}%`, background: '#334155' }} />
+                    </div>
+                    <span className="font-semibold" style={{ color: masteryColor }}>{masteryLabel}</span>
+                    <span className="text-slate-500">({topic.correct}/{topic.attempted})</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <div className="rounded-lg border border-emerald-200 p-4" style={{ background: '#f0fdf4' }}>
@@ -743,7 +853,7 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
             </button>
           </div>
           <span className="text-xs px-2 py-0.5 rounded font-medium bg-slate-100 text-slate-700">
-            exam mode
+            {runMeta.runMode === 'diagnostic' ? 'diagnostic mode' : 'exam mode'}
           </span>
         </div>
 
