@@ -106,7 +106,7 @@ export default function CSPPage() {
         accent: '#14b8a6',
         accentLight: '#f97316',
         bgClass: 'bg-csp-teal',
-        examDate: 'May 14, 2025 — afternoon session (12:00 PM ET)',
+        examDate: 'May 14, 2026 — afternoon session (12:00 PM local)',
         units,
       }}
       basePath="/csp"

@@ -60,6 +60,25 @@ export function SiteNav() {
               </Link>
             )
           })}
+          <Link
+            href="/study-plan"
+            className="relative ml-2 px-3 py-1.5 font-mono text-xs tracking-widest uppercase transition-all duration-200"
+            style={{
+              color: pathname === '/study-plan' ? '#38bdf8' : '#7a9ab0',
+              background: pathname === '/study-plan' ? '#38bdf811' : 'transparent',
+              border: '1px solid #38bdf833',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = '#38bdf8'; e.currentTarget.style.background = '#38bdf811' }}
+            onMouseLeave={(e) => { 
+              e.currentTarget.style.color = pathname === '/study-plan' ? '#38bdf8' : '#7a9ab0'
+              e.currentTarget.style.background = pathname === '/study-plan' ? '#38bdf811' : 'transparent'
+            }}
+          >
+            {pathname === '/study-plan' && (
+              <span className="absolute inset-x-0 bottom-0 h-0.5" style={{ background: '#38bdf8' }} />
+            )}
+            study plan
+          </Link>
         </div>
 
         {/* Mobile hamburger */}
@@ -123,6 +142,18 @@ export function SiteNav() {
             {c.label}
           </Link>
         ))}
+        <Link
+          href="/study-plan"
+          className="font-mono text-sm tracking-widest uppercase px-6 py-3 w-full text-center"
+          style={{
+            color: '#38bdf8',
+            border: '1px solid #38bdf833',
+            background: '#38bdf811',
+          }}
+          onClick={() => setOpen(false)}
+        >
+          study plan
+        </Link>
       </div>
 
       {/* Spacer for fixed nav */}

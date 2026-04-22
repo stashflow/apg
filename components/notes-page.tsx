@@ -4,7 +4,6 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { SiteNav } from './site-nav'
 import { VideoDropdown } from './video-dropdown'
-import { CollegeBored } from './college-bored'
 
 export interface NotesSection {
   type: 'heading' | 'subheading' | 'body' | 'bullets' | 'callout' | 'examtip' | 'frqtip' | 'table'
@@ -78,9 +77,15 @@ export function NotesPage({
   const courseSlug = course.short.replace(/\s+/g, '-').replace('ap-', '')
   const courseHref = courseHrefProp ?? `/${courseSlug}`
   const unitHref = unitHrefProp ?? `/${courseSlug}/unit-${unit.number}`
+  const topicSearchQuery = `${course.short.toUpperCase()} ${topic.title}`
+  const quizletHref =
+    quizletUrl ?? `https://quizlet.com/search?query=${encodeURIComponent(topicSearchQuery)}&type=sets`
+  const youtubeHref =
+    videoId
+      ? `https://www.youtube.com/watch?v=${videoId}`
+      : `https://www.youtube.com/results?search_query=${encodeURIComponent(topicSearchQuery)}`
   const [loaded, setLoaded] = useState(false)
   const [readPct, setReadPct] = useState(0)
-  const [showCollegeBored, setShowCollegeBored] = useState(false)
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 80)
@@ -291,11 +296,12 @@ export function NotesPage({
                 {topic.keyTerms.map((term, i) => (
                   <span
                     key={i}
-                    className="px-2 py-0.5 font-mono text-xs"
+                    className="px-2 py-0.5 font-mono text-xs animate-float-soft"
                     style={{
                       background: `${course.accent}18`,
                       color: course.accent,
                       border: `1px solid ${course.accent}33`,
+                      animationDelay: `${(i % 4) * 0.12}s`,
                     }}
                   >
                     {term}
@@ -306,89 +312,66 @@ export function NotesPage({
             
             {/* Study buttons */}
             <div className="flex flex-wrap gap-2">
-              {/* CollegeBored button — always visible */}
               <button
                 type="button"
-                onClick={() => setShowCollegeBored(true)}
-                className="flex items-center gap-1.5 px-2.5 py-1.5 font-mono text-xs font-bold transition-all cursor-pointer"
+                onClick={() => window.open(quizletHref, '_blank', 'noopener,noreferrer')}
+                className="flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
                 style={{
-                  background: '#1e1b4b22',
-                  color: '#6366f1',
-                  border: '1px solid #6366f133',
+                  background: '#4255ff24',
+                  color: '#4255ff',
+                  border: '1px solid #4255ff55',
+                  boxShadow: '0 0 0 rgba(66,85,255,0)',
                 }}
+                title={quizletUrl ? 'Open Quizlet set' : 'Search Quizlet for this topic'}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#1e1b4b33'
-                  e.currentTarget.style.borderColor = '#6366f166'
+                  const el = e.currentTarget
+                  el.style.background = '#4255ff36'
+                  el.style.borderColor = '#4255ff88'
+                  el.style.transform = 'translateY(-1px)'
+                  el.style.boxShadow = '0 10px 20px rgba(66,85,255,0.2)'
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#1e1b4b22'
-                  e.currentTarget.style.borderColor = '#6366f133'
+                  const el = e.currentTarget
+                  el.style.background = '#4255ff24'
+                  el.style.borderColor = '#4255ff55'
+                  el.style.transform = 'translateY(0)'
+                  el.style.boxShadow = '0 0 0 rgba(66,85,255,0)'
                 }}
               >
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
-                </svg>
-                collegebored
+                Q
+                <span>quizlet</span>
               </button>
-
-              {(quizletUrl || videoId) && (
-              <>
-                {quizletUrl && (
-                  <button
-                    type="button"
-                    onClick={() => window.open(quizletUrl, '_blank', 'noopener,noreferrer')}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 font-mono text-xs font-bold transition-all cursor-pointer"
-                    style={{
-                      background: '#4255ff18',
-                      color: '#4255ff',
-                      border: '1px solid #4255ff33',
-                    }}
-                    onMouseEnter={(e) => {
-                      const el = e.currentTarget
-                      el.style.background = '#4255ff30'
-                      el.style.borderColor = '#4255ff66'
-                    }}
-                    onMouseLeave={(e) => {
-                      const el = e.currentTarget
-                      el.style.background = '#4255ff18'
-                      el.style.borderColor = '#4255ff33'
-                    }}
-                  >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
-                    </svg>
-                    quizlet
-                  </button>
-                )}
-                {videoId && (
-                  <button
-                    type="button"
-                    onClick={() => window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank', 'noopener,noreferrer')}
-                    className="flex items-center gap-1.5 px-2.5 py-1.5 font-mono text-xs font-bold transition-all cursor-pointer"
-                    style={{
-                      background: '#ff000018',
-                      color: '#ff4444',
-                      border: '1px solid #ff000033',
-                    }}
-                    onMouseEnter={(e) => {
-                      const el = e.currentTarget
-                      el.style.background = '#ff000030'
-                      el.style.borderColor = '#ff000066'
-                    }}
-                    onMouseLeave={(e) => {
-                      const el = e.currentTarget
-                      el.style.background = '#ff000018'
-                      el.style.borderColor = '#ff000033'
-                    }}
-                  >
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
-                    </svg>
-                    watch
-                  </button>
-                )}
-              </>
-              )}
+              <button
+                type="button"
+                onClick={() => window.open(youtubeHref, '_blank', 'noopener,noreferrer')}
+                className="flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
+                style={{
+                  background: '#ff000024',
+                  color: '#ff4444',
+                  border: '1px solid #ff000055',
+                  boxShadow: '0 0 0 rgba(255,0,0,0)',
+                }}
+                title={videoId ? 'Watch topic video' : 'Search YouTube for this topic'}
+                onMouseEnter={(e) => {
+                  const el = e.currentTarget
+                  el.style.background = '#ff000036'
+                  el.style.borderColor = '#ff000088'
+                  el.style.transform = 'translateY(-1px)'
+                  el.style.boxShadow = '0 10px 20px rgba(255,68,68,0.2)'
+                }}
+                onMouseLeave={(e) => {
+                  const el = e.currentTarget
+                  el.style.background = '#ff000024'
+                  el.style.borderColor = '#ff000055'
+                  el.style.transform = 'translateY(0)'
+                  el.style.boxShadow = '0 0 0 rgba(255,0,0,0)'
+                }}
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M23.495 6.205a3.007 3.007 0 0 0-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 0 0 .527 6.205a31.247 31.247 0 0 0-.522 5.805 31.247 31.247 0 0 0 .522 5.783 3.007 3.007 0 0 0 2.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 0 0 2.088-2.088 31.247 31.247 0 0 0 .5-5.783 31.247 31.247 0 0 0-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/>
+                </svg>
+                <span>youtube</span>
+              </button>
             </div>
           </div>
         </div>
@@ -463,13 +446,6 @@ export function NotesPage({
         </div>
       </div>
 
-      {/* CollegeBored modal */}
-      {showCollegeBored && (
-        <CollegeBored
-          courseShort={course.short}
-          onClose={() => setShowCollegeBored(false)}
-        />
-      )}
     </div>
   )
 }

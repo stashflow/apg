@@ -20,7 +20,7 @@ export default function APUSHUnit9Page() {
       basePath="/apush/unit-9"
       courseHref="/apush"
 
-      examDate={{ date: 'Friday, May 9, 2025', time: '8:00 AM' }}
+      examDate={{ date: 'Friday, May 8, 2026', time: '8:00 AM' }}
     />
   )
 }

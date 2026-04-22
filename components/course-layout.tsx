@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { SiteNav } from './site-nav'
 
 export interface TopicLink {
@@ -39,11 +39,55 @@ interface CourseLayoutProps {
 export function CourseLayout({ course, basePath }: CourseLayoutProps) {
   const [loaded, setLoaded] = useState(false)
   const [hoveredUnit, setHoveredUnit] = useState<number | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 80)
     return () => clearTimeout(t)
   }, [])
+
+  const normalizedSearch = searchQuery.trim().toLowerCase()
+  const hasSearch = normalizedSearch.length > 0
+  const collectionLabel = course.units.every((unit) => unit.title.toLowerCase().startsWith('period '))
+    ? 'all periods'
+    : 'all units'
+
+  const visibleUnits = useMemo(() => {
+    const normalized = normalizedSearch
+    return course.units
+      .map((unit) => {
+        const unitNumberText = `unit ${unit.number}`
+        const unitMatches =
+          unit.title.toLowerCase().includes(normalized) ||
+          unitNumberText.includes(normalized) ||
+          unit.examWeight.toLowerCase().includes(normalized)
+
+        const indexedTopics = unit.topics.map((topic, index) => ({ topic, index }))
+        const matchedTopics = indexedTopics.filter(({ topic }) =>
+          topic.toLowerCase().includes(normalized),
+        )
+
+        const topicRows = hasSearch
+          ? unitMatches
+            ? indexedTopics
+            : matchedTopics
+          : indexedTopics
+
+        const includeUnit = !hasSearch || unitMatches || matchedTopics.length > 0
+
+        return {
+          unit,
+          topicRows,
+          includeUnit,
+        }
+      })
+      .filter((entry) => entry.includeUnit)
+  }, [course.units, hasSearch, normalizedSearch])
+
+  const totalMatchedTopics = useMemo(
+    () => visibleUnits.reduce((sum, entry) => sum + entry.topicRows.length, 0),
+    [visibleUnits],
+  )
 
   return (
     <div className="min-h-screen" style={{ background: '#050d1a' }}>
@@ -144,15 +188,76 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
 
       {/* Units grid */}
       <div className="px-6 md:px-14 py-12 max-w-7xl mx-auto">
-        <div className="flex items-center gap-4 mb-8">
-          <h2 className="text-xl font-black lowercase tracking-tight" style={{ color: '#f0f6ff' }}>
-            all units
-          </h2>
-          <div className="flex-1 h-px" style={{ background: 'rgba(26,108,245,0.2)' }} />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-8">
+          <div className="flex items-center gap-4 min-w-0">
+            <h2 className="text-xl font-black lowercase tracking-tight shrink-0" style={{ color: '#f0f6ff' }}>
+              {collectionLabel}
+            </h2>
+            <div className="flex-1 h-px hidden sm:block" style={{ background: 'rgba(26,108,245,0.2)' }} />
+          </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto">
+            <div
+              className="h-9 sm:h-8 px-2 font-mono text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 animate-glow-pulse shrink-0"
+              style={{
+                background: '#12233b',
+                color: '#7dd3fc',
+                border: '1px solid #1e3a5f',
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+              </svg>
+            </div>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder={`search ${collectionLabel}...`}
+              aria-label={`Search ${collectionLabel} and topics`}
+              className="h-9 sm:h-8 flex-1 sm:flex-none sm:w-56 md:w-72 px-3 text-sm sm:text-xs font-mono rounded-none"
+              style={{
+                background: '#0b1a2c',
+                color: '#dbeafe',
+                border: '1px solid #1e3a5f',
+                outline: 'none',
+                transition: 'border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease',
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.borderColor = '#38bdf8'
+                e.currentTarget.style.background = '#102238'
+                e.currentTarget.style.boxShadow = '0 0 0 2px rgba(56,189,248,0.2)'
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.borderColor = '#1e3a5f'
+                e.currentTarget.style.background = '#0b1a2c'
+                e.currentTarget.style.boxShadow = 'none'
+              }}
+            />
+            {hasSearch && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="h-9 sm:h-8 px-3 sm:px-2 font-mono text-xs sm:text-[10px] uppercase tracking-wider shrink-0"
+                style={{
+                  background: '#13253b',
+                  color: '#93c5fd',
+                  border: '1px solid #1e3a5f',
+                }}
+              >
+                clear
+              </button>
+            )}
+          </div>
         </div>
 
+        {hasSearch && (
+          <p className="mb-4 font-mono text-[11px] tracking-wide uppercase" style={{ color: '#7dd3fc' }}>
+            {visibleUnits.length} units · {totalMatchedTopics} topic matches
+          </p>
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {course.units.map((unit, i) => {
+          {visibleUnits.map(({ unit, topicRows }, i) => {
             const isHovered = hoveredUnit === unit.number
             return (
               <div
@@ -162,8 +267,13 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
                   background: isHovered ? '#0f2540' : '#0a1929',
                   border: `1px solid ${isHovered ? course.accent : 'rgba(26,48,80,0.7)'}`,
                   opacity: loaded ? 1 : 0,
-                  transform: loaded ? 'translateY(0)' : 'translateY(20px)',
-                  transition: `opacity 0.5s ease ${i * 0.05}s, transform 0.5s ease ${i * 0.05}s, border-color 0.2s, background 0.2s`,
+                  transform: loaded
+                    ? isHovered
+                      ? 'translateY(-2px) scale(1.004)'
+                      : 'translateY(0) scale(1)'
+                    : 'translateY(20px) scale(1)',
+                  boxShadow: isHovered ? `0 14px 28px ${course.accent}22` : '0 0 0 rgba(0,0,0,0)',
+                  transition: `opacity 0.5s ease ${i * 0.05}s, transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.2s, background 0.2s, box-shadow 0.25s ease`,
                   cursor: 'default',
                 }}
                 onMouseEnter={() => setHoveredUnit(unit.number)}
@@ -215,19 +325,19 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
 
                   {/* Topics */}
                   <div className="space-y-0.5 mb-4">
-                    {unit.topics.map((topic, ti) => {
-                      const topicLink = unit.topicLinks?.[ti]
+                    {topicRows.map(({ topic, index: topicIndex }) => {
+                      const topicLink = unit.topicLinks?.[topicIndex]
                       const hasQuizlet = !!topicLink?.quizletUrl
                       const hasVideo = !!topicLink?.videoId
                       const searchQuery = `${course.short.toUpperCase()} - ${topic}`
                       
                       return (
                         <div
-                          key={ti}
+                          key={`${unit.number}-${topicIndex}`}
                           className="flex items-center gap-1 group/row"
                         >
                           <Link
-                            href={`${basePath}/unit-${unit.number}/${ti + 1}`}
+                            href={`${basePath}/unit-${unit.number}/${topicIndex + 1}`}
                             className="flex items-center gap-2 py-1 px-1 text-sm transition-all duration-150 group/t flex-1 min-w-0"
                             style={{ color: '#8aabb0', borderRadius: '2px' }}
                             onMouseEnter={(e) => {
@@ -241,8 +351,11 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
                               e.currentTarget.style.paddingLeft = '4px'
                             }}
                           >
-                            <span className="shrink-0 font-mono text-xs" style={{ color: course.accentLight, opacity: 0.7, minWidth: '16px' }}>
-                              {(ti + 1).toString().padStart(2, '0')}
+                            <span
+                              className="shrink-0 font-mono text-xs"
+                              style={{ color: course.accentLight, opacity: 0.7, minWidth: '16px' }}
+                            >
+                              {(topicIndex + 1).toString().padStart(2, '0')}
                             </span>
                             <span className="truncate">{topic}</span>
                           </Link>
@@ -304,6 +417,79 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
           })}
         </div>
 
+        {hasSearch && visibleUnits.length === 0 && (
+          <div
+            className="mt-4 px-5 py-4"
+            style={{ background: '#0b1a2c', border: '1px solid #1e3a5f', color: '#93c5fd' }}
+          >
+            <p className="font-mono text-xs uppercase tracking-wider mb-1">no matches</p>
+            <p className="text-sm">Try a unit number, topic word, or keyword phrase.</p>
+          </div>
+        )}
+
+        <div
+          className="mt-6 px-5 py-4 flex items-center justify-between gap-3 flex-wrap"
+          style={{
+            background: '#1e1b4b12',
+            border: '1px solid #6366f122',
+          }}
+        >
+          <p className="font-mono text-xs tracking-widest uppercase" style={{ color: '#9ca3ff' }}>
+            collegeboard-aligned practice tools
+          </p>
+          <Link
+            href={`/collegebored?course=${encodeURIComponent(course.id)}`}
+            className="flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all"
+            style={{
+              background: '#1e1b4b22',
+              color: '#6366f1',
+              border: '1px solid #6366f133',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = '#1e1b4b33'
+              e.currentTarget.style.borderColor = '#6366f166'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = '#1e1b4b22'
+              e.currentTarget.style.borderColor = '#6366f133'
+            }}
+          >
+            open collegebored
+          </Link>
+        </div>
+
+        <div className="mt-3 flex justify-end">
+          <Link
+            href={`/ezo-learn-center?course=${encodeURIComponent(course.id)}`}
+            className="group relative inline-flex items-center gap-2 px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider transition-all duration-300"
+            style={{
+              background: 'linear-gradient(120deg, #bbf7d0 0%, #e9d5ff 35%, #d9f99d 100%)',
+              color: '#14532d',
+              border: '1px solid #c4b5fd',
+              boxShadow: '0 10px 22px rgba(196,181,253,0.24)',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px) scale(1.01)'
+              e.currentTarget.style.boxShadow = '0 16px 28px rgba(196,181,253,0.32)'
+              e.currentTarget.style.filter = 'saturate(1.05)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0) scale(1)'
+              e.currentTarget.style.boxShadow = '0 10px 22px rgba(196,181,253,0.24)'
+              e.currentTarget.style.filter = 'saturate(1)'
+            }}
+          >
+            <span
+              className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+              style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent)' }}
+            />
+            <span className="relative">open ezo learn center</span>
+            <svg className="relative" width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M2 6h8M6.5 2.5l3.5 3.5-3.5 3.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </Link>
+        </div>
+
         {/* Exam info */}
         {course.examDate && (
           <div
@@ -321,6 +507,7 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
           </div>
         )}
       </div>
+
     </div>
   )
 }

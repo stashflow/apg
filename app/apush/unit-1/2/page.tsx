@@ -111,7 +111,7 @@ export default function APUSHU1T2() {
       }}
       sections={sections}
       prev={{ href: '/apush/unit-1/1', title: 'native american societies' }}
-      next={{ href: '/apush/unit-1/3', title: 'the columbian exchange' }}
+      next={{ href: '/apush/unit-1/3', title: 'columbian exchange impacts' }}
       courseHref="/apush"
       unitHref="/apush/unit-1"
     />

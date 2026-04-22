@@ -7,7 +7,7 @@ export const apushConfig = {
   accent: '#ef4444',
   accentLight: '#f59e0b',
   bgClass: 'bg-navy',
-  examDate: 'May 2026 (TBD)',
+  examDate: 'May 8, 2026 — morning session (8:00 AM local)',
   units: [
     {
       number: 1,
