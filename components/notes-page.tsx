@@ -248,7 +248,7 @@ function getHtrMemoryHook(term: string, context: string, topicTitle: string): { 
   if (lower.includes('act')) {
     return {
       anchor,
-      memory: `Treat "${term}" like a policy switch Congress flipped. Ask: what behavior did this law force, protect, or restrict?`,
+      memory: `"${term}" = policy switch. Remember: new rule, new winners, new losers, and backlash.`,
       courseLink: `Connect it to cause-and-effect chains: law passes -> groups react -> later unit consequences in ${topicTitle}.`,
     }
   }
@@ -269,28 +269,28 @@ function getHtrMemoryHook(term: string, context: string, topicTitle: string): { 
   if (lower.includes('war') || lower.includes('battle')) {
     return {
       anchor,
-      memory: `Use a 3-step frame: trigger -> turning point -> long-term consequence.`,
+      memory: `War memory line: trigger -> turning point -> long-term consequence.`,
       courseLink: `Most APUSH war prompts reward connecting one conflict to broader political/economic change across units.`,
     }
   }
   if (lower.includes('amendment')) {
     return {
       anchor,
-      memory: `Think of "${term}" as a permanent rule patch to the Constitution.`,
+      memory: `"${term}" = permanent rule patch to the Constitution.`,
       courseLink: `Track who gained power/rights immediately, and where enforcement lagged in later periods.`,
     }
   }
   if (lower.includes('party')) {
     return {
       anchor,
-      memory: `Map it like teams in a season: platform, voter base, and what crisis they formed around.`,
+      memory: `"${term}" = team matchup: platform + voter base + crisis moment.`,
       courseLink: `Connect party shifts to realignment moments and policy outcomes in later units.`,
     }
   }
 
   return {
     anchor,
-    memory: `- **Cue phrase:** "${term} = ${firstSentence}"\n- **Dual-code image:** picture one scene that captures the cue phrase.\n- **20-second retrieval:** close notes and explain the term + one consequence out loud.\n- **Spacing:** retry in 10 minutes and again tomorrow.`,
+    memory: `- **Say this:** "${term} = ${firstSentence}"\n- **Real-life memory:** ${`It works like a current policy debate where people split into sides and rules change.`}\n- **APUSH link:** Pair it with one earlier cause and one later effect.`,
     courseLink: `Bridge it to one earlier and one later APUSH event for stronger recall.`,
   }
 }

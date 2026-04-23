@@ -47,10 +47,10 @@ function realLifeAnalogy(term: string): string {
 function buildEasyMemory(term: string, oneLiner: string, courseLink: string): string {
   const acronym = acronymFromTerm(term)
   return [
-    `- **Acronym:** \`${acronym}\``,
-    `- **Real-life version:** ${realLifeAnalogy(term)}`,
-    `- **One-line memory:** ${oneLiner}`,
-    `- **APUSH connection:** ${courseLink}`,
+    `- **Say this:** "${oneLiner}"`,
+    `- **Shortcut:** \`${acronym}\``,
+    `- **Real-life memory:** ${realLifeAnalogy(term)}`,
+    `- **Link it in APUSH:** ${courseLink}`,
   ].join('\n')
 }
 
@@ -339,7 +339,7 @@ export function getApushMemoryHook(term: string, ctx: HookContext): ApushMemoryH
     const courseLink = 'Acts are often best analyzed in a chain: context -> passage -> resistance -> later legal/political consequences.'
     return {
       anchor: `${term} in this section: ${firstSentence(ctx.sectionContext) || `policy change in Unit ${ctx.unitNumber}`}.`,
-      memory: buildEasyMemory(term, 'Think of this Act as a new rule that creates winners, losers, and backlash.', courseLink),
+      memory: buildEasyMemory(term, 'This Act is a new rule that creates winners, losers, and backlash.', courseLink),
       courseLink,
     }
   }
@@ -348,7 +348,7 @@ export function getApushMemoryHook(term: string, ctx: HookContext): ApushMemoryH
     const courseLink = 'APUSH rewards showing how wartime outcomes reshape domestic politics and rights conflicts.'
     return {
       anchor: `${term} in this section: ${firstSentence(ctx.sectionContext) || `conflict turning point in Unit ${ctx.unitNumber}`}.`,
-      memory: buildEasyMemory(term, 'Use 3 steps: trigger -> turning point -> result.', courseLink),
+      memory: buildEasyMemory(term, 'War memory line: trigger -> turning point -> result.', courseLink),
       courseLink,
     }
   }
@@ -357,7 +357,7 @@ export function getApushMemoryHook(term: string, ctx: HookContext): ApushMemoryH
     const courseLink = 'High-scoring writing compares constitutional text with real-world implementation.'
     return {
       anchor: `${term} in this section: ${firstSentence(ctx.sectionContext) || `constitutional shift in Unit ${ctx.unitNumber}`}.`,
-      memory: buildEasyMemory(term, 'This is a permanent rule update; ask who got rights on paper vs in practice.', courseLink),
+      memory: buildEasyMemory(term, 'This is a permanent rule update: rights on paper vs rights in real life.', courseLink),
       courseLink,
     }
   }
