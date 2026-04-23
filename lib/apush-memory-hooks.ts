@@ -21,6 +21,39 @@ function firstSentence(value: string): string {
     .find(Boolean) || ''
 }
 
+function acronymFromTerm(term: string): string {
+  const stop = new Set(['and', 'of', 'the', 'to', 'for', 'in', 'on'])
+  const letters = term
+    .split(/[\s\-]+/)
+    .map((w) => w.replace(/[^a-zA-Z0-9]/g, ''))
+    .filter(Boolean)
+    .filter((w) => !stop.has(w.toLowerCase()))
+    .map((w) => w[0]?.toUpperCase())
+    .filter(Boolean)
+  if (letters.length === 0) return 'KEY'
+  return letters.slice(0, 5).join('')
+}
+
+function realLifeAnalogy(term: string): string {
+  const lower = term.toLowerCase()
+  if (lower.includes('act') || lower.includes('amendment')) return 'Like your school adding a new permanent rule that changes what everyone can/can’t do.'
+  if (lower.includes('war') || lower.includes('battle')) return 'Like a huge rivalry game that changes who has power after it ends.'
+  if (lower.includes('doctrine') || lower.includes('plan')) return 'Like a team strategy your coach announces and keeps using all season.'
+  if (lower.includes('movement')) return 'Like students organizing over time until the school board has to respond.'
+  if (lower.includes('scandal')) return 'Like a major leak that makes everyone stop trusting leadership.'
+  return 'Like a major policy trend today: people debate it, sides form, and later rules change because of it.'
+}
+
+function buildEasyMemory(term: string, oneLiner: string, courseLink: string): string {
+  const acronym = acronymFromTerm(term)
+  return [
+    `- **Acronym:** \`${acronym}\``,
+    `- **Real-life version:** ${realLifeAnalogy(term)}`,
+    `- **One-line memory:** ${oneLiner}`,
+    `- **APUSH connection:** ${courseLink}`,
+  ].join('\n')
+}
+
 function withAliases(aliases: string[], hook: ApushMemoryHook, target: Record<string, ApushMemoryHook>) {
   for (const alias of aliases) {
     target[normalize(alias)] = hook
@@ -294,36 +327,40 @@ export function getApushMemoryHook(term: string, ctx: HookContext): ApushMemoryH
   const key = normalize(term)
   const exact = APUSH_HOOKS[key]
   if (exact) {
+    const anchor = exact.anchor || `${term} in this section: ${firstSentence(ctx.sectionContext) || `core idea in ${ctx.topicTitle}`}.`
     return {
-      ...exact,
-      anchor: exact.anchor || `${term} in this section: ${firstSentence(ctx.sectionContext) || `core idea in ${ctx.topicTitle}`}.`,
+      anchor,
+      memory: buildEasyMemory(term, exact.memory, exact.courseLink),
+      courseLink: exact.courseLink,
     }
   }
 
   if (key.includes('act')) {
+    const courseLink = 'Acts are often best analyzed in a chain: context -> passage -> resistance -> later legal/political consequences.'
     return {
       anchor: `${term} in this section: ${firstSentence(ctx.sectionContext) || `policy change in Unit ${ctx.unitNumber}`}.`,
-      memory: 'Treat every APUSH Act as a rule change: ask who gains power, who loses leverage, and what backlash follows.',
-      courseLink: 'Acts are often best analyzed in a chain: context -> passage -> resistance -> later legal/political consequences.',
+      memory: buildEasyMemory(term, 'Think of this Act as a new rule that creates winners, losers, and backlash.', courseLink),
+      courseLink,
     }
   }
 
   if (key.includes('war') || key.includes('battle')) {
+    const courseLink = 'APUSH rewards showing how wartime outcomes reshape domestic politics and rights conflicts.'
     return {
       anchor: `${term} in this section: ${firstSentence(ctx.sectionContext) || `conflict turning point in Unit ${ctx.unitNumber}`}.`,
-      memory: 'Lock wars with a 3-step card: trigger, turning point, treaty/political result.',
-      courseLink: 'APUSH rewards showing how wartime outcomes reshape domestic politics and rights conflicts.',
+      memory: buildEasyMemory(term, 'Use 3 steps: trigger -> turning point -> result.', courseLink),
+      courseLink,
     }
   }
 
   if (key.includes('amendment')) {
+    const courseLink = 'High-scoring writing compares constitutional text with real-world implementation.'
     return {
       anchor: `${term} in this section: ${firstSentence(ctx.sectionContext) || `constitutional shift in Unit ${ctx.unitNumber}`}.`,
-      memory: 'Read amendments as permanent framework edits, then ask how enforcement changed over time.',
-      courseLink: 'High-scoring writing compares constitutional text with real-world implementation.',
+      memory: buildEasyMemory(term, 'This is a permanent rule update; ask who got rights on paper vs in practice.', courseLink),
+      courseLink,
     }
   }
 
   return null
 }
-

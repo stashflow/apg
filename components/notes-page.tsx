@@ -312,7 +312,7 @@ function getHtrMemoryHookForCourse(
     if (apushHook) {
       return {
         anchor: apushHook.anchor || `${term} = ${topicTitle}`,
-        memory: `- **Cue phrase:** ${apushHook.anchor || `${term} = ${topicTitle}`}\n- **Memory hook:** ${apushHook.memory}\n- **Retrieval drill (20s):** explain this term without notes, then check accuracy.\n- **Interleave:** compare it to one related term from another unit.`,
+        memory: apushHook.memory,
         courseLink: apushHook.courseLink,
       }
     }
@@ -835,9 +835,11 @@ export function NotesPage({
                   <div key={term} className="p-3 border" style={{ borderColor: '#1f3652', background: '#0a192b' }}>
                     <p className="text-sm font-black mb-1" style={{ color: course.accentLight }}>{term}</p>
                     {renderMarkdownBlock(hook.memory)}
-                    <p className="text-xs mt-2" style={{ color: '#96b4d4' }}>
-                      {renderInlineMarkdown(`**APUSH link:** ${hook.courseLink}`)}
-                    </p>
+                    {!course.short.toLowerCase().includes('apush') && (
+                      <p className="text-xs mt-2" style={{ color: '#96b4d4' }}>
+                        {renderInlineMarkdown(`**Course link:** ${hook.courseLink}`)}
+                      </p>
+                    )}
                   </div>
                 )
               })}
