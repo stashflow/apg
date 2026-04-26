@@ -175,12 +175,13 @@ export default function HomePage() {
 
   return (
     <main
-      className="relative w-full min-h-screen overflow-x-hidden"
-      style={{ background: '#050d1a' }}
+      className="relative w-full overflow-hidden"
+      style={{ height: '100dvh', minHeight: '100svh' }}
     >
-      {/* Responsive course grid with fixed media ratio cards */}
+      {/* 2×2 grid — fills the viewport exactly */}
       <div
-        className="grid w-full max-w-[1700px] mx-auto px-4 sm:px-6 md:px-10 py-4 sm:py-6 md:py-10 gap-3 sm:gap-4 md:gap-5 lg:grid-cols-2"
+        className="grid w-full h-full"
+        style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr' }}
       >
         {courses.map((course, i) => {
           const dirs = [
@@ -192,7 +193,7 @@ export default function HomePage() {
           return (
             <div
               key={course.id}
-              className="relative aspect-[16/9]"
+              className="relative"
               style={{
                 opacity: loaded ? 1 : 0,
                 transform: loaded
@@ -208,8 +209,15 @@ export default function HomePage() {
       </div>
 
       {/* Dividing lines (crosshair) */}
-      <div className="absolute inset-0 pointer-events-none hidden lg:block" style={{ zIndex: 15 }}>
-        <div className="absolute top-0 bottom-0" style={{ left: '50%', width: '1px', background: 'rgba(26,108,245,0.2)' }} />
+      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 15 }}>
+        <div
+          className="absolute top-0 bottom-0"
+          style={{ left: '50%', width: '1px', background: 'rgba(26,108,245,0.3)' }}
+        />
+        <div
+          className="absolute left-0 right-0"
+          style={{ top: '50%', height: '1px', background: 'rgba(26,108,245,0.3)' }}
+        />
       </div>
 
       {/* Center logo - hidden */}
