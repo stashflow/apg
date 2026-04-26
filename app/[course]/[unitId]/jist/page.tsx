@@ -21,12 +21,6 @@ type TopicDeepDive = {
   examMove: string
 }
 
-type TopicVisual = {
-  src: string
-  alt: string
-  caption: string
-}
-
 type ThemeOverlay = {
   hero: string
   glow: string
@@ -391,32 +385,6 @@ function getTopicDeepDive(courseKey: string, title: string): TopicDeepDive {
   }
 }
 
-function getApesVisualForTopic(title: string): TopicVisual | null {
-  const lower = title.toLowerCase()
-  if (lower.includes('carbon') || lower.includes('climate') || lower.includes('greenhouse')) {
-    return { src: '/images/apes-diagrams/carbon-cycle.svg', alt: 'Carbon cycle diagram', caption: 'Reservoirs and fluxes that drive climate and ecosystem responses.' }
-  }
-  if (lower.includes('trophic') || lower.includes('food') || lower.includes('productivity')) {
-    return { src: '/images/apes-diagrams/energy-flow.svg', alt: 'Energy flow diagram', caption: 'Energy transfer limits explain short food chains and biomass pyramids.' }
-  }
-  if (lower.includes('demographic') || lower.includes('population')) {
-    return { src: '/images/apes-diagrams/demographic-transition.svg', alt: 'Demographic transition model', caption: 'Birth/death rate shifts explain growth-stage differences.' }
-  }
-  if (lower.includes('soil') || lower.includes('erosion')) {
-    return { src: '/images/apes-diagrams/soil-profile.svg', alt: 'Soil profile', caption: 'Horizon structure helps explain fertility and erosion impacts.' }
-  }
-  if (lower.includes('eutrophication') || lower.includes('water pollution') || lower.includes('runoff')) {
-    return { src: '/images/apes-diagrams/eutrophication.svg', alt: 'Eutrophication process', caption: 'Classic APES chain from nutrient loading to hypoxia.' }
-  }
-  if (lower.includes('circulation') || lower.includes('biome') || lower.includes('enso')) {
-    return { src: '/images/apes-diagrams/atmospheric-circulation.svg', alt: 'Atmospheric circulation cells', caption: 'Latitude-level circulation links directly to climate patterns and biome placement.' }
-  }
-  if (lower.includes('acidification') || lower.includes('carbonate')) {
-    return { src: '/images/apes-diagrams/ocean-acidification.svg', alt: 'Ocean acidification chemistry', caption: 'Chemistry pathway from atmospheric CO2 to reduced shell-building capacity.' }
-  }
-  return null
-}
-
 export default async function JistUnitPage({ params }: { params: Promise<{ course: string; unitId: string }> }) {
   const { course, unitId } = await params
 
@@ -530,7 +498,6 @@ export default async function JistUnitPage({ params }: { params: Promise<{ cours
             {focus.map((item, idx) => (
               (() => {
                 const deepDive = getTopicDeepDive(courseKey, item.title)
-                const visual = courseKey === 'apes' ? getApesVisualForTopic(item.title) : null
                 return (
               <article
                 key={`focus-${item.number}`}
@@ -581,14 +548,6 @@ export default async function JistUnitPage({ params }: { params: Promise<{ cours
                   <p className="text-xs leading-relaxed mt-1" style={{ color: '#b8f6d1' }}>
                     <span className="font-bold">Exam move:</span> {deepDive.examMove}
                   </p>
-                  {visual && (
-                    <div className="mt-3 border overflow-hidden" style={{ borderColor: 'rgba(173,205,235,0.3)', background: 'rgba(9,26,43,0.7)' }}>
-                      <img src={visual.src} alt={visual.alt} className="w-full h-auto block" loading="lazy" />
-                      <p className="px-2.5 py-2 text-[11px] leading-relaxed" style={{ color: '#b8d8f5' }}>
-                        {visual.caption}
-                      </p>
-                    </div>
-                  )}
                 </div>
               </article>
                 )
