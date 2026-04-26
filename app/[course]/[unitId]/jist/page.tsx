@@ -263,8 +263,8 @@ function parseUnitNumber(unitId: string): number | null {
   return Number.isFinite(number) && number > 0 ? number : null
 }
 
-export default function JistUnitPage({ params }: { params: { course: string; unitId: string } }) {
-  const { course, unitId } = params
+export default async function JistUnitPage({ params }: { params: Promise<{ course: string; unitId: string }> }) {
+  const { course, unitId } = await params
 
   const courseKey = course.toLowerCase()
   const config = courseMap[courseKey]
