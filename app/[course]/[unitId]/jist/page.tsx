@@ -14,6 +14,19 @@ type Topic = {
   score: number
 }
 
+type TopicDeepDive = {
+  mechanism: string
+  mustKnow: string[]
+  commonTrap: string
+  examMove: string
+}
+
+type TopicVisual = {
+  src: string
+  alt: string
+  caption: string
+}
+
 type ThemeOverlay = {
   hero: string
   glow: string
@@ -263,6 +276,147 @@ function parseUnitNumber(unitId: string): number | null {
   return Number.isFinite(number) && number > 0 ? number : null
 }
 
+function getTopicDeepDive(courseKey: string, title: string): TopicDeepDive {
+  const lower = title.toLowerCase()
+  const has = (needle: string) => lower.includes(needle)
+
+  if (courseKey === 'apes') {
+    if (has('biodiversity') || has('ecosystem') || has('species')) {
+      return {
+        mechanism: 'Diverse ecosystems spread ecological risk by supporting different niches and response pathways under disturbance.',
+        mustKnow: [
+          'Different biodiversity levels: ecosystem vs species vs genetic diversity.',
+          'Fragmentation raises edge effects and lowers interior-habitat specialists.',
+          'Connectivity (corridors) supports migration and gene flow.',
+        ],
+        commonTrap: 'Saying biodiversity is only “number of species.” APES expects level-specific explanations.',
+        examMove: 'Use source -> ecological mechanism -> service impact (pollination, resilience, water quality).',
+      }
+    }
+    if (has('population') || has('demographic') || has('carrying capacity')) {
+      return {
+        mechanism: 'Population size changes with birth, death, immigration, and emigration, constrained by limiting factors.',
+        mustKnow: [
+          'Exponential growth happens when resources are abundant; logistic growth levels near K.',
+          'Overshoot can trigger dieback when demand exceeds resource renewal.',
+          'Demographic transition stages explain changing growth rates over development.',
+        ],
+        commonTrap: 'Confusing carrying capacity with maximum possible population instead of sustainable long-term level.',
+        examMove: 'State whether factor is density-dependent or independent, then predict direction of growth rate change.',
+      }
+    }
+    if (has('soil') || has('agriculture') || has('land use') || has('deforestation') || has('fisheries')) {
+      return {
+        mechanism: 'Land-use choices alter nutrient cycling, erosion rates, habitat integrity, and long-term productivity.',
+        mustKnow: [
+          'Topsoil loss reduces fertility, infiltration, and plant productivity.',
+          'Monoculture and tilling can increase pest pressure and runoff risk.',
+          'Conservation tillage, contour plowing, and riparian buffers reduce erosion and nutrient export.',
+        ],
+        commonTrap: 'Naming a mitigation strategy without saying which process it interrupts.',
+        examMove: 'Pair each problem with a process-level fix (e.g., buffer strips reduce nutrient transport to streams).',
+      }
+    }
+    if (has('energy') || has('fossil') || has('nuclear') || has('solar') || has('wind')) {
+      return {
+        mechanism: 'Every energy source has a distinct profile for emissions, reliability, land impact, and waste stream.',
+        mustKnow: [
+          'Renewable does not automatically mean low ecological footprint in every location.',
+          'Capacity factor and intermittency matter for real-world output.',
+          'Lifecycle impacts (extraction, operation, disposal) matter in APES comparisons.',
+        ],
+        commonTrap: 'Comparing sources with one metric only (like cost or carbon) and ignoring tradeoffs.',
+        examMove: 'Use a 3-column comparison: emissions, reliability, and ecological side effects.',
+      }
+    }
+    if (has('pollution') || has('smog') || has('acid') || has('waste') || has('eutrophication')) {
+      return {
+        mechanism: 'Pollutants move through air/water pathways, transform chemically, and produce biological impacts downstream.',
+        mustKnow: [
+          'Primary pollutants are emitted directly; secondary pollutants form in atmosphere/water.',
+          'Eutrophication chain: nutrient input -> algal bloom -> decomposition -> oxygen decline.',
+          'Dose, persistence, and bioaccumulation determine ecological and human risk.',
+        ],
+        commonTrap: 'Listing effects without tracing transport pathway or chemical transformation.',
+        examMove: 'Answer as chain logic: source -> transport -> transformation -> impact -> policy/tech control.',
+      }
+    }
+    if (has('climate') || has('greenhouse') || has('carbon') || has('acidification') || has('sea-level')) {
+      return {
+        mechanism: 'Greenhouse gas forcing shifts Earth’s energy balance, driving coupled atmospheric, oceanic, and biosphere changes.',
+        mustKnow: [
+          'Greenhouse effect is heat trapping from IR absorption/re-radiation, not ozone depletion.',
+          'Positive feedbacks amplify warming (ice-albedo loss, methane release).',
+          'Mitigation lowers forcing; adaptation reduces damage under current/expected change.',
+        ],
+        commonTrap: 'Mixing mitigation and adaptation as if they are interchangeable.',
+        examMove: 'Name one emissions lever, one ecosystem response, and one policy instrument in the same response.',
+      }
+    }
+    return {
+      mechanism: 'APES topics are strongest when explained as interacting systems: matter flow, energy flow, and human decision feedback.',
+      mustKnow: [
+        'Identify direct cause and indirect ecological consequence.',
+        'Connect local actions to watershed/atmospheric/global outcomes.',
+        'Use precise vocab (not just “bad for environment”).',
+      ],
+      commonTrap: 'Using broad claims without mechanism or measurable variable.',
+      examMove: 'Ground answers in one process and one quantifiable outcome whenever possible.',
+    }
+  }
+
+  if (courseKey === 'apush') {
+    return {
+      mechanism: 'Most APUSH prompts reward causal chains over isolated facts.',
+      mustKnow: ['Identify immediate trigger, structural cause, and long-term consequence.', 'Track how federal power, labor, race, and region shift over time.', 'Use periodization language (continuity and change).'],
+      commonTrap: 'Name-dropping events without argument or chronology.',
+      examMove: 'Frame each paragraph as claim + specific evidence + explicit significance.',
+    }
+  }
+
+  if (courseKey === 'csp') {
+    return {
+      mechanism: 'CSP questions test whether you can reason through systems, not memorize terms.',
+      mustKnow: ['Trace input -> process -> output.', 'Differentiate abstraction from implementation detail.', 'Explain computing impact with stakeholder perspective.'],
+      commonTrap: 'Describing what code does without why or constraints.',
+      examMove: 'Use precise pseudocode logic and include edge-case thinking.',
+    }
+  }
+
+  return {
+    mechanism: 'AP Lang scoring improves when reasoning structure is explicit and evidence is interpreted, not just cited.',
+    mustKnow: ['Thesis sets direction.', 'Evidence must be analyzed for significance.', 'Style choices should support purpose, not decoration.'],
+    commonTrap: 'Paraphrasing sources without argumentative movement.',
+    examMove: 'Build each body paragraph around one claim and one clear rhetorical or logical move.',
+  }
+}
+
+function getApesVisualForTopic(title: string): TopicVisual | null {
+  const lower = title.toLowerCase()
+  if (lower.includes('carbon') || lower.includes('climate') || lower.includes('greenhouse')) {
+    return { src: '/images/apes-diagrams/carbon-cycle.svg', alt: 'Carbon cycle diagram', caption: 'Reservoirs and fluxes that drive climate and ecosystem responses.' }
+  }
+  if (lower.includes('trophic') || lower.includes('food') || lower.includes('productivity')) {
+    return { src: '/images/apes-diagrams/energy-flow.svg', alt: 'Energy flow diagram', caption: 'Energy transfer limits explain short food chains and biomass pyramids.' }
+  }
+  if (lower.includes('demographic') || lower.includes('population')) {
+    return { src: '/images/apes-diagrams/demographic-transition.svg', alt: 'Demographic transition model', caption: 'Birth/death rate shifts explain growth-stage differences.' }
+  }
+  if (lower.includes('soil') || lower.includes('erosion')) {
+    return { src: '/images/apes-diagrams/soil-profile.svg', alt: 'Soil profile', caption: 'Horizon structure helps explain fertility and erosion impacts.' }
+  }
+  if (lower.includes('eutrophication') || lower.includes('water pollution') || lower.includes('runoff')) {
+    return { src: '/images/apes-diagrams/eutrophication.svg', alt: 'Eutrophication process', caption: 'Classic APES chain from nutrient loading to hypoxia.' }
+  }
+  if (lower.includes('circulation') || lower.includes('biome') || lower.includes('enso')) {
+    return { src: '/images/apes-diagrams/atmospheric-circulation.svg', alt: 'Atmospheric circulation cells', caption: 'Latitude-level circulation links directly to climate patterns and biome placement.' }
+  }
+  if (lower.includes('acidification') || lower.includes('carbonate')) {
+    return { src: '/images/apes-diagrams/ocean-acidification.svg', alt: 'Ocean acidification chemistry', caption: 'Chemistry pathway from atmospheric CO2 to reduced shell-building capacity.' }
+  }
+  return null
+}
+
 export default async function JistUnitPage({ params }: { params: Promise<{ course: string; unitId: string }> }) {
   const { course, unitId } = await params
 
@@ -374,6 +528,10 @@ export default async function JistUnitPage({ params }: { params: Promise<{ cours
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {focus.map((item, idx) => (
+              (() => {
+                const deepDive = getTopicDeepDive(courseKey, item.title)
+                const visual = courseKey === 'apes' ? getApesVisualForTopic(item.title) : null
+                return (
               <article
                 key={`focus-${item.number}`}
                 className="relative p-4 md:p-5 border overflow-hidden transition-all duration-300 hover:-translate-y-1"
@@ -406,8 +564,35 @@ export default async function JistUnitPage({ params }: { params: Promise<{ cours
                   <p className="text-sm leading-relaxed" style={{ color: '#d8ecff' }}>
                     <span className="font-bold" style={{ color: config.accentLight }}>How to remember:</span> {item.memory}
                   </p>
+                  <p className="text-xs leading-relaxed mt-2" style={{ color: '#cae3fb' }}>
+                    <span className="font-bold" style={{ color: config.accentLight }}>Mechanism:</span> {deepDive.mechanism}
+                  </p>
+                  <ul className="mt-2 space-y-1">
+                    {deepDive.mustKnow.map((point, pointIndex) => (
+                      <li key={`must-${item.number}-${pointIndex}`} className="text-xs leading-relaxed flex items-start gap-2" style={{ color: '#cde4fb' }}>
+                        <span className="mt-1 h-1.5 w-1.5 rounded-full" style={{ background: config.accentLight }} />
+                        <span>{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="text-xs leading-relaxed mt-2" style={{ color: '#ffd7ba' }}>
+                    <span className="font-bold">Common trap:</span> {deepDive.commonTrap}
+                  </p>
+                  <p className="text-xs leading-relaxed mt-1" style={{ color: '#b8f6d1' }}>
+                    <span className="font-bold">Exam move:</span> {deepDive.examMove}
+                  </p>
+                  {visual && (
+                    <div className="mt-3 border overflow-hidden" style={{ borderColor: 'rgba(173,205,235,0.3)', background: 'rgba(9,26,43,0.7)' }}>
+                      <img src={visual.src} alt={visual.alt} className="w-full h-auto block" loading="lazy" />
+                      <p className="px-2.5 py-2 text-[11px] leading-relaxed" style={{ color: '#b8d8f5' }}>
+                        {visual.caption}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </article>
+                )
+              })()
             ))}
           </div>
         </section>

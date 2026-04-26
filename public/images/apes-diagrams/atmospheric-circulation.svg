@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="Global atmospheric circulation cells">
+  <rect width="1200" height="675" fill="#09192b"/>
+  <text x="60" y="70" fill="#e7f4ff" font-size="38" font-family="Arial" font-weight="700">Global Atmospheric Circulation</text>
+
+  <ellipse cx="600" cy="380" rx="420" ry="180" fill="#12314f" stroke="#78b8ea" stroke-width="3"/>
+  <line x1="180" y1="380" x2="1020" y2="380" stroke="#87bde6" stroke-width="2"/>
+
+  <text x="565" y="388" fill="#fff2c4" font-size="22" font-family="Arial">0°</text>
+  <text x="440" y="388" fill="#fff2c4" font-size="22" font-family="Arial">30°N</text>
+  <text x="740" y="388" fill="#fff2c4" font-size="22" font-family="Arial">30°S</text>
+  <text x="330" y="388" fill="#fff2c4" font-size="22" font-family="Arial">60°N</text>
+  <text x="850" y="388" fill="#fff2c4" font-size="22" font-family="Arial">60°S</text>
+
+  <path d="M560 300 Q500 230 440 300" fill="none" stroke="#8fe0ff" stroke-width="4"/>
+  <path d="M640 300 Q700 230 760 300" fill="none" stroke="#8fe0ff" stroke-width="4"/>
+  <text x="530" y="250" fill="#bdeeff" font-size="21" font-family="Arial">Hadley Cells</text>
+
+  <path d="M420 320 Q360 270 320 330" fill="none" stroke="#f3ca84" stroke-width="4"/>
+  <path d="M780 320 Q840 270 880 330" fill="none" stroke="#f3ca84" stroke-width="4"/>
+  <text x="305" y="265" fill="#ffe0b2" font-size="21" font-family="Arial">Ferrel</text>
+  <text x="860" y="265" fill="#ffe0b2" font-size="21" font-family="Arial">Ferrel</text>
+
+  <path d="M310 350 Q250 320 220 360" fill="none" stroke="#b9c2ff" stroke-width="4"/>
+  <path d="M890 350 Q950 320 980 360" fill="none" stroke="#b9c2ff" stroke-width="4"/>
+  <text x="210" y="300" fill="#d5dbff" font-size="21" font-family="Arial">Polar</text>
+  <text x="950" y="300" fill="#d5dbff" font-size="21" font-family="Arial">Polar</text>
+
+  <text x="60" y="620" fill="#a0c5e4" font-size="22" font-family="Arial">APES link: circulation belts shape biome distribution and precipitation patterns globally.</text>
+</svg>

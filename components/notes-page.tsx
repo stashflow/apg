@@ -108,6 +108,13 @@ interface NotesPageProps {
   quizletUrl?: string
 }
 
+interface DiagramResource {
+  src: string
+  title: string
+  caption: string
+  whyItHelps: string
+}
+
 function escapeRegex(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 }
@@ -411,6 +418,99 @@ function getHtrMemoryHookForCourse(
   return getHtrMemoryHook(term, context, topicTitle)
 }
 
+function getApesDiagrams(topicTitle: string, keyTerms: string[], unitNumber: number): DiagramResource[] {
+  const text = `${topicTitle} ${keyTerms.join(' ')}`.toLowerCase()
+  const has = (needle: string) => text.includes(needle)
+  const diagrams: DiagramResource[] = []
+
+  const add = (diagram: DiagramResource) => {
+    if (!diagrams.some((entry) => entry.src === diagram.src)) diagrams.push(diagram)
+  }
+
+  if (has('carbon') || has('climate') || has('greenhouse')) {
+    add({
+      src: '/images/apes-diagrams/carbon-cycle.svg',
+      title: 'carbon cycle map',
+      caption: 'Tracks major reservoirs and fluxes: atmosphere, biomass, soils, ocean, and fossil pools.',
+      whyItHelps: 'Use it to explain how one change (combustion/deforestation) shifts multiple pools, not just one.',
+    })
+  }
+
+  if (has('trophic') || has('food web') || has('productivity') || has('energy flow')) {
+    add({
+      src: '/images/apes-diagrams/energy-flow.svg',
+      title: 'trophic energy pyramid',
+      caption: 'Shows why usable energy drops sharply at each trophic level (~10% transfer).',
+      whyItHelps: 'Great for FRQs asking why top predators are fewer and food chains stay relatively short.',
+    })
+  }
+
+  if (has('demographic') || has('population growth') || has('age-structure') || has('transition model')) {
+    add({
+      src: '/images/apes-diagrams/demographic-transition.svg',
+      title: 'demographic transition model',
+      caption: 'Visual comparison of birth and death rates through stages 1 to 5.',
+      whyItHelps: 'Useful for identifying where rapid growth occurs and which policies tend to reduce TFR.',
+    })
+  }
+
+  if (has('soil') || has('erosion') || has('degradation')) {
+    add({
+      src: '/images/apes-diagrams/soil-profile.svg',
+      title: 'soil horizons profile',
+      caption: 'Layers O-A-B-C-R and why topsoil is the most biologically productive layer.',
+      whyItHelps: 'Lets you quickly justify why erosion and tilling practices directly impact yield and runoff.',
+    })
+  }
+
+  if (has('eutrophication') || has('water pollution') || has('runoff') || has('hypoxia')) {
+    add({
+      src: '/images/apes-diagrams/eutrophication.svg',
+      title: 'eutrophication sequence',
+      caption: 'Source -> bloom -> decomposition -> dissolved oxygen crash -> fish die-off.',
+      whyItHelps: 'Perfect FRQ chain: identify source, mechanism, and one prevention strategy.',
+    })
+  }
+
+  if (has('atmospheric circulation') || has('winds') || has('ocean currents') || has('enso') || has('biome')) {
+    add({
+      src: '/images/apes-diagrams/atmospheric-circulation.svg',
+      title: 'global circulation cells',
+      caption: 'Hadley, Ferrel, and Polar cells shape precipitation and climate zones.',
+      whyItHelps: 'Helps connect latitude, pressure belts, and biome patterns in one mental model.',
+    })
+  }
+
+  if (has('ocean acidification') || has('ph') || has('carbonate')) {
+    add({
+      src: '/images/apes-diagrams/ocean-acidification.svg',
+      title: 'ocean acidification chemistry',
+      caption: 'CO2 dissolves to carbonic acid, lowering pH and reducing carbonate availability.',
+      whyItHelps: 'Strong for cause-effect FRQs linking atmospheric changes to marine ecosystem outcomes.',
+    })
+  }
+
+  if (has('greenhouse') || has('radiation') || has('energy budget')) {
+    add({
+      src: '/images/apes-diagrams/greenhouse-effect.svg',
+      title: 'greenhouse effect flow',
+      caption: 'Shortwave in, longwave out, and re-radiation trapping with greenhouse gases.',
+      whyItHelps: 'Useful for distinguishing greenhouse effect mechanics from ozone depletion.',
+    })
+  }
+
+  if (diagrams.length === 0 && (unitNumber <= 3 || unitNumber >= 7)) {
+    add({
+      src: '/images/apes-diagrams/carbon-cycle.svg',
+      title: 'systems diagram',
+      caption: 'Reservoir and flux thinking supports APES systems questions in many units.',
+      whyItHelps: 'A reusable model for tracing source -> transfer -> impact across the course.',
+    })
+  }
+
+  return diagrams.slice(0, 2)
+}
+
 export function NotesPage({
   course, unit, topic, sections: sectionsProp, content, prev, next, courseHref: courseHrefProp, unitHref: unitHrefProp, videoId, videoTitle, quizletUrl
 }: NotesPageProps) {
@@ -419,7 +519,12 @@ export function NotesPage({
     ? topic.keyTerms
     : topic.title.split(/[,&/()-]+/).map((x) => x.trim()).filter((x) => x.length > 2)
   const isApush = course.short.toLowerCase().includes('apush')
+  const isApes = course.short.toLowerCase().includes('apes')
   const termRegex = useMemo(() => buildTermRegex(keyTerms), [keyTerms])
+  const apesDiagrams = useMemo(
+    () => (isApes ? getApesDiagrams(topic.title, keyTerms, unit.number) : []),
+    [isApes, keyTerms, topic.title, unit.number],
+  )
   const courseSlug = course.short.replace(/\s+/g, '-').replace('ap-', '')
   const courseHref = courseHrefProp ?? `/${courseSlug}`
   const unitHref = unitHrefProp ?? `/${courseSlug}/unit-${unit.number}`
@@ -819,6 +924,46 @@ export function NotesPage({
           className="w-full h-px mb-8"
           style={{ background: `linear-gradient(90deg, ${course.accent}, transparent)` }}
         />
+
+        {apesDiagrams.length > 0 && (
+          <section className="mb-8">
+            <div className="flex items-center justify-between gap-3 mb-3">
+              <h2 className="text-sm font-mono uppercase tracking-widest" style={{ color: course.accentLight }}>
+                visual aid
+              </h2>
+              <span className="text-[11px] font-mono uppercase tracking-wider" style={{ color: '#85a8c5' }}>
+                APES diagrams
+              </span>
+            </div>
+            <div className="grid grid-cols-1 gap-4">
+              {apesDiagrams.map((diagram) => (
+                <article
+                  key={diagram.src}
+                  className="border overflow-hidden"
+                  style={{ borderColor: `${course.accent}44`, background: '#08192a' }}
+                >
+                  <img
+                    src={diagram.src}
+                    alt={diagram.title}
+                    className="w-full h-auto block"
+                    loading="lazy"
+                  />
+                  <div className="p-3">
+                    <p className="text-sm font-black lowercase mb-1" style={{ color: '#eaf6ff' }}>
+                      {diagram.title}
+                    </p>
+                    <p className="text-xs leading-relaxed" style={{ color: '#b6d0ea' }}>
+                      {diagram.caption}
+                    </p>
+                    <p className="text-xs leading-relaxed mt-1" style={{ color: '#9fd7b7' }}>
+                      Why it helps: {diagram.whyItHelps}
+                    </p>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* Notes content */}
         <div

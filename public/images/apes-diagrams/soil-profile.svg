@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="Soil horizons diagram">
+  <rect width="1200" height="675" fill="#111826"/>
+  <text x="60" y="70" fill="#f7eedc" font-size="38" font-family="Arial" font-weight="700">Soil Profile and Horizons</text>
+
+  <rect x="180" y="120" width="820" height="80" fill="#3b2f1f"/>
+  <rect x="180" y="200" width="820" height="95" fill="#5b462d"/>
+  <rect x="180" y="295" width="820" height="95" fill="#7f603f"/>
+  <rect x="180" y="390" width="820" height="95" fill="#9a7a58"/>
+  <rect x="180" y="485" width="820" height="95" fill="#b79c7c"/>
+
+  <text x="200" y="170" fill="#fff2d8" font-size="30" font-family="Arial">O Horizon: litter and organic material</text>
+  <text x="200" y="260" fill="#fff2d8" font-size="30" font-family="Arial">A Horizon: topsoil (humus + minerals)</text>
+  <text x="200" y="355" fill="#fff2d8" font-size="30" font-family="Arial">B Horizon: subsoil, leached materials</text>
+  <text x="200" y="450" fill="#fff2d8" font-size="30" font-family="Arial">C Horizon: weathered parent material</text>
+  <text x="200" y="545" fill="#fff2d8" font-size="30" font-family="Arial">R Horizon: bedrock</text>
+
+  <text x="60" y="630" fill="#cbb79a" font-size="22" font-family="Arial">Exam use: erosion removes topsoil (A horizon), reducing fertility and water retention.</text>
+</svg>
