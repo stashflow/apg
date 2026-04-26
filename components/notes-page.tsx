@@ -6,11 +6,13 @@ import { SiteNav } from './site-nav'
 import { getApushMemoryHook } from '@/lib/apush-memory-hooks'
 
 export interface NotesSection {
-  type: 'heading' | 'subheading' | 'body' | 'bullets' | 'callout' | 'examtip' | 'frqtip' | 'table'
+  type: 'heading' | 'subheading' | 'body' | 'bullets' | 'callout' | 'examtip' | 'frqtip' | 'table' | 'code'
   content: string
   bullets?: string[]
   tableHeaders?: string[]
   tableRows?: string[][]
+  code?: string
+  language?: string
 }
 
 // Parse a raw markdown-style string into NotesSection[]
@@ -18,6 +20,9 @@ function parseContent(raw: string): NotesSection[] {
   const lines = raw.split('\n')
   const result: NotesSection[] = []
   let bulletBuffer: string[] = []
+  let inCodeBlock = false
+  let codeBuffer: string[] = []
+  let codeLanguage = ''
 
   const flushBullets = () => {
     if (bulletBuffer.length > 0) {
@@ -27,6 +32,31 @@ function parseContent(raw: string): NotesSection[] {
   }
 
   for (const line of lines) {
+    if (line.trim().startsWith('```')) {
+      if (!inCodeBlock) {
+        flushBullets()
+        inCodeBlock = true
+        codeLanguage = line.trim().slice(3).trim()
+        codeBuffer = []
+      } else {
+        result.push({
+          type: 'code',
+          content: '',
+          code: codeBuffer.join('\n'),
+          language: codeLanguage || undefined,
+        })
+        inCodeBlock = false
+        codeBuffer = []
+        codeLanguage = ''
+      }
+      continue
+    }
+
+    if (inCodeBlock) {
+      codeBuffer.push(line)
+      continue
+    }
+
     const trimmed = line.trim()
     if (!trimmed) { flushBullets(); continue }
     if (trimmed.startsWith('## ')) { flushBullets(); result.push({ type: 'heading', content: trimmed.slice(3) }); continue }
@@ -39,6 +69,14 @@ function parseContent(raw: string): NotesSection[] {
     result.push({ type: 'body', content: trimmed })
   }
   flushBullets()
+  if (inCodeBlock && codeBuffer.length > 0) {
+    result.push({
+      type: 'code',
+      content: '',
+      code: codeBuffer.join('\n'),
+      language: codeLanguage || undefined,
+    })
+  }
   return result
 }
 
@@ -125,19 +163,72 @@ function highlightTerms(text: string, termRegex: RegExp | null, accentLight: str
   return nodes
 }
 
-function renderMarkdownWithHighlights(text: string, termRegex: RegExp | null, accentLight: string) {
-  const strongSplit = text.split(/(\*\*[^*]+\*\*)/g).filter(Boolean)
-  return strongSplit.map((chunk, idx) => {
-    const isStrong = chunk.startsWith('**') && chunk.endsWith('**')
-    const clean = isStrong ? chunk.slice(2, -2) : chunk
-    const highlighted = highlightTerms(clean, termRegex, accentLight)
-    if (!isStrong) return <Fragment key={`chunk-${idx}`}>{highlighted}</Fragment>
-    return (
-      <strong key={`chunk-${idx}`} style={{ color: accentLight }}>
-        {highlighted}
-      </strong>
+function renderRichMarkdownInline(text: string, termRegex: RegExp | null, accentLight: string) {
+  const nodes: Array<string | JSX.Element> = []
+  const tokenRegex = /(\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*|`([^`]+)`|_([^_]+)_|\*([^*]+)\*)/g
+  let last = 0
+  let match: RegExpExecArray | null
+  let idx = 0
+
+  while ((match = tokenRegex.exec(text)) !== null) {
+    if (match.index > last) {
+      nodes.push(
+        <Fragment key={`txt-${idx++}`}>
+          {highlightTerms(text.slice(last, match.index), termRegex, accentLight)}
+        </Fragment>,
+      )
+    }
+    const [token, , linkLabel, linkHref, boldContent, codeContent, italicUnderscore, italicStar] = match
+    if (linkLabel && linkHref) {
+      nodes.push(
+        <a
+          key={`link-${idx++}`}
+          href={linkHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ color: accentLight, textDecoration: 'underline', textUnderlineOffset: '2px' }}
+        >
+          {highlightTerms(linkLabel, termRegex, accentLight)}
+        </a>,
+      )
+    } else if (boldContent) {
+      nodes.push(
+        <strong key={`b-${idx++}`} style={{ color: accentLight }}>
+          {highlightTerms(boldContent, termRegex, accentLight)}
+        </strong>,
+      )
+    } else if (codeContent) {
+      nodes.push(
+        <code
+          key={`c-${idx++}`}
+          className="px-1 py-0.5 text-[11px]"
+          style={{ background: 'rgba(159,179,200,0.12)', color: '#cfe2f7' }}
+        >
+          {codeContent}
+        </code>,
+      )
+    } else if (italicUnderscore || italicStar) {
+      const italicContent = italicUnderscore || italicStar || ''
+      nodes.push(
+        <em key={`i-${idx++}`} style={{ color: '#d6e6f8' }}>
+          {highlightTerms(italicContent, termRegex, accentLight)}
+        </em>,
+      )
+    } else {
+      nodes.push(token)
+    }
+    last = match.index + token.length
+  }
+
+  if (last < text.length) {
+    nodes.push(
+      <Fragment key={`tail-${idx++}`}>
+        {highlightTerms(text.slice(last), termRegex, accentLight)}
+      </Fragment>,
     )
-  })
+  }
+
+  return nodes
 }
 
 function sectionText(section: NotesSection): string {
@@ -290,8 +381,8 @@ function getHtrMemoryHook(term: string, context: string, topicTitle: string): { 
 
   return {
     anchor,
-    memory: `- **Say this:** "${term} = ${firstSentence}"\n- **Real-life memory:** ${`It works like a current policy debate where people split into sides and rules change.`}\n- **APUSH link:** Pair it with one earlier cause and one later effect.`,
-    courseLink: `Bridge it to one earlier and one later APUSH event for stronger recall.`,
+    memory: `- **Say this:** "${term} = ${firstSentence}"\n- **Real-life memory:** It works like a current policy debate where people split into sides and rules change.\n- **Course link:** Pair it with one earlier cause and one later effect in this course.`,
+    courseLink: `Bridge it to one earlier and one later event for stronger recall.`,
   }
 }
 
@@ -324,7 +415,9 @@ export function NotesPage({
   course, unit, topic, sections: sectionsProp, content, prev, next, courseHref: courseHrefProp, unitHref: unitHrefProp, videoId, videoTitle, quizletUrl
 }: NotesPageProps) {
   const sections: NotesSection[] = sectionsProp ?? (content ? parseContent(content) : [])
-  const keyTerms = topic.keyTerms ?? []
+  const keyTerms = (topic.keyTerms && topic.keyTerms.length > 0)
+    ? topic.keyTerms
+    : topic.title.split(/[,&/()-]+/).map((x) => x.trim()).filter((x) => x.length > 2)
   const isApush = course.short.toLowerCase().includes('apush')
   const termRegex = useMemo(() => buildTermRegex(keyTerms), [keyTerms])
   const courseSlug = course.short.replace(/\s+/g, '-').replace('ap-', '')
@@ -394,7 +487,7 @@ export function NotesPage({
           const bodyContent = isApush && examFocusMode ? trimToSentences(s.content, 2) : s.content
         return (
           <p key={i} className="text-base leading-relaxed mb-4" style={{ color: '#b8d0ee', lineHeight: '1.75' }}>
-            {highlightTerms(bodyContent, termRegex, course.accentLight)}
+            {renderRichMarkdownInline(bodyContent, termRegex, course.accentLight)}
           </p>
         )
         }
@@ -411,13 +504,13 @@ export function NotesPage({
                     className="shrink-0 mt-1 w-1.5 h-1.5"
                     style={{ background: course.accent, marginTop: '8px' }}
                   />
-                  <span
-                    className="text-base leading-relaxed"
-                    style={{ color: '#b8d0ee' }}
-                  >
-                    {renderMarkdownWithHighlights(b, termRegex, course.accentLight)}
-                  </span>
-                </li>
+                <span
+                  className="text-base leading-relaxed"
+                  style={{ color: '#b8d0ee' }}
+                >
+                    {renderRichMarkdownInline(b, termRegex, course.accentLight)}
+                </span>
+              </li>
               ))}
             </ul>
             {hiddenBulletCount > 0 && (
@@ -439,7 +532,7 @@ export function NotesPage({
               color: '#b8d0ee',
             }}
           >
-            {highlightTerms(s.content, termRegex, course.accentLight)}
+            {renderRichMarkdownInline(s.content, termRegex, course.accentLight)}
           </div>
         )
       case 'examtip':
@@ -454,7 +547,7 @@ export function NotesPage({
             }}
           >
             <span style={{ color: '#22c55e', fontWeight: 800 }}>exam tip: </span>
-            {highlightTerms(s.content, termRegex, course.accentLight)}
+            {renderRichMarkdownInline(s.content, termRegex, course.accentLight)}
           </div>
         )
       case 'frqtip':
@@ -469,7 +562,7 @@ export function NotesPage({
             }}
           >
             <span style={{ color: '#f59e0b', fontWeight: 800 }}>frq / essay tip: </span>
-            {highlightTerms(s.content, termRegex, course.accentLight)}
+            {renderRichMarkdownInline(s.content, termRegex, course.accentLight)}
           </div>
         )
       case 'table':
@@ -491,7 +584,7 @@ export function NotesPage({
                         border: `1px solid ${course.accent}33`,
                       }}
                     >
-                      {h}
+                      {renderRichMarkdownInline(h, termRegex, course.accentLight)}
                     </th>
                   ))}
                 </tr>
@@ -509,7 +602,7 @@ export function NotesPage({
                           background: ri % 2 === 0 ? '#0a1929' : '#0d2035',
                         }}
                       >
-                        {highlightTerms(cell, termRegex, course.accentLight)}
+                        {renderRichMarkdownInline(cell, termRegex, course.accentLight)}
                       </td>
                     ))}
                   </tr>
@@ -524,6 +617,26 @@ export function NotesPage({
           </div>
         )
         }
+      case 'code':
+        return (
+          <div key={i} className="my-5">
+            {s.language && (
+              <p className="mb-1 text-[10px] uppercase tracking-widest font-mono" style={{ color: '#7ca2c8' }}>
+                {s.language}
+              </p>
+            )}
+            <pre
+              className="overflow-x-auto p-4 text-sm leading-relaxed"
+              style={{
+                background: '#091524',
+                border: '1px solid rgba(124,162,200,0.25)',
+                color: '#d7e6f7',
+              }}
+            >
+              <code>{s.code || ''}</code>
+            </pre>
+          </div>
+        )
       default:
         return null
     }
@@ -723,12 +836,12 @@ export function NotesPage({
             </div>
           )}
           {sections.map((s, i) => {
-            const mentions = isApush ? getSectionMentionedTerms(s, keyTerms) : []
+            const mentions = getSectionMentionedTerms(s, keyTerms)
             const context = sectionText(s)
             return (
               <div key={`section-wrap-${i}`} className="relative md:pr-24">
                 {renderSection(s, i)}
-                {isApush && mentions.length > 0 && (
+                {mentions.length > 0 && (
                   <div className="hidden md:flex absolute right-0 top-0 h-full items-center">
                     <div className="group relative h-full flex items-center pr-1 pl-3">
                       <div className="relative h-[calc(100%-10px)] min-h-7 w-4 opacity-60 transition-opacity duration-200 group-hover:opacity-90">

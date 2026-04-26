@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { SiteNav } from './site-nav'
 
 export interface TopicLink {
@@ -37,9 +38,11 @@ interface CourseLayoutProps {
 }
 
 export function CourseLayout({ course, basePath }: CourseLayoutProps) {
+  const router = useRouter()
   const [loaded, setLoaded] = useState(false)
   const [hoveredUnit, setHoveredUnit] = useState<number | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+  const searchInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 80)
@@ -88,6 +91,39 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
     () => visibleUnits.reduce((sum, entry) => sum + entry.topicRows.length, 0),
     [visibleUnits],
   )
+
+  const runSearchAction = useCallback(() => {
+    if (!hasSearch) {
+      searchInputRef.current?.focus()
+      return
+    }
+    const first = visibleUnits[0]
+    if (!first) return
+    const firstTopicIndex = first.topicRows[0]?.index ?? 0
+    router.push(`${basePath}/unit-${first.unit.number}/${firstTopicIndex + 1}`)
+  }, [basePath, hasSearch, router, visibleUnits])
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement | null
+      const tag = target?.tagName?.toLowerCase()
+      const isTypingField = tag === 'input' || tag === 'textarea' || target?.isContentEditable
+
+      if (event.key === '/' && !isTypingField) {
+        event.preventDefault()
+        searchInputRef.current?.focus()
+      }
+      if (event.key === 'Escape' && hasSearch) {
+        setSearchQuery('')
+      }
+      if (event.key === 'Enter' && document.activeElement === searchInputRef.current) {
+        runSearchAction()
+      }
+    }
+
+    window.addEventListener('keydown', onKeyDown)
+    return () => window.removeEventListener('keydown', onKeyDown)
+  }, [hasSearch, runSearchAction])
 
   return (
     <div className="min-h-screen" style={{ background: '#050d1a' }}>
@@ -196,19 +232,24 @@ export function CourseLayout({ course, basePath }: CourseLayoutProps) {
             <div className="flex-1 h-px hidden sm:block" style={{ background: 'rgba(26,108,245,0.2)' }} />
           </div>
           <div className="flex items-center gap-2 w-full sm:w-auto">
-            <div
-              className="h-9 sm:h-8 px-2 font-mono text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 animate-glow-pulse shrink-0"
+            <button
+              type="button"
+              onClick={runSearchAction}
+              className="h-9 sm:h-8 px-2 font-mono text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 animate-glow-pulse shrink-0 transition-all"
               style={{
                 background: '#12233b',
                 color: '#7dd3fc',
                 border: '1px solid #1e3a5f',
               }}
+              title={hasSearch ? 'Open top search match' : 'Focus search'}
             >
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
               </svg>
-            </div>
+              <span className="hidden sm:inline">search</span>
+            </button>
             <input
+              ref={searchInputRef}
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}

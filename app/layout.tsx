@@ -17,7 +17,7 @@ const spaceMono = Space_Mono({
 
 export const metadata: Metadata = {
   title: 'ap grounds',
-  description: 'exam-ready notes for AP Environmental Science, APUSH, AP Lang, and AP CSP — built to guarantee a 5.',
+  description: 'exam-ready notes for AP Environmental Science, APUSH, AP Lang, and AP CSP — designed for complete coverage and smart review.',
   generator: 'ap grounds',
 }
 

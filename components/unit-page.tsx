@@ -38,6 +38,14 @@ interface UnitPageProps {
 
 export function UnitPage({ course, unit, topics, basePath, courseHref, videoId: _videoId, quizletUrl, examDate }: UnitPageProps) {
   const [loaded, setLoaded] = useState(false)
+  const unitThemeHint = (() => {
+    const text = `${unit.title} ${topics.map((topic) => topic.title).join(' ')}`.toLowerCase()
+    if (text.includes('climate') || text.includes('pollution') || text.includes('energy')) return 'systems focus'
+    if (text.includes('civil war') || text.includes('reconstruction') || text.includes('cold war')) return 'causation focus'
+    if (text.includes('algorithm') || text.includes('data') || text.includes('internet')) return 'logic focus'
+    if (text.includes('argument') || text.includes('rhetorical') || text.includes('style')) return 'writing focus'
+    return 'high-yield focus'
+  })()
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 80)
@@ -141,6 +149,35 @@ export function UnitPage({ course, unit, topics, basePath, courseHref, videoId: 
               </svg>
               <span>search youtube</span>
             </a>
+
+            <Link
+              href={`${basePath}/jist`}
+              className="group relative overflow-hidden px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wide transition-all duration-300 animate-gradient-shift"
+              style={{
+                color: '#ecfeff',
+                border: `1px solid ${course.accent}88`,
+                background: `linear-gradient(130deg, ${course.accent}55 0%, ${course.accentLight}44 50%, #0f1b35 100%)`,
+                boxShadow: `0 0 18px ${course.accent}33`,
+                backgroundSize: '200% 200%',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-1px) scale(1.02)'
+                e.currentTarget.style.boxShadow = `0 0 26px ${course.accent}66`
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0) scale(1)'
+                e.currentTarget.style.boxShadow = `0 0 18px ${course.accent}33`
+              }}
+            >
+              <span
+                className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                style={{ background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)' }}
+              />
+              <span className="relative">JIST page</span>
+              <span className="relative ml-2 opacity-85" style={{ color: '#cffafe' }}>
+                {unitThemeHint}
+              </span>
+            </Link>
             
             <p className="text-sm leading-relaxed max-w-2xl" style={{ color: '#b8d0ee' }}>
               {unit.description}

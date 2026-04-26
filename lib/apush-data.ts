@@ -2,7 +2,7 @@ export const apushConfig = {
   id: 'apush',
   label: 'ap united states history',
   short: 'apush',
-  description: 'from 1491 to the present — complete notes, key themes, and essay practice for a guaranteed 5.',
+  description: 'from 1491 to the present — complete notes, key themes, and essay practice built for top APUSH performance.',
   banner: '/images/apush-banner.jpg',
   accent: '#ef4444',
   accentLight: '#f59e0b',

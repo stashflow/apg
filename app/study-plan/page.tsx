@@ -52,8 +52,16 @@ export default function StudyPlanPage() {
   }
 
   // Find today and next priority
-  const today = '2026-04-22'
+  const today = useMemo(() => {
+    const now = new Date()
+    const year = now.getFullYear()
+    const month = String(now.getMonth() + 1).padStart(2, '0')
+    const day = String(now.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }, [])
   const todayData = STUDY_DAYS.find(d => d.date === today)
+  const planStart = STUDY_DAYS[0]?.date
+  const planEnd = STUDY_DAYS[STUDY_DAYS.length - 1]?.date
   
   const nextExam = useMemo(() => {
     return EXAMS.find(e => getDaysUntil(e.date) > 0) || EXAMS[EXAMS.length - 1]
@@ -113,7 +121,7 @@ export default function StudyPlanPage() {
           AP Study Plan
         </h1>
         <p className="text-sm sm:text-base mb-6" style={{ color: '#b8d0ee' }}>
-          Daily command center from April 22 - May 15, 2026. Check off tasks as you go.
+          Daily command center from {planStart ? formatDate(planStart) : 'start date'} to {planEnd ? formatDate(planEnd) : 'end date'}. Check off tasks as you go.
         </p>
 
         {/* Overall Progress Bar */}
