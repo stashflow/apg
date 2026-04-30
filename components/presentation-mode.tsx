@@ -480,6 +480,7 @@ export function PresentationMode({ open, onClose, course, unit, topic, topics, s
   const [activeOccurrence, setActiveOccurrence] = useState(0)
   const [readerControls, setReaderControls] = useState<ReadAloudControls | null>(null)
   const [slideFinished, setSlideFinished] = useState(false)
+  const [readAloudEnabled, setReadAloudEnabled] = useState(true)
 
   const slides = useMemo(() => {
     if (topic && sections) return makeTopicSlides(course, unit, topic, sections)
@@ -493,18 +494,28 @@ export function PresentationMode({ open, onClose, course, unit, topic, topics, s
   }, [open])
 
   useEffect(() => {
+    if (!readAloudEnabled) {
+      setReaderControls(null)
+      setActiveWord('')
+      setActiveOccurrence(0)
+      setSlideFinished(false)
+    }
+  }, [readAloudEnabled])
+
+  useEffect(() => {
     setSlideFinished(false)
   }, [index])
 
   useEffect(() => {
     if (!open || !slideFinished) return
+    if (!readAloudEnabled) return
     if (index >= slides.length - 1) return
     const delayMs = index === 0 ? 1000 : 5000
     const timer = window.setTimeout(() => {
       setIndex((v) => Math.min(slides.length - 1, v + 1))
     }, delayMs)
     return () => window.clearTimeout(timer)
-  }, [index, open, slideFinished, slides.length])
+  }, [index, open, readAloudEnabled, slideFinished, slides.length])
 
   useEffect(() => {
     if (!open) return
@@ -533,21 +544,35 @@ export function PresentationMode({ open, onClose, course, unit, topic, topics, s
             <p className="text-sm" style={{ color: '#8eb6de' }}>{topic ? `Topic ${topic.number}: ${topic.title}` : unit.title}</p>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <ReadAloud
-              title="have the teacher read it"
-              text={readAloudText}
-              accent={course.accent}
-              accentLight={course.accentLight}
-              inline
-              onWordChange={(word, _wordIndex, occurrence) => {
-                setActiveWord(word)
-                setActiveOccurrence(occurrence)
+            <button
+              type="button"
+              onClick={() => setReadAloudEnabled((v) => !v)}
+              className="px-3 py-1.5 text-xs font-mono uppercase tracking-wider whitespace-nowrap shrink-0"
+              style={{
+                color: readAloudEnabled ? '#d1fae5' : '#dbeafe',
+                border: readAloudEnabled ? '1px solid rgba(34,197,94,0.5)' : '1px solid rgba(147,197,253,0.45)',
+                background: readAloudEnabled ? 'rgba(22,101,52,0.55)' : 'rgba(15,30,48,0.75)',
               }}
-              onRegisterControls={(controls) => setReaderControls(controls)}
-              autoPlayOnTextChange
-              onPlaybackEnd={() => setSlideFinished(true)}
-              resetToken={index}
-            />
+            >
+              {readAloudEnabled ? 'read aloud on' : 'read aloud off'}
+            </button>
+            {readAloudEnabled && (
+              <ReadAloud
+                title="have the teacher read it"
+                text={readAloudText}
+                accent={course.accent}
+                accentLight={course.accentLight}
+                inline
+                onWordChange={(word, _wordIndex, occurrence) => {
+                  setActiveWord(word)
+                  setActiveOccurrence(occurrence)
+                }}
+                onRegisterControls={(controls) => setReaderControls(controls)}
+                autoPlayOnTextChange
+                onPlaybackEnd={() => setSlideFinished(true)}
+                resetToken={index}
+              />
+            )}
             <button
               type="button"
               onClick={onClose}
@@ -593,7 +618,7 @@ export function PresentationMode({ open, onClose, course, unit, topic, topics, s
             </div>
             <p className="mt-1 text-center font-mono text-[10px] uppercase tracking-[0.22em]" style={{ color: '#95b7d8' }}>
               Slide {index + 1} of {slides.length}
-              {slideFinished && index < slides.length - 1 ? (index === 0 ? ' · advancing in 1s' : ' · advancing in 5s') : ''}
+              {readAloudEnabled && slideFinished && index < slides.length - 1 ? (index === 0 ? ' · advancing in 1s' : ' · advancing in 5s') : ''}
             </p>
           </div>
           <button
