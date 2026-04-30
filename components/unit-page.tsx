@@ -1,8 +1,9 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { SiteNav } from './site-nav'
+import { ReadAloud } from './read-aloud'
 
 interface Topic {
   number: number
@@ -38,6 +39,10 @@ interface UnitPageProps {
 
 export function UnitPage({ course, unit, topics, basePath, courseHref, videoId: _videoId, quizletUrl, examDate }: UnitPageProps) {
   const [loaded, setLoaded] = useState(false)
+  const readAloudText = useMemo(() => {
+    const topicLines = topics.map((topic) => `Topic ${topic.number}: ${topic.title}. ${topic.description}`).join(' ')
+    return `${course.label}. Unit ${unit.number}: ${unit.title}. Exam weight ${unit.examWeight}. ${unit.description}. ${topicLines}`
+  }, [course.label, topics, unit.description, unit.examWeight, unit.number, unit.title])
   const unitThemeHint = (() => {
     const text = `${unit.title} ${topics.map((topic) => topic.title).join(' ')}`.toLowerCase()
     if (text.includes('climate') || text.includes('pollution') || text.includes('energy')) return 'systems focus'
@@ -55,6 +60,12 @@ export function UnitPage({ course, unit, topics, basePath, courseHref, videoId: 
   return (
     <div className="min-h-screen" style={{ background: '#050d1a' }}>
       <SiteNav />
+      <ReadAloud
+        title="have the teacher read it"
+        text={readAloudText}
+        accent={course.accent}
+        accentLight={course.accentLight}
+      />
 
       {/* Breadcrumb & header */}
       <div

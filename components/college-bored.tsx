@@ -54,6 +54,10 @@ interface ActiveRunMeta {
   runMode: RunMode
   label: string
   diagnostic?: DiagnosticSet
+  targetQuestions?: number
+  sourceLabel?: string
+  usedQuestionLoop?: boolean
+  sectionLabel?: string
 }
 
 // ─── TIMER ───────────────────────────────────────────────────────────────────
@@ -223,11 +227,15 @@ function MCQPanel({
   q,
   selected,
   onSelect,
+  struck,
+  onToggleStrike,
   revealed,
 }: {
   q: Question
   selected: string | null
   onSelect: (l: string) => void
+  struck: Set<string>
+  onToggleStrike: (l: string) => void
   revealed: boolean
 }) {
   return (
@@ -259,6 +267,7 @@ function MCQPanel({
           {q.options?.map(opt => {
             const isSelected = selected === opt.letter
             const isCorrect = opt.letter === q.correctAnswer
+            const isStruck = struck.has(opt.letter)
             let bg = '#fff'
             let borderColor = '#d1d5db'
             let textColor = '#374151'
@@ -292,7 +301,34 @@ function MCQPanel({
                 >
                   {opt.letter}
                 </span>
-                <span className="leading-relaxed">{opt.text}</span>
+                <span
+                  className="leading-relaxed flex-1"
+                  style={{
+                    textDecoration: isStruck ? 'line-through' : 'none',
+                    opacity: isStruck ? 0.55 : 1,
+                  }}
+                >
+                  {opt.text}
+                </span>
+                {!revealed && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      onToggleStrike(opt.letter)
+                    }}
+                    className="shrink-0 px-2 py-1 rounded border text-[10px] font-bold uppercase tracking-wide"
+                    style={{
+                      borderColor: isStruck ? '#ef4444' : '#cbd5e1',
+                      color: isStruck ? '#b91c1c' : '#64748b',
+                      background: isStruck ? '#fef2f2' : '#f8fafc',
+                    }}
+                    title={isStruck ? 'Remove strikeout' : 'Strike out option'}
+                  >
+                    {isStruck ? 'Undo' : 'Strike'}
+                  </button>
+                )}
               </button>
             )
           })}
@@ -368,15 +404,121 @@ function FRQPanel({ q, revealed }: { q: Question; revealed: boolean }) {
 // ─── PRACTICE TAB ─────────────────────────────────────────────────────────────
 function PracticeTab({ courseShort }: { courseShort: string }) {
   const allQs = getQuestionsForCourse(courseShort)
+  const normalizedCourse = normalizeCourseKey(courseShort)
+  const isApushCourse = normalizedCourse === 'apush'
   const [mode, setMode] = useState<'browse' | 'exam' | 'review'>('browse')
   const [examQs, setExamQs] = useState<Question[]>([])
   const [runMeta, setRunMeta] = useState<ActiveRunMeta>({ runMode: 'standard', label: 'practice set' })
   const [qIndex, setQIndex] = useState(0)
   const [answers, setAnswers] = useState<Record<string, string>>({})
   const [markedReview, setMarkedReview] = useState<Set<string>>(new Set())
+  const [struckOptions, setStruckOptions] = useState<Record<string, string[]>>({})
+  const [questionMapOpen, setQuestionMapOpen] = useState(true)
   const [timerRunning, setTimerRunning] = useState(false)
   // 90 minutes default for practice
   const { seconds, fmt, reset } = useTimer(90 * 60, timerRunning)
+
+  const cloneQuestionForRun = (q: Question, idx: number): Question => ({
+    ...q,
+    id: `${q.id}__run_${idx + 1}`,
+  })
+
+  const sourceWeighted = (pool: Question[]) =>
+    [...pool].sort((a, b) => {
+      const sourceScore = (q: Question) => (q.source === 'Released' ? 2 : 1)
+      const difficultyScore = (q: Question) =>
+        getQuestionDifficulty(q) === 'hard' ? 2 : getQuestionDifficulty(q) === 'medium' ? 1 : 0
+      const sourceDiff = sourceScore(b) - sourceScore(a)
+      if (sourceDiff !== 0) return sourceDiff
+      const diff = difficultyScore(b) - difficultyScore(a)
+      if (diff !== 0) return diff
+      return a.id.localeCompare(b.id)
+    })
+
+  const buildRunFromPool = (pool: Question[], targetCount: number): { run: Question[]; usedLoop: boolean } => {
+    if (pool.length === 0) return { run: [], usedLoop: false }
+    const shuffled = [...pool].sort(() => Math.random() - 0.5)
+    if (shuffled.length >= targetCount) {
+      return { run: shuffled.slice(0, targetCount), usedLoop: false }
+    }
+
+    const run: Question[] = []
+    let idx = 0
+    while (run.length < targetCount) {
+      const base = shuffled[idx % shuffled.length]
+      run.push(cloneQuestionForRun(base, run.length))
+      idx += 1
+    }
+    return { run, usedLoop: true }
+  }
+
+  const getApushSectionRun = (sectionId: 'mcq' | 'saq' | 'dbq' | 'leq' | 'full'): { questions: Question[]; target: number; seconds: number; label: string; sourceLabel: string; usedLoop: boolean } => {
+    const mcqPool = sourceWeighted(allQs.filter((q) => q.type === 'mcq'))
+    const frqPool = sourceWeighted(allQs.filter((q) => q.type === 'frq'))
+
+    if (sectionId === 'mcq') {
+      const target = 55
+      const built = buildRunFromPool(mcqPool, target)
+      return {
+        questions: built.run,
+        target,
+        seconds: 95 * 60,
+        label: 'section i part a — mcq simulation',
+        sourceLabel: '55 MCQ target',
+        usedLoop: built.usedLoop,
+      }
+    }
+
+    if (sectionId === 'saq') {
+      const target = 3
+      const built = buildRunFromPool(frqPool, target)
+      return {
+        questions: built.run,
+        target,
+        seconds: 40 * 60,
+        label: 'section i part b — saq simulation',
+        sourceLabel: '3 short-response target',
+        usedLoop: built.usedLoop,
+      }
+    }
+
+    if (sectionId === 'dbq') {
+      const dbqSeed = [...frqPool].sort((a, b) => (b.stimulus?.length || 0) - (a.stimulus?.length || 0))[0]
+      const picked = dbqSeed ? [cloneQuestionForRun(dbqSeed, 0)] : []
+      return {
+        questions: picked,
+        target: 1,
+        seconds: 60 * 60,
+        label: 'section ii — dbq simulation',
+        sourceLabel: '1 DBQ-style prompt',
+        usedLoop: false,
+      }
+    }
+
+    if (sectionId === 'leq') {
+      const leqSeed = [...frqPool].sort((a, b) => (a.stimulus ? 1 : 0) - (b.stimulus ? 1 : 0))[0]
+      const picked = leqSeed ? [cloneQuestionForRun(leqSeed, 0)] : []
+      return {
+        questions: picked,
+        target: 1,
+        seconds: 40 * 60,
+        label: 'section ii — leq simulation',
+        sourceLabel: '1 LEQ-style prompt',
+        usedLoop: false,
+      }
+    }
+
+    const mcqBuilt = buildRunFromPool(mcqPool, 55)
+    const frqBuilt = buildRunFromPool(frqPool, 4)
+    return {
+      questions: [...mcqBuilt.run, ...frqBuilt.run],
+      target: 59,
+      seconds: 3 * 60 * 60 + 15 * 60,
+      label: 'full apush simulation',
+      sourceLabel: 'section i + section ii style run',
+      usedLoop: mcqBuilt.usedLoop || frqBuilt.usedLoop,
+    }
+  }
 
   const buildMcqSet = (seed?: Question) => {
     const mcqs = allQs
@@ -406,6 +548,8 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
     setQIndex(0)
     setAnswers({})
     setMarkedReview(new Set())
+    setStruckOptions({})
+    setQuestionMapOpen(true)
     if (nextMeta) setRunMeta(nextMeta)
     reset(timeSeconds)
     setTimerRunning(true)
@@ -502,6 +646,20 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
 
   const currentQ = examQs[qIndex]
   const timeWarn = seconds < 300 // < 5 min warning
+  const questionStatus = examQs.map((q) => {
+    const answered = !!answers[q.id]
+    const marked = markedReview.has(q.id)
+    return { id: q.id, answered, marked }
+  })
+
+  const toggleStrikeOption = (questionId: string, letter: string) => {
+    setStruckOptions((prev) => {
+      const existing = new Set(prev[questionId] ?? [])
+      if (existing.has(letter)) existing.delete(letter)
+      else existing.add(letter)
+      return { ...prev, [questionId]: Array.from(existing) }
+    })
+  }
 
   if (mode === 'browse') {
     const mcqs = allQs.filter(q => q.type === 'mcq')
@@ -566,6 +724,50 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
             </button>
           </div>
         </div>
+
+        {isApushCourse && (
+          <div className="mb-8 rounded-xl border border-indigo-200 overflow-hidden">
+            <div className="px-5 py-3 border-b border-indigo-200 bg-indigo-50">
+              <h3 className="text-base font-black text-indigo-950">APUSH Exam Sections</h3>
+              <p className="text-xs text-indigo-800 mt-1">CollegeBoard-style section flow with official timing windows and full-length simulation options.</p>
+            </div>
+            <div className="p-4 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 bg-white">
+              {[
+                { id: 'mcq', label: 'Section I Part A', detail: '55 MCQ · 95 min' },
+                { id: 'saq', label: 'Section I Part B', detail: '3 SAQ-style prompts · 40 min' },
+                { id: 'dbq', label: 'Section II DBQ', detail: '1 DBQ-style prompt · 60 min' },
+                { id: 'leq', label: 'Section II LEQ', detail: '1 LEQ-style prompt · 40 min' },
+                { id: 'full', label: 'Full APUSH Run', detail: 'Section I + II flow · 3h15m' },
+              ].map((preset) => (
+                <button
+                  key={preset.id}
+                  type="button"
+                  onClick={() => {
+                    const section = getApushSectionRun(preset.id as 'mcq' | 'saq' | 'dbq' | 'leq' | 'full')
+                    startExam(
+                      section.questions,
+                      section.seconds,
+                      {
+                        runMode: 'standard',
+                        label: section.label,
+                        targetQuestions: section.target,
+                        sourceLabel: section.sourceLabel,
+                        usedQuestionLoop: section.usedLoop,
+                        sectionLabel: preset.label,
+                      },
+                    )
+                  }}
+                  className="text-left p-4 rounded-lg border border-slate-200 hover:border-indigo-400 hover:-translate-y-0.5 transition-all"
+                  style={{ background: '#fcfcff' }}
+                >
+                  <p className="text-sm font-bold text-slate-900">{preset.label}</p>
+                  <p className="text-xs text-slate-600 mt-1">{preset.detail}</p>
+                  <p className="text-[11px] text-indigo-700 mt-2 font-semibold">Start section</p>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* MCQs */}
         {mcqs.length > 0 && (
@@ -824,7 +1026,7 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
   }
 
   return (
-    <div className="flex flex-col h-full bg-white">
+    <div className="fixed inset-0 z-50 flex flex-col bg-white">
       {/* Exam top bar */}
       <div className="flex items-center justify-between px-5 py-2.5 border-b border-gray-200 bg-white shrink-0">
         <div className="flex items-center gap-3">
@@ -855,6 +1057,19 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
           <span className="text-xs px-2 py-0.5 rounded font-medium bg-slate-100 text-slate-700">
             {runMeta.runMode === 'diagnostic' ? 'diagnostic mode' : 'exam mode'}
           </span>
+          {runMeta.sectionLabel && (
+            <span className="text-xs px-2 py-0.5 rounded font-medium bg-indigo-100 text-indigo-800">
+              {runMeta.sectionLabel}
+            </span>
+          )}
+          <span className="text-xs px-2 py-0.5 rounded font-medium bg-slate-100 text-slate-700">
+            {examQs.length}/{runMeta.targetQuestions ?? examQs.length} loaded
+          </span>
+          {runMeta.usedQuestionLoop && (
+            <span className="text-xs px-2 py-0.5 rounded font-medium bg-amber-100 text-amber-800">
+              repeated bank items used
+            </span>
+          )}
         </div>
 
         <div className="flex items-center gap-3">
@@ -880,6 +1095,13 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
           >
             {timerRunning ? 'Pause' : 'Resume'}
           </button>
+          <button
+            type="button"
+            onClick={() => { setTimerRunning(false); setMode('browse') }}
+            className="text-xs px-2 py-1 rounded border font-semibold text-slate-600 border-slate-300 hover:bg-slate-50"
+          >
+            Exit
+          </button>
         </div>
       </div>
 
@@ -890,6 +1112,8 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
             q={currentQ}
             selected={answers[currentQ.id] || null}
             onSelect={l => setAnswers(a => ({ ...a, [currentQ.id]: l }))}
+            struck={new Set(struckOptions[currentQ.id] ?? [])}
+            onToggleStrike={(letter) => toggleStrikeOption(currentQ.id, letter)}
             revealed={false}
           />
         ) : (
@@ -911,10 +1135,11 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
         <button
           type="button"
           className="flex items-center gap-2 px-4 py-1.5 rounded font-semibold text-sm border border-gray-300 bg-gray-50 hover:bg-gray-100 text-gray-700"
+          onClick={() => setQuestionMapOpen((v) => !v)}
         >
           Question {qIndex + 1} of {examQs.length}
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <polyline points="18 15 12 9 6 15"/>
+            <polyline points={questionMapOpen ? '6 15 12 9 18 15' : '18 9 12 15 6 9'} />
           </svg>
         </button>
 
@@ -950,6 +1175,30 @@ function PracticeTab({ courseShort }: { courseShort: string }) {
           )}
         </div>
       </div>
+      {questionMapOpen && (
+        <div className="shrink-0 px-5 py-3 border-t border-gray-200 bg-slate-50">
+          <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto">
+            {questionStatus.map((status, idx) => {
+              const isCurrent = idx === qIndex
+              const baseBg = isCurrent ? '#1e1b4b' : status.answered ? '#dbeafe' : '#fff'
+              const baseColor = isCurrent ? '#fff' : status.answered ? '#1d4ed8' : '#475569'
+              const borderColor = status.marked ? '#f59e0b' : isCurrent ? '#1e1b4b' : '#cbd5e1'
+              return (
+                <button
+                  key={status.id}
+                  type="button"
+                  onClick={() => setQIndex(idx)}
+                  className="w-8 h-8 rounded text-xs font-bold border transition-all"
+                  style={{ background: baseBg, color: baseColor, borderColor }}
+                  title={status.marked ? `Q${idx + 1} marked for review` : `Go to Q${idx + 1}`}
+                >
+                  {idx + 1}
+                </button>
+              )
+            })}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

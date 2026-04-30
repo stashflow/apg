@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { SiteNav } from './site-nav'
 import { getApushMemoryHook } from '@/lib/apush-memory-hooks'
+import { ReadAloud } from './read-aloud'
 
 export interface NotesSection {
   type: 'heading' | 'subheading' | 'body' | 'bullets' | 'callout' | 'examtip' | 'frqtip' | 'table' | 'code'
@@ -427,6 +428,19 @@ export function NotesPage({
   const quizletHref =
     quizletUrl ?? `https://quizlet.com/search?query=${encodeURIComponent(topicSearchQuery)}&type=sets`
   const youtubeHref = `https://www.youtube.com/results?search_query=${encodeURIComponent(topicSearchQuery)}`
+  const readAloudText = useMemo(() => {
+    const sectionTextContent = sections
+      .map((section) => {
+        const bullets = section.bullets?.join(' ') ?? ''
+        const tableHeaders = section.tableHeaders?.join(' ') ?? ''
+        const tableRows = section.tableRows?.flat().join(' ') ?? ''
+        const code = section.code ?? ''
+        return `${section.content} ${bullets} ${tableHeaders} ${tableRows} ${code}`.trim()
+      })
+      .filter(Boolean)
+      .join(' ')
+    return `${course.label}. Unit ${unit.number}: ${unit.title}. Topic ${topic.number}: ${topic.title}. ${topic.description ?? ''} ${sectionTextContent}`.trim()
+  }, [course.label, sections, topic.description, topic.number, topic.title, unit.number, unit.title])
   const [loaded, setLoaded] = useState(false)
   const [readPct, setReadPct] = useState(0)
   const [htrOpen, setHtrOpen] = useState(false)
@@ -645,6 +659,12 @@ export function NotesPage({
   return (
     <div className="min-h-screen" style={{ background: '#050d1a' }}>
       <SiteNav />
+      <ReadAloud
+        title="have the teacher read it"
+        text={readAloudText}
+        accent={course.accent}
+        accentLight={course.accentLight}
+      />
 
       {/* Reading progress bar */}
       <div
