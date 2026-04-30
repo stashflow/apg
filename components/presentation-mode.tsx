@@ -480,7 +480,6 @@ export function PresentationMode({ open, onClose, course, unit, topic, topics, s
   const [activeOccurrence, setActiveOccurrence] = useState(0)
   const [readerControls, setReaderControls] = useState<ReadAloudControls | null>(null)
   const [slideFinished, setSlideFinished] = useState(false)
-  const [autoAdvanceArmed, setAutoAdvanceArmed] = useState(false)
 
   const slides = useMemo(() => {
     if (topic && sections) return makeTopicSlides(course, unit, topic, sections)
@@ -495,28 +494,17 @@ export function PresentationMode({ open, onClose, course, unit, topic, topics, s
 
   useEffect(() => {
     setSlideFinished(false)
-    setAutoAdvanceArmed(false)
-    const arm = window.setTimeout(() => setAutoAdvanceArmed(true), 250)
-    return () => window.clearTimeout(arm)
   }, [index])
 
   useEffect(() => {
     if (!open || !slideFinished) return
     if (index >= slides.length - 1) return
+    const delayMs = index === 0 ? 1000 : 5000
     const timer = window.setTimeout(() => {
       setIndex((v) => Math.min(slides.length - 1, v + 1))
-    }, 5000)
+    }, delayMs)
     return () => window.clearTimeout(timer)
   }, [index, open, slideFinished, slides.length])
-
-  useEffect(() => {
-    if (!open || !autoAdvanceArmed) return
-    if (index >= slides.length - 1) return
-    const fallback = window.setTimeout(() => {
-      setSlideFinished(true)
-    }, 22000)
-    return () => window.clearTimeout(fallback)
-  }, [autoAdvanceArmed, index, open, slides.length])
 
   useEffect(() => {
     if (!open) return
@@ -604,7 +592,8 @@ export function PresentationMode({ open, onClose, course, unit, topic, topics, s
               <div className="h-full rounded-full transition-all" style={{ width: `${((index + 1) / slides.length) * 100}%`, background: `linear-gradient(90deg, ${course.accent}, ${course.accentLight})` }} />
             </div>
             <p className="mt-1 text-center font-mono text-[10px] uppercase tracking-[0.22em]" style={{ color: '#95b7d8' }}>
-              Slide {index + 1} of {slides.length}{slideFinished && index < slides.length - 1 ? ' · advancing in 5s' : ''}
+              Slide {index + 1} of {slides.length}
+              {slideFinished && index < slides.length - 1 ? (index === 0 ? ' · advancing in 1s' : ' · advancing in 5s') : ''}
             </p>
           </div>
           <button
