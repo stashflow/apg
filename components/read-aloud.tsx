@@ -18,6 +18,8 @@ type ReadAloudProps = {
   panelTopOffsetClassName?: string
   inline?: boolean
   className?: string
+  autoPlayOnTextChange?: boolean
+  onPlaybackEnd?: () => void
 }
 
 type WordMeta = {
@@ -64,6 +66,8 @@ export function ReadAloud({
   panelTopOffsetClassName = 'top-33',
   inline = false,
   className = '',
+  autoPlayOnTextChange = false,
+  onPlaybackEnd,
 }: ReadAloudProps) {
   const [open, setOpen] = useState(false)
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
@@ -77,7 +81,15 @@ export function ReadAloud({
   const offsetRef = useRef(0)
   const restartPausedRef = useRef(false)
 
-  const cleanText = useMemo(() => text.replace(/\s+/g, ' ').trim(), [text])
+  const cleanText = useMemo(() => {
+    return text
+      .replace(/\r\n/g, '\n')
+      .replace(/\n{2,}/g, '. ')
+      .replace(/\n/g, '. ')
+      .replace(/\s+/g, ' ')
+      .replace(/\.\s*\./g, '.')
+      .trim()
+  }, [text])
   const words = useMemo(() => parseWords(cleanText), [cleanText])
   const currentWord = useMemo(() => closestWordIndex(words, currentChar), [words, currentChar])
 
@@ -123,6 +135,7 @@ export function ReadAloud({
       setIsSpeaking(false)
       setIsPaused(false)
       setCurrentChar(cleanText.length)
+      if (onPlaybackEnd) onPlaybackEnd()
     }
 
     utter.onerror = () => {
@@ -212,6 +225,13 @@ export function ReadAloud({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [voiceName, rate, pitch])
 
+  useEffect(() => {
+    if (!autoPlayOnTextChange || !cleanText) return
+    setCurrentChar(0)
+    speakFromChar(0)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cleanText, autoPlayOnTextChange])
+
   const onPlayPause = () => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
 
@@ -245,7 +265,6 @@ export function ReadAloud({
 
   const closePanel = () => {
     setOpen(false)
-    onStop()
   }
 
   const progressPct = words.length > 0 ? (currentWord / words.length) * 100 : 0
@@ -275,7 +294,7 @@ export function ReadAloud({
 
       {open && (
         <div className={inline
-          ? 'absolute right-0 top-11 z-50 w-[min(460px,calc(100vw-2rem))] rounded-xl border shadow-2xl overflow-hidden'
+          ? 'absolute left-full ml-2 top-0 z-50 w-[min(460px,calc(100vw-2rem))] rounded-xl border shadow-2xl overflow-hidden'
           : `fixed right-4 md:right-6 ${panelTopOffsetClassName} z-50 w-[min(460px,calc(100vw-2rem))] rounded-xl border shadow-2xl overflow-hidden`}
           style={{ background: '#081426', borderColor: 'rgba(147,197,253,0.35)' }}>
           <div className="px-4 py-3 border-b" style={{ borderColor: 'rgba(147,197,253,0.25)', background: 'rgba(12,29,51,0.92)' }}>
@@ -284,7 +303,10 @@ export function ReadAloud({
                 <p className="text-[10px] font-mono uppercase tracking-widest" style={{ color: accentLight }}>audio reading</p>
                 <p className="text-sm font-black lowercase" style={{ color: '#ecf5ff' }}>{title}</p>
               </div>
-              <button type="button" onClick={closePanel} className="px-2 py-1 text-[10px] font-mono uppercase border" style={{ color: '#a9bfd8', borderColor: 'rgba(147,197,253,0.3)' }}>close</button>
+              <div className="flex items-center gap-2">
+                <button type="button" onClick={closePanel} className="px-2 py-1 text-[10px] font-mono uppercase border" style={{ color: '#a9bfd8', borderColor: 'rgba(147,197,253,0.3)' }}>close</button>
+                <button type="button" onClick={closePanel} className="w-7 h-7 text-xs border flex items-center justify-center" style={{ color: '#a9bfd8', borderColor: 'rgba(147,197,253,0.3)' }} aria-label="Dismiss reader panel">×</button>
+              </div>
             </div>
           </div>
 
