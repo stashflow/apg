@@ -83,6 +83,8 @@ export function ReadAloud({
 
   const offsetRef = useRef(0)
   const restartPausedRef = useRef(false)
+  const utteranceIdRef = useRef(0)
+  const suppressEndRef = useRef(false)
 
   const cleanText = useMemo(() => {
     return text
@@ -103,6 +105,7 @@ export function ReadAloud({
 
   const speakFromChar = (startChar: number, shouldPauseAfterStart = false) => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window) || !cleanText) return
+    suppressEndRef.current = true
     window.speechSynthesis.cancel()
 
     const start = Math.max(0, Math.min(cleanText.length - 1, startChar))
@@ -110,6 +113,9 @@ export function ReadAloud({
     if (!segment) return
 
     restartPausedRef.current = shouldPauseAfterStart
+    suppressEndRef.current = false
+    utteranceIdRef.current += 1
+    const utteranceId = utteranceIdRef.current
 
     const utter = new SpeechSynthesisUtterance(segment)
     utter.voice = selectedVoice ?? null
@@ -118,6 +124,7 @@ export function ReadAloud({
     offsetRef.current = start
 
     utter.onstart = () => {
+      if (utteranceId !== utteranceIdRef.current) return
       setIsSpeaking(true)
       setIsPaused(false)
       setCurrentChar(start)
@@ -129,12 +136,15 @@ export function ReadAloud({
     }
 
     utter.onboundary = (ev: SpeechSynthesisEvent) => {
+      if (utteranceId !== utteranceIdRef.current) return
       if (ev.name === 'word') {
         setCurrentChar(offsetRef.current + ev.charIndex)
       }
     }
 
     utter.onend = () => {
+      if (utteranceId !== utteranceIdRef.current) return
+      if (suppressEndRef.current) return
       setIsSpeaking(false)
       setIsPaused(false)
       setCurrentChar(cleanText.length)
@@ -142,6 +152,8 @@ export function ReadAloud({
     }
 
     utter.onerror = () => {
+      if (utteranceId !== utteranceIdRef.current) return
+      if (suppressEndRef.current) return
       setIsSpeaking(false)
       setIsPaused(false)
     }
@@ -255,6 +267,7 @@ export function ReadAloud({
     setIsPaused(false)
     setIsSpeaking(false)
     if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      suppressEndRef.current = true
       window.speechSynthesis.cancel()
     }
     const t = window.setTimeout(() => {
@@ -284,6 +297,7 @@ export function ReadAloud({
 
   const onStop = () => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
+    suppressEndRef.current = true
     window.speechSynthesis.cancel()
     setIsSpeaking(false)
     setIsPaused(false)
