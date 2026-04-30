@@ -62,12 +62,6 @@ export function UnitPage({ course, unit, topics, basePath, courseHref, videoId: 
   return (
     <div className="min-h-screen" style={{ background: '#050d1a' }}>
       <SiteNav />
-      <ReadAloud
-        title="have the teacher read it"
-        text={readAloudText}
-        accent={course.accent}
-        accentLight={course.accentLight}
-      />
 
       {/* Breadcrumb & header */}
       <div
@@ -205,6 +199,14 @@ export function UnitPage({ course, unit, topics, basePath, courseHref, videoId: 
                 presentation
               </button>
             )}
+            <ReadAloud
+              title="have the teacher read it"
+              text={readAloudText}
+              accent={course.accent}
+              accentLight={course.accentLight}
+              inline
+              className="ml-auto"
+            />
             
             <p className="text-sm leading-relaxed max-w-2xl" style={{ color: '#b8d0ee' }}>
               {unit.description}

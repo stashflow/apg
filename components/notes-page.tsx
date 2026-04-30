@@ -475,6 +475,7 @@ export function NotesPage({
   const [examFocusMode, setExamFocusMode] = useState(isApush)
   const [presentationOpen, setPresentationOpen] = useState(false)
   const [activeWord, setActiveWord] = useState('')
+  const [seekToWord, setSeekToWord] = useState<((word: string) => void) | null>(null)
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 80)
@@ -687,13 +688,6 @@ export function NotesPage({
   return (
     <div className="min-h-screen" style={{ background: '#050d1a' }}>
       <SiteNav />
-      <ReadAloud
-        title="have the teacher read it"
-        text={readAloudText}
-        accent={course.accent}
-        accentLight={course.accentLight}
-        onWordChange={(word) => setActiveWord(word)}
-      />
 
       {/* Reading progress bar */}
       <div
@@ -798,7 +792,7 @@ export function NotesPage({
             )}
 
 	            {/* Study buttons */}
-	            <div className="flex flex-wrap gap-2">
+	            <div className="flex flex-wrap items-center gap-2 w-full">
               <button
                 type="button"
                 onClick={() => window.open(quizletHref, '_blank', 'noopener,noreferrer')}
@@ -873,6 +867,16 @@ export function NotesPage({
                   <span>presentation</span>
                 </button>
               )}
+              <ReadAloud
+                title="have the teacher read it"
+                text={readAloudText}
+                accent={course.accent}
+                accentLight={course.accentLight}
+                inline
+                className="ml-auto"
+                onWordChange={(word) => setActiveWord(word)}
+                onRegisterControls={(controls) => setSeekToWord(() => controls.seekToWord)}
+              />
             </div>
           </div>
         </div>
@@ -902,7 +906,17 @@ export function NotesPage({
             const mentions = getSectionMentionedTerms(s, keyTerms)
             const context = sectionText(s)
             return (
-              <div key={`section-wrap-${i}`} className="relative md:pr-24">
+              <div
+                key={`section-wrap-${i}`}
+                className="relative md:pr-24"
+                onDoubleClick={(event) => {
+                  if (!seekToWord) return
+                  const target = event.target as HTMLElement
+                  const word = target.textContent?.trim().split(/\s+/)[0] ?? ''
+                  if (!word) return
+                  seekToWord(word)
+                }}
+              >
                 {renderSection(s, i)}
                 {mentions.length > 0 && (
                   <div className="hidden md:flex absolute right-0 top-0 h-full items-center">

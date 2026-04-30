@@ -2,14 +2,22 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 
+type ReadAloudControls = {
+  seekToWord: (word: string) => void
+  seekToIndex: (wordIndex: number) => void
+}
+
 type ReadAloudProps = {
   title?: string
   text: string
   accent?: string
   accentLight?: string
   onWordChange?: (word: string, wordIndex: number) => void
+  onRegisterControls?: (controls: ReadAloudControls) => void
   topOffsetClassName?: string
   panelTopOffsetClassName?: string
+  inline?: boolean
+  className?: string
 }
 
 type WordMeta = {
@@ -41,14 +49,21 @@ function closestWordIndex(words: WordMeta[], charIndex: number): number {
   return Math.max(0, Math.min(words.length - 1, lo))
 }
 
+function normalizeWord(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, '')
+}
+
 export function ReadAloud({
   title = 'have the teacher read it',
   text,
   accent = '#4f46e5',
   accentLight = '#93c5fd',
   onWordChange,
+  onRegisterControls,
   topOffsetClassName = 'top-20',
   panelTopOffsetClassName = 'top-33',
+  inline = false,
+  className = '',
 }: ReadAloudProps) {
   const [open, setOpen] = useState(false)
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
@@ -60,6 +75,7 @@ export function ReadAloud({
   const [currentChar, setCurrentChar] = useState(0)
 
   const offsetRef = useRef(0)
+  const restartPausedRef = useRef(false)
 
   const cleanText = useMemo(() => text.replace(/\s+/g, ' ').trim(), [text])
   const words = useMemo(() => parseWords(cleanText), [cleanText])
@@ -69,6 +85,89 @@ export function ReadAloud({
     () => voices.find((v) => v.name === voiceName) ?? voices[0],
     [voices, voiceName],
   )
+
+  const speakFromChar = (startChar: number, shouldPauseAfterStart = false) => {
+    if (typeof window === 'undefined' || !('speechSynthesis' in window) || !cleanText) return
+    window.speechSynthesis.cancel()
+
+    const start = Math.max(0, Math.min(cleanText.length - 1, startChar))
+    const segment = cleanText.slice(start)
+    if (!segment) return
+
+    restartPausedRef.current = shouldPauseAfterStart
+
+    const utter = new SpeechSynthesisUtterance(segment)
+    utter.voice = selectedVoice ?? null
+    utter.rate = rate
+    utter.pitch = pitch
+    offsetRef.current = start
+
+    utter.onstart = () => {
+      setIsSpeaking(true)
+      setIsPaused(false)
+      setCurrentChar(start)
+      if (restartPausedRef.current && typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.pause()
+        setIsPaused(true)
+        restartPausedRef.current = false
+      }
+    }
+
+    utter.onboundary = (ev: SpeechSynthesisEvent) => {
+      if (ev.name === 'word') {
+        setCurrentChar(offsetRef.current + ev.charIndex)
+      }
+    }
+
+    utter.onend = () => {
+      setIsSpeaking(false)
+      setIsPaused(false)
+      setCurrentChar(cleanText.length)
+    }
+
+    utter.onerror = () => {
+      setIsSpeaking(false)
+      setIsPaused(false)
+    }
+
+    window.speechSynthesis.speak(utter)
+  }
+
+  const seekWord = (targetWord: number) => {
+    if (words.length === 0) return
+    const i = Math.max(0, Math.min(words.length - 1, targetWord))
+    const nextChar = words[i].start
+    setCurrentChar(nextChar)
+    if (isSpeaking) {
+      speakFromChar(nextChar, isPaused)
+      return
+    }
+    if (onWordChange) onWordChange(words[i].word, i)
+  }
+
+  const seekToWord = (rawWord: string) => {
+    const normalized = normalizeWord(rawWord)
+    if (!normalized || words.length === 0) return
+
+    let bestIndex = -1
+    let bestDistance = Number.MAX_SAFE_INTEGER
+
+    for (let i = 0; i < words.length; i += 1) {
+      if (normalizeWord(words[i].word) !== normalized) continue
+      const distance = Math.abs(i - currentWord)
+      if (distance < bestDistance) {
+        bestDistance = distance
+        bestIndex = i
+      }
+    }
+
+    if (bestIndex >= 0) seekWord(bestIndex)
+  }
+
+  useEffect(() => {
+    if (!onRegisterControls) return
+    onRegisterControls({ seekToWord, seekToIndex: seekWord })
+  }, [onRegisterControls, currentWord, words])
 
   useEffect(() => {
     if (!onWordChange) return
@@ -107,45 +206,11 @@ export function ReadAloud({
     }
   }, [])
 
-  const speakFromChar = (startChar: number) => {
-    if (typeof window === 'undefined' || !('speechSynthesis' in window) || !cleanText) return
-    window.speechSynthesis.cancel()
-
-    const start = Math.max(0, Math.min(cleanText.length - 1, startChar))
-    const segment = cleanText.slice(start)
-    if (!segment) return
-
-    const utter = new SpeechSynthesisUtterance(segment)
-    utter.voice = selectedVoice ?? null
-    utter.rate = rate
-    utter.pitch = pitch
-    offsetRef.current = start
-
-    utter.onstart = () => {
-      setIsSpeaking(true)
-      setIsPaused(false)
-      setCurrentChar(start)
-    }
-
-    utter.onboundary = (ev: SpeechSynthesisEvent) => {
-      if (ev.name === 'word') {
-        setCurrentChar(offsetRef.current + ev.charIndex)
-      }
-    }
-
-    utter.onend = () => {
-      setIsSpeaking(false)
-      setIsPaused(false)
-      setCurrentChar(cleanText.length)
-    }
-
-    utter.onerror = () => {
-      setIsSpeaking(false)
-      setIsPaused(false)
-    }
-
-    window.speechSynthesis.speak(utter)
-  }
+  useEffect(() => {
+    if (!isSpeaking) return
+    speakFromChar(currentChar, isPaused)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [voiceName, rate, pitch])
 
   const onPlayPause = () => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
@@ -174,14 +239,6 @@ export function ReadAloud({
     if (onWordChange) onWordChange('', 0)
   }
 
-  const seekWord = (targetWord: number) => {
-    if (words.length === 0) return
-    const i = Math.max(0, Math.min(words.length - 1, targetWord))
-    const nextChar = words[i].start
-    setCurrentChar(nextChar)
-    if (isSpeaking) speakFromChar(nextChar)
-  }
-
   const skipWords = (delta: number) => {
     seekWord(currentWord + delta)
   }
@@ -194,13 +251,16 @@ export function ReadAloud({
   const progressPct = words.length > 0 ? (currentWord / words.length) * 100 : 0
 
   return (
-    <>
+    <div className={inline ? `relative ${className}` : ''}>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className={`fixed right-4 md:right-6 ${topOffsetClassName} z-50 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-300`}
+        className={inline
+          ? `h-9 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${className}`
+          : `fixed right-4 md:right-6 ${topOffsetClassName} z-50 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${className}`}
         style={{
-          width: open ? '68px' : '46px',
+          zIndex: inline ? undefined : 50,
+          width: open ? (inline ? '62px' : '68px') : (inline ? '40px' : '46px'),
           background: open ? `linear-gradient(135deg, ${accent}, ${accentLight})` : 'rgba(9,20,34,0.88)',
           color: '#f8fbff',
           border: `1px solid ${open ? accentLight : 'rgba(147,197,253,0.35)'}`,
@@ -214,7 +274,10 @@ export function ReadAloud({
       </button>
 
       {open && (
-        <div className={`fixed right-4 md:right-6 ${panelTopOffsetClassName} z-50 w-[min(460px,calc(100vw-2rem))] rounded-xl border shadow-2xl overflow-hidden`} style={{ background: '#081426', borderColor: 'rgba(147,197,253,0.35)' }}>
+        <div className={inline
+          ? 'absolute right-0 top-11 z-50 w-[min(460px,calc(100vw-2rem))] rounded-xl border shadow-2xl overflow-hidden'
+          : `fixed right-4 md:right-6 ${panelTopOffsetClassName} z-50 w-[min(460px,calc(100vw-2rem))] rounded-xl border shadow-2xl overflow-hidden`}
+          style={{ background: '#081426', borderColor: 'rgba(147,197,253,0.35)' }}>
           <div className="px-4 py-3 border-b" style={{ borderColor: 'rgba(147,197,253,0.25)', background: 'rgba(12,29,51,0.92)' }}>
             <div className="flex items-center justify-between gap-3">
               <div>
@@ -247,17 +310,9 @@ export function ReadAloud({
               <div className="h-full transition-all" style={{ width: `${progressPct}%`, background: `linear-gradient(90deg, ${accent}, ${accentLight})` }} />
             </div>
 
-            <label className="block text-[11px] font-mono uppercase tracking-wide">jump to word ({Math.min(words.length, currentWord + 1)}/{words.length || 0})
-              <input
-                type="range"
-                min={0}
-                max={Math.max(0, words.length - 1)}
-                step={1}
-                value={Math.max(0, Math.min(words.length - 1, currentWord)) || 0}
-                onChange={(e) => seekWord(Number(e.target.value))}
-                className="mt-2 w-full"
-              />
-            </label>
+            <p className="text-[11px] font-mono uppercase tracking-wide" style={{ color: '#9cb9d8' }}>
+              highlighted words are seek targets: double-click a word in notes to jump there
+            </p>
 
             <div className="grid grid-cols-5 gap-2">
               <button type="button" onClick={() => skipWords(-15)} className="py-2 text-xs font-bold border" style={{ borderColor: 'rgba(147,197,253,0.35)' }}>-15w</button>
@@ -275,6 +330,6 @@ export function ReadAloud({
           </div>
         </div>
       )}
-    </>
+    </div>
   )
 }

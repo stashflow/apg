@@ -341,6 +341,7 @@ function SlideCard({ slide, course, activeWord }: { slide: Slide; course: Course
 export function PresentationMode({ open, onClose, course, unit, topic, topics, sections }: PresentationModeProps) {
   const [index, setIndex] = useState(0)
   const [activeWord, setActiveWord] = useState('')
+  const [seekToWord, setSeekToWord] = useState<((word: string) => void) | null>(null)
 
   const slides = useMemo(() => {
     if (topic && sections) return makeTopicSlides(course, unit, topic, sections)
@@ -379,6 +380,7 @@ export function PresentationMode({ open, onClose, course, unit, topic, topics, s
         topOffsetClassName="top-5"
         panelTopOffsetClassName="top-18"
         onWordChange={(word) => setActiveWord(word)}
+        onRegisterControls={(controls) => setSeekToWord(() => controls.seekToWord)}
       />
 
       <div className="h-full w-full px-4 md:px-10 py-6 md:py-8 flex flex-col">
@@ -397,7 +399,16 @@ export function PresentationMode({ open, onClose, course, unit, topic, topics, s
           </button>
         </div>
 
-        <div className="flex-1 min-h-0">
+        <div
+          className="flex-1 min-h-0"
+          onDoubleClick={(event) => {
+            if (!seekToWord) return
+            const target = event.target as HTMLElement
+            const word = target.textContent?.trim().split(/\s+/)[0] ?? ''
+            if (!word) return
+            seekToWord(word)
+          }}
+        >
           <SlideCard slide={activeSlide} course={course} activeWord={activeWord} />
         </div>
 
