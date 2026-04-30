@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 type ReadAloudControls = {
   seekToWord: (word: string) => void
   seekToIndex: (wordIndex: number) => void
+  seekToWordOccurrence: (word: string, occurrence: number) => void
 }
 
 type ReadAloudProps = {
@@ -12,7 +13,7 @@ type ReadAloudProps = {
   text: string
   accent?: string
   accentLight?: string
-  onWordChange?: (word: string, wordIndex: number) => void
+  onWordChange?: (word: string, wordIndex: number, wordOccurrence: number) => void
   onRegisterControls?: (controls: ReadAloudControls) => void
   topOffsetClassName?: string
   panelTopOffsetClassName?: string
@@ -20,6 +21,7 @@ type ReadAloudProps = {
   className?: string
   autoPlayOnTextChange?: boolean
   onPlaybackEnd?: () => void
+  resetToken?: string | number
 }
 
 type WordMeta = {
@@ -68,6 +70,7 @@ export function ReadAloud({
   className = '',
   autoPlayOnTextChange = false,
   onPlaybackEnd,
+  resetToken,
 }: ReadAloudProps) {
   const [open, setOpen] = useState(false)
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
@@ -155,7 +158,7 @@ export function ReadAloud({
       speakFromChar(nextChar, isPaused)
       return
     }
-    if (onWordChange) onWordChange(words[i].word, i)
+    if (onWordChange) onWordChange(words[i].word, i, 1)
   }
 
   const seekToWord = (rawWord: string) => {
@@ -177,19 +180,40 @@ export function ReadAloud({
     if (bestIndex >= 0) seekWord(bestIndex)
   }
 
+  const seekToWordOccurrence = (rawWord: string, occurrence: number) => {
+    const normalized = normalizeWord(rawWord)
+    if (!normalized || words.length === 0 || occurrence < 1) return
+    let seen = 0
+    for (let i = 0; i < words.length; i += 1) {
+      if (normalizeWord(words[i].word) !== normalized) continue
+      seen += 1
+      if (seen === occurrence) {
+        seekWord(i)
+        return
+      }
+    }
+  }
+
   useEffect(() => {
     if (!onRegisterControls) return
-    onRegisterControls({ seekToWord, seekToIndex: seekWord })
+    onRegisterControls({ seekToWord, seekToIndex: seekWord, seekToWordOccurrence })
   }, [onRegisterControls, currentWord, words])
 
   useEffect(() => {
     if (!onWordChange) return
     if (!isSpeaking) {
-      onWordChange('', 0)
+      onWordChange('', 0, 0)
       return
     }
     const next = words[currentWord]?.word ?? ''
-    onWordChange(next, currentWord)
+    const normalized = normalizeWord(next)
+    let occurrence = 0
+    if (normalized) {
+      for (let i = 0; i <= currentWord; i += 1) {
+        if (normalizeWord(words[i]?.word ?? '') === normalized) occurrence += 1
+      }
+    }
+    onWordChange(next, currentWord, occurrence)
   }, [currentWord, isSpeaking, onWordChange, words])
 
   useEffect(() => {
@@ -228,9 +252,17 @@ export function ReadAloud({
   useEffect(() => {
     if (!autoPlayOnTextChange || !cleanText) return
     setCurrentChar(0)
-    speakFromChar(0)
+    setIsPaused(false)
+    setIsSpeaking(false)
+    if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel()
+    }
+    const t = window.setTimeout(() => {
+      speakFromChar(0)
+    }, 40)
+    return () => window.clearTimeout(t)
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [cleanText, autoPlayOnTextChange])
+  }, [cleanText, autoPlayOnTextChange, resetToken])
 
   const onPlayPause = () => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
@@ -256,7 +288,7 @@ export function ReadAloud({
     setIsSpeaking(false)
     setIsPaused(false)
     setCurrentChar(0)
-    if (onWordChange) onWordChange('', 0)
+    if (onWordChange) onWordChange('', 0, 0)
   }
 
   const skipWords = (delta: number) => {
@@ -294,7 +326,7 @@ export function ReadAloud({
 
       {open && (
         <div className={inline
-          ? 'absolute left-full ml-2 top-0 z-50 w-[min(460px,calc(100vw-2rem))] rounded-xl border shadow-2xl overflow-hidden'
+          ? 'absolute left-full ml-2 top-0 z-50 w-[420px] max-w-[calc(100vw-4rem)] rounded-xl border shadow-2xl overflow-hidden'
           : `fixed right-4 md:right-6 ${panelTopOffsetClassName} z-50 w-[min(460px,calc(100vw-2rem))] rounded-xl border shadow-2xl overflow-hidden`}
           style={{ background: '#081426', borderColor: 'rgba(147,197,253,0.35)' }}>
           <div className="px-4 py-3 border-b" style={{ borderColor: 'rgba(147,197,253,0.25)', background: 'rgba(12,29,51,0.92)' }}>

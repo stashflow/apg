@@ -6,6 +6,11 @@ import { SiteNav } from './site-nav'
 import { getApushMemoryHook } from '@/lib/apush-memory-hooks'
 import { ReadAloud } from './read-aloud'
 import { PresentationMode } from './presentation-mode'
+type ReadAloudControls = {
+  seekToWord: (word: string) => void
+  seekToIndex: (wordIndex: number) => void
+  seekToWordOccurrence: (word: string, occurrence: number) => void
+}
 
 export interface NotesSection {
   type: 'heading' | 'subheading' | 'body' | 'bullets' | 'callout' | 'examtip' | 'frqtip' | 'table' | 'code'
@@ -118,6 +123,41 @@ function normalizeForCompare(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]/g, '')
 }
 
+function getSelectionWordInfo(event: React.MouseEvent<HTMLElement>): { word: string; occurrence: number } | null {
+  const selection = window.getSelection()
+  if (!selection || selection.rangeCount === 0) return null
+  const selectedText = selection.toString().trim()
+  const word = selectedText.split(/\s+/)[0]?.trim()
+  if (!word) return null
+  const normalizedTarget = normalizeForCompare(word)
+  if (!normalizedTarget) return null
+
+  const container = event.currentTarget
+  const focusNode = selection.focusNode
+  const focusOffset = selection.focusOffset
+  const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT)
+  let seen = 0
+
+  while (walker.nextNode()) {
+    const node = walker.currentNode as Text
+    const text = node.nodeValue ?? ''
+    if (!text) continue
+    const tokens = text.split(/(\s+)/)
+    let cursor = 0
+    for (const token of tokens) {
+      const tokenEnd = cursor + token.length
+      cursor = tokenEnd
+      if (!token.trim()) continue
+      if (normalizeForCompare(token) !== normalizedTarget) continue
+      seen += 1
+      if (node === focusNode && focusOffset <= tokenEnd) {
+        return { word, occurrence: seen }
+      }
+    }
+  }
+  return { word, occurrence: Math.max(1, seen) }
+}
+
 function buildTermRegex(keyTerms: string[]): RegExp | null {
   if (!keyTerms || keyTerms.length === 0) return null
   const parts = [...keyTerms]
@@ -133,13 +173,21 @@ function normalizeWord(value: string): string {
   return value.toLowerCase().replace(/[^a-z0-9]/g, '')
 }
 
-function highlightActiveWord(text: string, activeWord: string) {
+function highlightActiveWord(
+  text: string,
+  activeWord: string,
+  activeOccurrence: number,
+  tracker: { seen: number },
+) {
   if (!activeWord) return [text]
   const target = normalizeWord(activeWord)
   if (!target) return [text]
   return text.split(/(\s+)/).map((token, i) => {
     const normalized = normalizeWord(token)
     if (normalized && normalized === target) {
+      tracker.seen += 1
+    }
+    if (normalized && normalized === target && tracker.seen === activeOccurrence && activeOccurrence > 0) {
       return (
         <span
           key={`aw-${i}-${token}`}
@@ -154,10 +202,17 @@ function highlightActiveWord(text: string, activeWord: string) {
   })
 }
 
-function highlightTerms(text: string, termRegex: RegExp | null, accentLight: string, activeWord: string) {
+function highlightTerms(
+  text: string,
+  termRegex: RegExp | null,
+  accentLight: string,
+  activeWord: string,
+  activeOccurrence: number,
+  tracker: { seen: number },
+) {
   if (!termRegex || !text) return text
   const matches = Array.from(text.matchAll(termRegex))
-  if (matches.length === 0) return highlightActiveWord(text, activeWord)
+  if (matches.length === 0) return highlightActiveWord(text, activeWord, activeOccurrence, tracker)
 
   const nodes: Array<string | JSX.Element> = []
   let cursor = 0
@@ -167,7 +222,7 @@ function highlightTerms(text: string, termRegex: RegExp | null, accentLight: str
     const start = match.index ?? -1
     if (start < 0) return
     const end = start + full.length
-    if (start > cursor) nodes.push(...highlightActiveWord(text.slice(cursor, start), activeWord))
+    if (start > cursor) nodes.push(...highlightActiveWord(text.slice(cursor, start), activeWord, activeOccurrence, tracker))
     nodes.push(
       <span
         key={`term-${idx}-${start}`}
@@ -186,11 +241,18 @@ function highlightTerms(text: string, termRegex: RegExp | null, accentLight: str
     cursor = end
   })
 
-  if (cursor < text.length) nodes.push(...highlightActiveWord(text.slice(cursor), activeWord))
+  if (cursor < text.length) nodes.push(...highlightActiveWord(text.slice(cursor), activeWord, activeOccurrence, tracker))
   return nodes
 }
 
-function renderRichMarkdownInline(text: string, termRegex: RegExp | null, accentLight: string, activeWord: string) {
+function renderRichMarkdownInline(
+  text: string,
+  termRegex: RegExp | null,
+  accentLight: string,
+  activeWord: string,
+  activeOccurrence: number,
+  tracker: { seen: number },
+) {
   const nodes: Array<string | JSX.Element> = []
   const tokenRegex = /(\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*|`([^`]+)`|_([^_]+)_|\*([^*]+)\*)/g
   let last = 0
@@ -201,7 +263,7 @@ function renderRichMarkdownInline(text: string, termRegex: RegExp | null, accent
     if (match.index > last) {
       nodes.push(
         <Fragment key={`txt-${idx++}`}>
-          {highlightTerms(text.slice(last, match.index), termRegex, accentLight, activeWord)}
+          {highlightTerms(text.slice(last, match.index), termRegex, accentLight, activeWord, activeOccurrence, tracker)}
         </Fragment>,
       )
     }
@@ -215,13 +277,13 @@ function renderRichMarkdownInline(text: string, termRegex: RegExp | null, accent
           rel="noopener noreferrer"
           style={{ color: accentLight, textDecoration: 'underline', textUnderlineOffset: '2px' }}
         >
-          {highlightTerms(linkLabel, termRegex, accentLight, activeWord)}
+          {highlightTerms(linkLabel, termRegex, accentLight, activeWord, activeOccurrence, tracker)}
         </a>,
       )
     } else if (boldContent) {
       nodes.push(
         <strong key={`b-${idx++}`} style={{ color: accentLight }}>
-          {highlightTerms(boldContent, termRegex, accentLight, activeWord)}
+          {highlightTerms(boldContent, termRegex, accentLight, activeWord, activeOccurrence, tracker)}
         </strong>,
       )
     } else if (codeContent) {
@@ -238,7 +300,7 @@ function renderRichMarkdownInline(text: string, termRegex: RegExp | null, accent
       const italicContent = italicUnderscore || italicStar || ''
       nodes.push(
         <em key={`i-${idx++}`} style={{ color: '#d6e6f8' }}>
-          {highlightTerms(italicContent, termRegex, accentLight, activeWord)}
+          {highlightTerms(italicContent, termRegex, accentLight, activeWord, activeOccurrence, tracker)}
         </em>,
       )
     } else {
@@ -250,7 +312,7 @@ function renderRichMarkdownInline(text: string, termRegex: RegExp | null, accent
   if (last < text.length) {
     nodes.push(
       <Fragment key={`tail-${idx++}`}>
-        {highlightTerms(text.slice(last), termRegex, accentLight, activeWord)}
+        {highlightTerms(text.slice(last), termRegex, accentLight, activeWord, activeOccurrence, tracker)}
       </Fragment>,
     )
   }
@@ -475,7 +537,8 @@ export function NotesPage({
   const [examFocusMode, setExamFocusMode] = useState(isApush)
   const [presentationOpen, setPresentationOpen] = useState(false)
   const [activeWord, setActiveWord] = useState('')
-  const [seekToWord, setSeekToWord] = useState<((word: string) => void) | null>(null)
+  const [activeOccurrence, setActiveOccurrence] = useState(0)
+  const [readerControls, setReaderControls] = useState<ReadAloudControls | null>(null)
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 80)
@@ -502,7 +565,7 @@ export function NotesPage({
     setHtrOpen(true)
   }
 
-  const renderSection = (s: NotesSection, i: number) => {
+  const renderSection = (s: NotesSection, i: number, tracker: { seen: number }) => {
     switch (s.type) {
       case 'heading':
         return (
@@ -530,7 +593,7 @@ export function NotesPage({
           const bodyContent = isApush && examFocusMode ? trimToSentences(s.content, 2) : s.content
         return (
           <p key={i} className="text-base leading-relaxed mb-4" style={{ color: '#b8d0ee', lineHeight: '1.75' }}>
-            {renderRichMarkdownInline(bodyContent, termRegex, course.accentLight, activeWord)}
+            {renderRichMarkdownInline(bodyContent, termRegex, course.accentLight, activeWord, activeOccurrence, tracker)}
           </p>
         )
         }
@@ -551,7 +614,7 @@ export function NotesPage({
                   className="text-base leading-relaxed"
                   style={{ color: '#b8d0ee' }}
                 >
-                    {renderRichMarkdownInline(b, termRegex, course.accentLight, activeWord)}
+                    {renderRichMarkdownInline(b, termRegex, course.accentLight, activeWord, activeOccurrence, tracker)}
                 </span>
               </li>
               ))}
@@ -575,7 +638,7 @@ export function NotesPage({
               color: '#b8d0ee',
             }}
           >
-            {renderRichMarkdownInline(s.content, termRegex, course.accentLight, activeWord)}
+            {renderRichMarkdownInline(s.content, termRegex, course.accentLight, activeWord, activeOccurrence, tracker)}
           </div>
         )
       case 'examtip':
@@ -590,7 +653,7 @@ export function NotesPage({
             }}
           >
             <span style={{ color: '#22c55e', fontWeight: 800 }}>exam tip: </span>
-            {renderRichMarkdownInline(s.content, termRegex, course.accentLight, activeWord)}
+            {renderRichMarkdownInline(s.content, termRegex, course.accentLight, activeWord, activeOccurrence, tracker)}
           </div>
         )
       case 'frqtip':
@@ -605,7 +668,7 @@ export function NotesPage({
             }}
           >
             <span style={{ color: '#f59e0b', fontWeight: 800 }}>frq / essay tip: </span>
-            {renderRichMarkdownInline(s.content, termRegex, course.accentLight, activeWord)}
+            {renderRichMarkdownInline(s.content, termRegex, course.accentLight, activeWord, activeOccurrence, tracker)}
           </div>
         )
       case 'table':
@@ -627,7 +690,7 @@ export function NotesPage({
                         border: `1px solid ${course.accent}33`,
                       }}
                     >
-                      {renderRichMarkdownInline(h, termRegex, course.accentLight, activeWord)}
+                      {renderRichMarkdownInline(h, termRegex, course.accentLight, activeWord, activeOccurrence, tracker)}
                     </th>
                   ))}
                 </tr>
@@ -645,7 +708,7 @@ export function NotesPage({
                           background: ri % 2 === 0 ? '#0a1929' : '#0d2035',
                         }}
                       >
-                        {renderRichMarkdownInline(cell, termRegex, course.accentLight, activeWord)}
+                        {renderRichMarkdownInline(cell, termRegex, course.accentLight, activeWord, activeOccurrence, tracker)}
                       </td>
                     ))}
                   </tr>
@@ -874,8 +937,11 @@ export function NotesPage({
                 accentLight={course.accentLight}
                 inline
                 className="ml-auto"
-                onWordChange={(word) => setActiveWord(word)}
-                onRegisterControls={(controls) => setSeekToWord(() => controls.seekToWord)}
+                onWordChange={(word, _wordIndex, occurrence) => {
+                  setActiveWord(word)
+                  setActiveOccurrence(occurrence)
+                }}
+                onRegisterControls={(controls) => setReaderControls(controls)}
               />
             </div>
           </div>
@@ -902,7 +968,9 @@ export function NotesPage({
               Exam Focus is on: this keeps high-yield APUSH essentials front and center. Switch to <strong>full context</strong> anytime to see all supporting detail.
             </div>
           )}
-          {sections.map((s, i) => {
+          {(() => {
+            const tracker = { seen: 0 }
+            return sections.map((s, i) => {
             const mentions = getSectionMentionedTerms(s, keyTerms)
             const context = sectionText(s)
             return (
@@ -910,14 +978,13 @@ export function NotesPage({
                 key={`section-wrap-${i}`}
                 className="relative md:pr-24"
                 onDoubleClick={(event) => {
-                  if (!seekToWord) return
-                  const target = event.target as HTMLElement
-                  const word = target.textContent?.trim().split(/\s+/)[0] ?? ''
-                  if (!word) return
-                  seekToWord(word)
+                  if (!readerControls) return
+                  const info = getSelectionWordInfo(event)
+                  if (!info) return
+                  readerControls.seekToWordOccurrence(info.word, info.occurrence)
                 }}
               >
-                {renderSection(s, i)}
+                {renderSection(s, i, tracker)}
                 {mentions.length > 0 && (
                   <div className="hidden md:flex absolute right-0 top-0 h-full items-center">
                     <div className="group relative h-full flex items-center pr-1 pl-3">
@@ -944,7 +1011,8 @@ export function NotesPage({
                 )}
               </div>
             )
-          })}
+          })
+          })()}
         </div>
 
         {/* Bottom nav */}
