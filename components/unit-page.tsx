@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { SiteNav } from './site-nav'
 import { ReadAloud } from './read-aloud'
+import { PresentationMode } from './presentation-mode'
 
 interface Topic {
   number: number
@@ -39,6 +40,7 @@ interface UnitPageProps {
 
 export function UnitPage({ course, unit, topics, basePath, courseHref, videoId: _videoId, quizletUrl, examDate }: UnitPageProps) {
   const [loaded, setLoaded] = useState(false)
+  const [presentationOpen, setPresentationOpen] = useState(false)
   const readAloudText = useMemo(() => {
     const topicLines = topics.map((topic) => `Topic ${topic.number}: ${topic.title}. ${topic.description}`).join(' ')
     return `${course.label}. Unit ${unit.number}: ${unit.title}. Exam weight ${unit.examWeight}. ${unit.description}. ${topicLines}`
@@ -189,6 +191,20 @@ export function UnitPage({ course, unit, topics, basePath, courseHref, videoId: 
                 {unitThemeHint}
               </span>
             </Link>
+            {(course.short === 'apes' || course.short === 'apush') && (
+              <button
+                type="button"
+                onClick={() => setPresentationOpen(true)}
+                className="px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wide transition-all"
+                style={{
+                  color: '#dcf3ff',
+                  border: `1px solid ${course.accent}77`,
+                  background: `linear-gradient(130deg, ${course.accent}44 0%, ${course.accentLight}24 55%, #0c1930 100%)`,
+                }}
+              >
+                presentation
+              </button>
+            )}
             
             <p className="text-sm leading-relaxed max-w-2xl" style={{ color: '#b8d0ee' }}>
               {unit.description}
@@ -382,6 +398,14 @@ export function UnitPage({ course, unit, topics, basePath, courseHref, videoId: 
           </div>
         )}
       </div>
+
+      <PresentationMode
+        open={presentationOpen}
+        onClose={() => setPresentationOpen(false)}
+        course={course}
+        unit={unit}
+        topics={topics}
+      />
     </div>
   )
 }

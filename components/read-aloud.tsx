@@ -7,6 +7,9 @@ type ReadAloudProps = {
   text: string
   accent?: string
   accentLight?: string
+  onWordChange?: (word: string, wordIndex: number) => void
+  topOffsetClassName?: string
+  panelTopOffsetClassName?: string
 }
 
 type WordMeta = {
@@ -38,7 +41,15 @@ function closestWordIndex(words: WordMeta[], charIndex: number): number {
   return Math.max(0, Math.min(words.length - 1, lo))
 }
 
-export function ReadAloud({ title = 'have the teacher read it', text, accent = '#4f46e5', accentLight = '#93c5fd' }: ReadAloudProps) {
+export function ReadAloud({
+  title = 'have the teacher read it',
+  text,
+  accent = '#4f46e5',
+  accentLight = '#93c5fd',
+  onWordChange,
+  topOffsetClassName = 'top-20',
+  panelTopOffsetClassName = 'top-33',
+}: ReadAloudProps) {
   const [open, setOpen] = useState(false)
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
   const [voiceName, setVoiceName] = useState('')
@@ -48,7 +59,6 @@ export function ReadAloud({ title = 'have the teacher read it', text, accent = '
   const [isPaused, setIsPaused] = useState(false)
   const [currentChar, setCurrentChar] = useState(0)
 
-  const utterRef = useRef<SpeechSynthesisUtterance | null>(null)
   const offsetRef = useRef(0)
 
   const cleanText = useMemo(() => text.replace(/\s+/g, ' ').trim(), [text])
@@ -59,6 +69,16 @@ export function ReadAloud({ title = 'have the teacher read it', text, accent = '
     () => voices.find((v) => v.name === voiceName) ?? voices[0],
     [voices, voiceName],
   )
+
+  useEffect(() => {
+    if (!onWordChange) return
+    if (!isSpeaking) {
+      onWordChange('', 0)
+      return
+    }
+    const next = words[currentWord]?.word ?? ''
+    onWordChange(next, currentWord)
+  }, [currentWord, isSpeaking, onWordChange, words])
 
   useEffect(() => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return
@@ -100,7 +120,6 @@ export function ReadAloud({ title = 'have the teacher read it', text, accent = '
     utter.rate = rate
     utter.pitch = pitch
     offsetRef.current = start
-    utterRef.current = utter
 
     utter.onstart = () => {
       setIsSpeaking(true)
@@ -152,6 +171,7 @@ export function ReadAloud({ title = 'have the teacher read it', text, accent = '
     setIsSpeaking(false)
     setIsPaused(false)
     setCurrentChar(0)
+    if (onWordChange) onWordChange('', 0)
   }
 
   const seekWord = (targetWord: number) => {
@@ -178,11 +198,13 @@ export function ReadAloud({ title = 'have the teacher read it', text, accent = '
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="fixed right-4 md:right-6 top-20 z-50 w-11 h-11 rounded-full flex items-center justify-center shadow-lg transition-all"
+        className={`fixed right-4 md:right-6 ${topOffsetClassName} z-50 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-300`}
         style={{
+          width: open ? '68px' : '46px',
           background: open ? `linear-gradient(135deg, ${accent}, ${accentLight})` : 'rgba(9,20,34,0.88)',
           color: '#f8fbff',
           border: `1px solid ${open ? accentLight : 'rgba(147,197,253,0.35)'}`,
+          boxShadow: open ? `0 10px 30px ${accent}66` : '0 8px 22px rgba(6,14,25,0.55)',
         }}
         title="Have the Teacher Read It"
       >
@@ -192,7 +214,7 @@ export function ReadAloud({ title = 'have the teacher read it', text, accent = '
       </button>
 
       {open && (
-        <div className="fixed right-4 md:right-6 top-33 z-50 w-[min(460px,calc(100vw-2rem))] rounded-xl border shadow-2xl overflow-hidden" style={{ background: '#081426', borderColor: 'rgba(147,197,253,0.35)' }}>
+        <div className={`fixed right-4 md:right-6 ${panelTopOffsetClassName} z-50 w-[min(460px,calc(100vw-2rem))] rounded-xl border shadow-2xl overflow-hidden`} style={{ background: '#081426', borderColor: 'rgba(147,197,253,0.35)' }}>
           <div className="px-4 py-3 border-b" style={{ borderColor: 'rgba(147,197,253,0.25)', background: 'rgba(12,29,51,0.92)' }}>
             <div className="flex items-center justify-between gap-3">
               <div>

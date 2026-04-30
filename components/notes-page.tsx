@@ -5,6 +5,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { SiteNav } from './site-nav'
 import { getApushMemoryHook } from '@/lib/apush-memory-hooks'
 import { ReadAloud } from './read-aloud'
+import { PresentationMode } from './presentation-mode'
 
 export interface NotesSection {
   type: 'heading' | 'subheading' | 'body' | 'bullets' | 'callout' | 'examtip' | 'frqtip' | 'table' | 'code'
@@ -128,10 +129,35 @@ function buildTermRegex(keyTerms: string[]): RegExp | null {
   return new RegExp(`(?<![A-Za-z0-9])(${parts.join('|')})(?![A-Za-z0-9])`, 'gi')
 }
 
-function highlightTerms(text: string, termRegex: RegExp | null, accentLight: string) {
+function normalizeWord(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, '')
+}
+
+function highlightActiveWord(text: string, activeWord: string) {
+  if (!activeWord) return [text]
+  const target = normalizeWord(activeWord)
+  if (!target) return [text]
+  return text.split(/(\s+)/).map((token, i) => {
+    const normalized = normalizeWord(token)
+    if (normalized && normalized === target) {
+      return (
+        <span
+          key={`aw-${i}-${token}`}
+          className="rounded-sm px-0.5"
+          style={{ background: 'rgba(236,253,245,0.18)', boxShadow: 'inset 0 0 0 1px rgba(134,239,172,0.32)' }}
+        >
+          {token}
+        </span>
+      )
+    }
+    return token
+  })
+}
+
+function highlightTerms(text: string, termRegex: RegExp | null, accentLight: string, activeWord: string) {
   if (!termRegex || !text) return text
   const matches = Array.from(text.matchAll(termRegex))
-  if (matches.length === 0) return text
+  if (matches.length === 0) return highlightActiveWord(text, activeWord)
 
   const nodes: Array<string | JSX.Element> = []
   let cursor = 0
@@ -141,7 +167,7 @@ function highlightTerms(text: string, termRegex: RegExp | null, accentLight: str
     const start = match.index ?? -1
     if (start < 0) return
     const end = start + full.length
-    if (start > cursor) nodes.push(text.slice(cursor, start))
+    if (start > cursor) nodes.push(...highlightActiveWord(text.slice(cursor, start), activeWord))
     nodes.push(
       <span
         key={`term-${idx}-${start}`}
@@ -160,11 +186,11 @@ function highlightTerms(text: string, termRegex: RegExp | null, accentLight: str
     cursor = end
   })
 
-  if (cursor < text.length) nodes.push(text.slice(cursor))
+  if (cursor < text.length) nodes.push(...highlightActiveWord(text.slice(cursor), activeWord))
   return nodes
 }
 
-function renderRichMarkdownInline(text: string, termRegex: RegExp | null, accentLight: string) {
+function renderRichMarkdownInline(text: string, termRegex: RegExp | null, accentLight: string, activeWord: string) {
   const nodes: Array<string | JSX.Element> = []
   const tokenRegex = /(\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*|`([^`]+)`|_([^_]+)_|\*([^*]+)\*)/g
   let last = 0
@@ -175,7 +201,7 @@ function renderRichMarkdownInline(text: string, termRegex: RegExp | null, accent
     if (match.index > last) {
       nodes.push(
         <Fragment key={`txt-${idx++}`}>
-          {highlightTerms(text.slice(last, match.index), termRegex, accentLight)}
+          {highlightTerms(text.slice(last, match.index), termRegex, accentLight, activeWord)}
         </Fragment>,
       )
     }
@@ -189,13 +215,13 @@ function renderRichMarkdownInline(text: string, termRegex: RegExp | null, accent
           rel="noopener noreferrer"
           style={{ color: accentLight, textDecoration: 'underline', textUnderlineOffset: '2px' }}
         >
-          {highlightTerms(linkLabel, termRegex, accentLight)}
+          {highlightTerms(linkLabel, termRegex, accentLight, activeWord)}
         </a>,
       )
     } else if (boldContent) {
       nodes.push(
         <strong key={`b-${idx++}`} style={{ color: accentLight }}>
-          {highlightTerms(boldContent, termRegex, accentLight)}
+          {highlightTerms(boldContent, termRegex, accentLight, activeWord)}
         </strong>,
       )
     } else if (codeContent) {
@@ -212,7 +238,7 @@ function renderRichMarkdownInline(text: string, termRegex: RegExp | null, accent
       const italicContent = italicUnderscore || italicStar || ''
       nodes.push(
         <em key={`i-${idx++}`} style={{ color: '#d6e6f8' }}>
-          {highlightTerms(italicContent, termRegex, accentLight)}
+          {highlightTerms(italicContent, termRegex, accentLight, activeWord)}
         </em>,
       )
     } else {
@@ -224,7 +250,7 @@ function renderRichMarkdownInline(text: string, termRegex: RegExp | null, accent
   if (last < text.length) {
     nodes.push(
       <Fragment key={`tail-${idx++}`}>
-        {highlightTerms(text.slice(last), termRegex, accentLight)}
+        {highlightTerms(text.slice(last), termRegex, accentLight, activeWord)}
       </Fragment>,
     )
   }
@@ -447,6 +473,8 @@ export function NotesPage({
   const [htrTerms, setHtrTerms] = useState<string[]>([])
   const [htrContext, setHtrContext] = useState('')
   const [examFocusMode, setExamFocusMode] = useState(isApush)
+  const [presentationOpen, setPresentationOpen] = useState(false)
+  const [activeWord, setActiveWord] = useState('')
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 80)
@@ -501,7 +529,7 @@ export function NotesPage({
           const bodyContent = isApush && examFocusMode ? trimToSentences(s.content, 2) : s.content
         return (
           <p key={i} className="text-base leading-relaxed mb-4" style={{ color: '#b8d0ee', lineHeight: '1.75' }}>
-            {renderRichMarkdownInline(bodyContent, termRegex, course.accentLight)}
+            {renderRichMarkdownInline(bodyContent, termRegex, course.accentLight, activeWord)}
           </p>
         )
         }
@@ -522,7 +550,7 @@ export function NotesPage({
                   className="text-base leading-relaxed"
                   style={{ color: '#b8d0ee' }}
                 >
-                    {renderRichMarkdownInline(b, termRegex, course.accentLight)}
+                    {renderRichMarkdownInline(b, termRegex, course.accentLight, activeWord)}
                 </span>
               </li>
               ))}
@@ -546,7 +574,7 @@ export function NotesPage({
               color: '#b8d0ee',
             }}
           >
-            {renderRichMarkdownInline(s.content, termRegex, course.accentLight)}
+            {renderRichMarkdownInline(s.content, termRegex, course.accentLight, activeWord)}
           </div>
         )
       case 'examtip':
@@ -561,7 +589,7 @@ export function NotesPage({
             }}
           >
             <span style={{ color: '#22c55e', fontWeight: 800 }}>exam tip: </span>
-            {renderRichMarkdownInline(s.content, termRegex, course.accentLight)}
+            {renderRichMarkdownInline(s.content, termRegex, course.accentLight, activeWord)}
           </div>
         )
       case 'frqtip':
@@ -576,7 +604,7 @@ export function NotesPage({
             }}
           >
             <span style={{ color: '#f59e0b', fontWeight: 800 }}>frq / essay tip: </span>
-            {renderRichMarkdownInline(s.content, termRegex, course.accentLight)}
+            {renderRichMarkdownInline(s.content, termRegex, course.accentLight, activeWord)}
           </div>
         )
       case 'table':
@@ -598,7 +626,7 @@ export function NotesPage({
                         border: `1px solid ${course.accent}33`,
                       }}
                     >
-                      {renderRichMarkdownInline(h, termRegex, course.accentLight)}
+                      {renderRichMarkdownInline(h, termRegex, course.accentLight, activeWord)}
                     </th>
                   ))}
                 </tr>
@@ -616,7 +644,7 @@ export function NotesPage({
                           background: ri % 2 === 0 ? '#0a1929' : '#0d2035',
                         }}
                       >
-                        {renderRichMarkdownInline(cell, termRegex, course.accentLight)}
+                        {renderRichMarkdownInline(cell, termRegex, course.accentLight, activeWord)}
                       </td>
                     ))}
                   </tr>
@@ -664,6 +692,7 @@ export function NotesPage({
         text={readAloudText}
         accent={course.accent}
         accentLight={course.accentLight}
+        onWordChange={(word) => setActiveWord(word)}
       />
 
       {/* Reading progress bar */}
@@ -830,6 +859,20 @@ export function NotesPage({
                 </svg>
                 <span>youtube</span>
               </button>
+              {(course.short === 'apes' || course.short === 'apush') && (
+                <button
+                  type="button"
+                  onClick={() => setPresentationOpen(true)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 font-mono text-xs font-bold uppercase tracking-wider transition-all cursor-pointer"
+                  style={{
+                    background: `${course.accent}24`,
+                    color: '#dcf3ff',
+                    border: `1px solid ${course.accent}55`,
+                  }}
+                >
+                  <span>presentation</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -980,6 +1023,15 @@ export function NotesPage({
           </div>
         </div>
       )}
+
+      <PresentationMode
+        open={presentationOpen}
+        onClose={() => setPresentationOpen(false)}
+        course={course}
+        unit={unit}
+        topic={topic}
+        sections={sections}
+      />
 
     </div>
   )
