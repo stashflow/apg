@@ -316,12 +316,12 @@ export function ReadAloud({
   const progressPct = words.length > 0 ? (currentWord / words.length) * 100 : 0
 
   return (
-    <div className={inline ? `relative ${className}` : ''}>
+    <div className={inline ? `relative w-fit pointer-events-none ${className}` : ''}>
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         className={inline
-          ? `h-9 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${className}`
+          ? `h-9 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 pointer-events-auto ${className}`
           : `fixed right-4 md:right-6 ${topOffsetClassName} z-50 h-12 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 ${className}`}
         style={{
           zIndex: inline ? undefined : 50,
@@ -340,7 +340,7 @@ export function ReadAloud({
 
       {open && (
         <div className={inline
-          ? 'absolute left-full ml-2 top-0 z-30 w-[420px] max-w-[calc(100vw-4rem)] rounded-xl border shadow-2xl overflow-hidden'
+          ? 'absolute left-full ml-2 top-0 z-30 w-[420px] max-w-[calc(100vw-4rem)] rounded-xl border shadow-2xl overflow-hidden pointer-events-auto'
           : `fixed right-4 md:right-6 ${panelTopOffsetClassName} z-50 w-[min(460px,calc(100vw-2rem))] rounded-xl border shadow-2xl overflow-hidden`}
           style={{ background: '#081426', borderColor: 'rgba(147,197,253,0.35)' }}>
           <div className="px-4 py-3 border-b" style={{ borderColor: 'rgba(147,197,253,0.25)', background: 'rgba(12,29,51,0.92)' }}>
