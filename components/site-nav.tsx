@@ -18,7 +18,7 @@ export function SiteNav() {
   return (
     <>
       <nav
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-6 h-14"
+        className="fixed top-0 left-0 right-0 z-[70] flex items-center justify-between px-6 h-14"
         style={{
           background: 'rgba(5,13,26,0.94)',
           backdropFilter: 'blur(16px)',
@@ -110,7 +110,7 @@ export function SiteNav() {
 
       {/* Mobile menu */}
       <div
-        className="fixed inset-0 z-40 flex flex-col items-center justify-center gap-6 md:hidden"
+        className="fixed inset-0 z-[65] flex flex-col items-center justify-center gap-6 md:hidden"
         style={{
           background: 'rgba(5,13,26,0.98)',
           backdropFilter: 'blur(24px)',
